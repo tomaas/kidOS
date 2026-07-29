@@ -35,6 +35,13 @@ interface DynamicStoryPlayerProps {
    */
   readOnly?: boolean;
   storyId: string;
+  /**
+   * La langue de l'HISTOIRE (stories.lang, figée à la création) — les aides
+   * de lecture (lettres muettes, liaisons) sont de la phonétique FRANÇAISE :
+   * elles n'existent que pour une histoire "fr" (annotation ET toggles).
+   * La police cursive reste disponible dans les deux langues.
+   */
+  storyLang: string;
   title: string;
 }
 
@@ -365,6 +372,7 @@ function LiveBeat({
  */
 export function DynamicStoryPlayer({
   storyId,
+  storyLang,
   title,
   initialSegments,
   imageEnabled,
@@ -383,7 +391,14 @@ export function DynamicStoryPlayer({
   // independently toggleable, persisted per-device.
   const { showSilent, showLiaisons, toggleSilent, toggleLiaisons } =
     useReadingAids();
-  const aids: ReadingAidsFlags = { showLiaisons, showSilent };
+  // Gating par langue d'histoire (plan multilangue, D6) : la phonétique
+  // française ne s'applique jamais à un texte anglais — aides forcées OFF et
+  // toggles absents (le réglage par appareil reste intact pour les
+  // histoires françaises).
+  const aidesFr = storyLang === "fr";
+  const aids: ReadingAidsFlags = aidesFr
+    ? { showLiaisons, showSilent }
+    : { showLiaisons: false, showSilent: false };
   // Whether the current live beat's image reveal has resolved — choices + the
   // closing actions appear only then, so text + image + choices reveal together.
   const [beatRevealed, setBeatRevealed] = useState(false);
@@ -500,6 +515,7 @@ export function DynamicStoryPlayer({
             />
           ))}
           <ClosingActions
+            aidesVisibles={aidesFr}
             aids={aids}
             isCursive={isCursive}
             onToggleFont={toggleFont}
@@ -547,12 +563,14 @@ export function DynamicStoryPlayer({
               onChoose={choose}
             />
             <div className="flex flex-wrap justify-center gap-4 pt-2">
-              <ReadingAidsToggles
-                onToggleLiaisons={toggleLiaisons}
-                onToggleSilent={toggleSilent}
-                showLiaisons={showLiaisons}
-                showSilent={showSilent}
-              />
+              {aidesFr ? (
+                <ReadingAidsToggles
+                  onToggleLiaisons={toggleLiaisons}
+                  onToggleSilent={toggleSilent}
+                  showLiaisons={showLiaisons}
+                  showSilent={showSilent}
+                />
+              ) : null}
               <ReadingFontToggle isCursive={isCursive} onToggle={toggleFont} />
             </div>
           </>
@@ -560,6 +578,7 @@ export function DynamicStoryPlayer({
 
         {beatRevealed && isFinal ? (
           <ClosingActions
+            aidesVisibles={aidesFr}
             aids={aids}
             isCursive={isCursive}
             onToggleFont={toggleFont}
@@ -584,23 +603,28 @@ function ClosingActions({
   isCursive,
   onToggleFont,
   aids,
+  aidesVisibles,
   onToggleSilent,
   onToggleLiaisons,
 }: {
   isCursive: boolean;
   onToggleFont: () => void;
   aids: ReadingAidsFlags;
+  /** false pour une histoire non française : la phonétique FR n'existe pas. */
+  aidesVisibles: boolean;
   onToggleSilent: () => void;
   onToggleLiaisons: () => void;
 }) {
   return (
     <div className="flex flex-wrap justify-center gap-4 pt-4">
-      <ReadingAidsToggles
-        onToggleLiaisons={onToggleLiaisons}
-        onToggleSilent={onToggleSilent}
-        showLiaisons={aids.showLiaisons}
-        showSilent={aids.showSilent}
-      />
+      {aidesVisibles ? (
+        <ReadingAidsToggles
+          onToggleLiaisons={onToggleLiaisons}
+          onToggleSilent={onToggleSilent}
+          showLiaisons={aids.showLiaisons}
+          showSilent={aids.showSilent}
+        />
+      ) : null}
       <ReadingFontToggle isCursive={isCursive} onToggle={onToggleFont} />
 
       <Button

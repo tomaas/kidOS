@@ -42,7 +42,7 @@ const MAX_CHOICES = 4;
 const HERO_CAP = 2;
 const ELEMENT_CAP = 2;
 
-const langSchema = z.enum(["fr", "ru"]).default("fr");
+const langSchema = z.enum(["fr", "ru", "en"]).default("fr");
 
 const startSchema = z.object({
   customPrompt: z.string().max(500).optional(),
@@ -408,7 +408,7 @@ export const continueDynamicStoryFn = createServerFn({ method: "POST" })
         elements,
         heroes,
         history: toHistory(claimedSegments),
-        lang: story.lang as "fr" | "ru",
+        lang: langSchema.catch("fr").parse(story.lang),
         mustEnd,
         place: {
           emoji: "",
@@ -709,7 +709,10 @@ async function generateSegmentImage(
     story,
     segment,
     referenceImage !== undefined,
-    frozen
+    frozen,
+    // La langue de l'histoire (colonne row, non typée) — une valeur inconnue
+    // retombe sur le prompt français historique, jamais une erreur.
+    langSchema.catch("fr").parse(story.lang)
   );
 
   try {

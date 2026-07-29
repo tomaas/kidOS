@@ -31,7 +31,10 @@ yes → don't.
   prompt builder, byte-identical); `test:coherence` pins the safety/structure
   validators, the anti-"doux" repetition guard, the landing decrescendo, the
   prompt builders and the zod schema key order (key order IS the JSON property
-  order sent to the model — a formatting pass must not reorder it);
+  order sent to the model — a formatting pass must not reorder it), PLUS the
+  ENGLISH corpus branch (english-coherence.golden.ts: EN prompts/validators,
+  the word-boundary safety scan, EN schema key order = FR, the EN illustration
+  prompt byte-pinned, the no-lang default staying French);
   `test:media` pins the media-store rules: blob-host derivation and the
   read-back choke-point (allowlist in both modes, media-dir escape, bytes
   round-trip);
@@ -127,9 +130,21 @@ yes → don't.
   `messages/{fr,en}.ts`, pure `buildBranding`, `normalizeLocale`;
   golden-tested via `test:i18n`). `<html lang>` and the tab title/description
   follow. DISTINCT from `stories.lang` (per-story, frozen at creation) and
-  `DEFAULT_LANG` (server-side story default) — those move in later phases;
-  stories, the aventure/bibliotheque UI and the non-calcul /parents copy are
-  still French-only. Since phase 2 the CALCUL mini-app is fully bilingual:
+  `DEFAULT_LANG` (server-side story default). Since phase 3 STORIES follow
+  the UI language at creation (the wizard passes the locale; `Lang` is now
+  "fr" | "ru" | "en"): the whole EN corpus (system/beat/arc prompts,
+  EN reading-level spec, forbidden/stakes lists, anti-tic soft/softly/gentle,
+  validator messages, EN beat/arc schemas with the SAME key order, EN image
+  fragments) lives in `src/server/providers/text/english.ts` — the FR/RU
+  path in dynamic.ts is byte-frozen and only BRANCHES there on lang==="en".
+  CRITICAL divergence: the EN safety scan is WORD-BOUNDARY, never substring
+  ("war" ⊂ "warm" would reject core cozy vocabulary; FR keeps its historical
+  substring scan). Reading aids (French phonics) are gated to
+  `story.lang === "fr"` (player + print: annotations off, toggles hidden);
+  the cursive font toggle stays in both. TTS voice map carries
+  en-US-AnaNeural. The aventure/bibliotheque UI chrome and the non-calcul
+  /parents copy are still French-only (phase 4). Since phase 2 the CALCUL
+  mini-app is fully bilingual:
   UI strings via the catalog (aria templates composed with `formatMessage`,
   the tray aria stays stable AT CONSTANT LANGUAGE), énoncés via per-locale
   packs inside `enonces.ts` (pools index-aligned and SAME LENGTH — pool

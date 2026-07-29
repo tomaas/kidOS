@@ -4,6 +4,35 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.5.0.0] - 2026-07-29
+
+### Added
+
+- **Les histoires parlent les deux langues (phase 3 du plan multilangue)** :
+  une histoire créée quand l'atelier est en anglais est écrite, illustrée et
+  (si activée) lue à voix haute en anglais. La langue est figée à la création
+  (`stories.lang`) : la bibliothèque peut mélanger les deux, chaque histoire
+  garde la sienne pour toujours.
+- Un corpus anglais COMPLET, rédigé (pas traduit mot à mot) pour un lecteur
+  débutant anglophone : prompts système et d'écriture, fil rouge secret,
+  décrescendo d'atterrissage, niveau de lecture early-reader, listes de mots
+  interdits et d'enjeu, anti-tic « soft/softly/gentle/gently » (le pendant du
+  « doux/doucement »), messages correctifs en anglais, prompt d'illustration
+  et voix anglaise (Ana) pour la lecture à voix haute.
+- Garde-fou spécifique à l'anglais : le scan de sécurité anglais travaille au
+  MOT ENTIER (jamais par sous-chaîne comme le français) — sinon « warm », mot
+  cœur d'une histoire câline, serait bloqué parce qu'il contient « war ».
+  Vérifié en conditions réelles : un fil + un premier bout générés en anglais
+  au premier essai, calmes et courts.
+- Les aides à la lecture (lettres muettes, liaisons) sont de la phonétique
+  FRANÇAISE : elles n'apparaissent plus que sur les histoires françaises
+  (annotations et boutons) — la police cursive reste disponible partout.
+- Nouveau golden dans `test:coherence` : la branche anglaise entière
+  (prompts, scan au mot entier, ordre des clés des schémas identique au
+  français, prompt d'illustration épinglé octet pour octet) — et tous les
+  goldens français passent INTOUCHÉS : le chemin historique n'a pas bougé
+  d'un octet.
+
 ## [0.4.4.0] - 2026-07-29
 
 ### Added

@@ -16,6 +16,7 @@ import { places as configPlaces } from "~/config/places";
 import { pickRandomDoudouIds, toDoudouItems } from "~/lib/doudou-items";
 import { pickRandomElementIds, toElementItems } from "~/lib/element-items";
 import { pickRandomHeroIds, toHeroItems } from "~/lib/hero-items";
+import { useLocale } from "~/lib/i18n";
 import { toPlaceItems } from "~/lib/place-items";
 import { previousStep, type WizardStep } from "~/lib/wizard-steps";
 import { listDoudousFn } from "~/server/doudous-functions";
@@ -217,6 +218,10 @@ function clearParcours(): void {
  * same soft waiting state and gentle retry on failure.
  */
 function AventurePage() {
+  // La langue de l'HISTOIRE = la locale UI au moment de la création (figée
+  // ensuite sur la ligne stories.lang) — le parent qui met l'atelier en
+  // anglais obtient des histoires en anglais, sans étape wizard en plus.
+  const locale = useLocale();
   const navigate = useNavigate();
   const { heroItems, elementItems, placeItems, doudouItems } =
     Route.useLoaderData();
@@ -388,6 +393,7 @@ function AventurePage() {
           doudouIds,
           elementIds: elementIds.length > 0 ? elementIds : [elementItems[0].id],
           heroIds,
+          lang: locale,
           placeId: placeId ?? placeItems[0].id,
         },
       });

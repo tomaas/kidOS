@@ -3,8 +3,11 @@ import { generateId } from "~/lib/id-generator";
 import { saveMedia } from "~/server/providers/media-store";
 import type { Lang, TtsProvider } from "~/server/providers/types";
 
-// Free Microsoft Edge neural voices. FR in v1; RU voice wired for later.
+// Free Microsoft Edge neural voices. FR in v1; RU voice wired for later;
+// EN (multilang phase 3) : Ana — la voix enfant du catalogue Edge, appariée
+// au ton câlin des histoires.
 const VOICE: Record<Lang, string> = {
+  en: "en-US-AnaNeural",
   fr: "fr-FR-DeniseNeural",
   ru: "ru-RU-SvetlanaNeural",
 };
