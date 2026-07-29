@@ -24,9 +24,11 @@
  */
 
 import { buildBranding } from "~/lib/i18n/branding";
+import { formatMessage } from "~/lib/i18n/format";
 import { normalizeLocale } from "~/lib/i18n/locale";
 import { en } from "~/lib/i18n/messages/en";
 import { fr } from "~/lib/i18n/messages/fr";
+import { FAMILLE_NOMS, FAMILLES, PALIERS } from "~/lib/operations";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {
@@ -137,10 +139,53 @@ const PINS_FR: readonly [string, string][] = [
   ["bureau.entrer", "Entrer"],
   ["bureau.fermerFenetre", "Fermer la fenêtre"],
   ["bureau.ranger", "Ranger le bureau"],
+  ["calcul.ariaEffacer", "Effacer"],
+  ["calcul.ariaReposerPlateau", "Reposer le plateau"],
+  ["calcul.atelierRange", "L'atelier est rangé."],
+  ["calcul.jaiFiniJeCompare", "J'ai fini, je compare"],
+  ["calcul.plateauSuivant", "Plateau suivant"],
+  ["calcul.prendrePlateau", "Prendre le plateau des {familles}"],
+  ["calcul.rangerAtelier", "Ranger l'atelier"],
+  ["calcul.serieEnCours", " — série en cours"],
   ["ecrans.pageIntrouvableTitre", "Cette page n'existe pas"],
   ["ecrans.revenirAccueil", "Revenir à l'accueil"],
   ["ecrans.soucisTexte", "On range tout et on recommence dans un instant."],
   ["ecrans.soucisTitre", "Oups, un petit souci"],
+  [
+    "parents.calcul.changerPalier",
+    "Changer le palier range la série en cours.",
+  ],
+  [
+    "parents.calcul.changerTaille",
+    "Changer la taille range les séries en cours de toutes les familles.",
+  ],
+  [
+    "parents.calcul.derniereFamille",
+    "Au moins une famille reste sur l'étagère.",
+  ],
+  ["parents.calcul.enregistrement", "Enregistrement…"],
+  ["parents.calcul.enregistrer", "Enregistrer"],
+  ["parents.calcul.imprimerFiche", "Imprimer une fiche"],
+  [
+    "parents.calcul.nApparaitPas",
+    "N'apparaît pas sur l'étagère. Désactiver oublie le palier choisi.",
+  ],
+  ["parents.calcul.operationsParSerie", "Opérations par série"],
+  [
+    "parents.calcul.rechargementEchoue",
+    "Enregistré — le rechargement a échoué, recharge la page pour vérifier.",
+  ],
+  [
+    "parents.calcul.reglagesIndisponibles",
+    "Réglages indisponibles pour le moment — recharge la page dans un instant.",
+  ],
+  ["parents.calcul.titre", "Les calculs"],
+  ["parents.calcul.titreFiche", "Des calculs à poser"],
+  [
+    "parents.enregistrementImpossible",
+    "Enregistrement impossible pour le moment — réessaie.",
+  ],
+  ["parents.espaceParent", "Espace parent"],
 ];
 
 for (const [chemin, attendu] of PINS_FR) {
@@ -195,6 +240,55 @@ const brandingPins: readonly [string, string, string][] = [
 for (const [nom, calcule, attendu] of brandingPins) {
   check(`branding ${nom}`, calcule === attendu, `lu « ${calcule} »`);
 }
+
+// ── Cohérence catalogue ↔ modules purs (phase 2, calcul) ─────────────────────
+// Le catalogue fr est BYTE-IDENTIQUE aux références françaises des modules
+// purs — l'aria du plateau et la page parent gardent leurs octets
+// historiques, et une famille/un palier ajouté sans entrée de catalogue
+// casse ici.
+
+for (const op of FAMILLES) {
+  check(
+    `familles fr : catalogue ≡ FAMILLE_NOMS (${op})`,
+    fr.calcul.familles[op] === FAMILLE_NOMS[op],
+    `catalogue « ${fr.calcul.familles[op]} », lib « ${FAMILLE_NOMS[op]} »`
+  );
+}
+
+{
+  const paliersCatalogue: Record<string, string> = fr.parents.calcul.paliers;
+  const paliersCatalogueEn: Record<string, string> = en.parents.calcul.paliers;
+  for (const palier of PALIERS) {
+    check(
+      `palier fr : catalogue ≡ label du module (${palier.id})`,
+      paliersCatalogue[palier.id] === palier.label,
+      `catalogue « ${paliersCatalogue[palier.id]} », lib « ${palier.label} »`
+    );
+    check(
+      `palier en : entrée présente et non vide (${palier.id})`,
+      (paliersCatalogueEn[palier.id] ?? "").trim().length > 0
+    );
+  }
+}
+
+// ── formatMessage (composition des gabarits à trous) ─────────────────────────
+
+check(
+  "formatMessage : composition FR de l'aria plateau ≡ octets historiques",
+  formatMessage(fr.calcul.prendrePlateau, {
+    familles: fr.calcul.familles.addition,
+  }) === "Prendre le plateau des additions"
+);
+check(
+  "formatMessage : composition EN de l'aria plateau",
+  formatMessage(en.calcul.prendrePlateau, {
+    familles: en.calcul.familles.addition,
+  }) === "Take the addition tray"
+);
+check(
+  "formatMessage : trou sans valeur → chaîne vide, jamais d'exception",
+  formatMessage("a {x} b", {}) === "a  b"
+);
 
 // ── normalizeLocale ──────────────────────────────────────────────────────────
 

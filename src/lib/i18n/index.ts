@@ -6,6 +6,7 @@
 
 export { type Branding, buildBranding } from "./branding";
 export { LocaleProvider, MESSAGES, useLocale, useMessages } from "./context";
+export { formatMessage } from "./format";
 export {
   DEFAULT_LOCALE,
   LOCALE_LABELS,
