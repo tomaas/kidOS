@@ -2,6 +2,7 @@ export {
   type EnonceEntities,
   enonceFor,
   OBJETS,
+  OBJETS_EN,
   varianteDuJour,
 } from "~/lib/operations/enonces";
 export {

@@ -4,6 +4,34 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.4.4.0] - 2026-07-29
+
+### Added
+
+- **La mini-app Calculs parle les deux langues (phase 2 du plan
+  multilangue)** : l'étagère (phrases des plateaux, lecteur d'écran), la
+  série (« Plateau suivant », « J'ai fini, je compare », le moment 🌿), le
+  pavé doux, et la page parent (cartes de familles, libellés des paliers,
+  fiche A5 — imprimée dans la langue de l'atelier au moment de
+  l'impression) suivent le réglage de langue.
+- Les énoncés déterministes existent en anglais : pools alignés index par
+  index sur les pools français (même graine → la traduction du même
+  énoncé) ; une série en cours n'est jamais invalidée par la bascule de
+  langue — seule la phrase au-dessus de l'opération change, les chiffres
+  restent.
+- Goldens étendus : pins byte-exact des énoncés anglais (traduction du même
+  tirage que les pins français), preuve d'alignement des pools sur 3
+  familles × 100 graines × 2 branches, scan calme anglais (jamais well
+  done/won/hurry/wrong…), sobriété (1 phrase, < 90 caractères) ; et côté
+  catalogue, l'identité byte-exacte du fr avec FAMILLE_NOMS et les labels
+  de paliers du module pur.
+
+### Changed
+
+- L'enregistrement des réglages calcul renvoie un code stable au lieu d'une
+  phrase française — le libellé vient du catalogue, dans la langue du
+  parent (décision D7 du plan).
+
 ## [0.4.3.0] - 2026-07-29
 
 ### Added

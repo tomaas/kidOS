@@ -159,7 +159,7 @@ function SectionLangue() {
         ) : null}
         {etat === "impossible" ? (
           <p className="text-muted-foreground text-sm">
-            {m.parents.langue.enregistrementImpossible}
+            {m.parents.enregistrementImpossible}
           </p>
         ) : null}
       </div>

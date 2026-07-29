@@ -28,9 +28,11 @@ import type {
 } from "~/lib/operations/types";
 
 /**
- * Noms français des familles — l'UNIQUE mapping d'affichage (l'étagère les
- * utilise tels quels dans l'aria, la page parent les capitalise) : une
- * nouvelle famille ne peut pas silencieusement manquer son libellé.
+ * Noms français des familles — depuis la phase 2 multilangue, l'affichage
+ * passe par le catalogue i18n (m.calcul.familles : l'étagère dans l'aria, la
+ * page parent capitalisée) ; CE mapping reste la RÉFÉRENCE française du
+ * module pur, et test:i18n épingle le catalogue fr byte-identique à lui —
+ * une nouvelle famille ne peut pas silencieusement manquer son libellé.
  */
 export const FAMILLE_NOMS: Record<Operation, string> = {
   addition: "additions",

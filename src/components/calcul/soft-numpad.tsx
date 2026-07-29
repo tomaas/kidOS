@@ -2,6 +2,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { Delete } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
+import { useMessages } from "~/lib/i18n";
 
 /**
  * Shared visual identity of a digit tile — the numpad key and the DragOverlay
@@ -24,6 +25,7 @@ export function SoftNumpad({
   onDigit: (digit: string) => void;
   onErase: () => void;
 }) {
+  const m = useMessages();
   const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
   return (
     <div className="grid w-fit grid-cols-5 gap-2">
@@ -31,7 +33,7 @@ export function SoftNumpad({
         <DigitKey digit={d} key={d} onDigit={onDigit} />
       ))}
       <Button
-        aria-label="Effacer"
+        aria-label={m.calcul.ariaEffacer}
         className="col-span-2 h-14 rounded-2xl sm:h-16"
         onClick={onErase}
         variant="ghost"
