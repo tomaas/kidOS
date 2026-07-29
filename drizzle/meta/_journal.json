@@ -78,6 +78,13 @@
       "when": 1784457600000,
       "tag": "0010_etagere_familles",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1785331573411,
+      "tag": "0011_wild_wolfpack",
+      "breakpoints": true
     }
   ]
 }

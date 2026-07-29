@@ -19,8 +19,10 @@ import {
   type EvenementIcone,
   transitionIcone,
 } from "~/lib/bureau/icone";
+import { useMessages } from "~/lib/i18n";
 
 export function Bureau({ onRanger }: { onRanger: () => void }) {
+  const m = useMessages();
   const navigate = useNavigate();
   const [selection, setSelection] = useState<string | null>(null);
   // « ouverte » est absorbant (machine D19-A) : la navigation est en vol,
@@ -91,7 +93,7 @@ export function Bureau({ onRanger }: { onRanger: () => void }) {
           <IconeBureau
             icone={app.icone}
             key={app.id}
-            libelle={app.libelle}
+            libelle={m.bureau.apps[app.id]}
             onEvenement={(evenement) => surEvenement(app.id, app.to, evenement)}
             selectionnee={selection === app.id}
             teinte={app.teinte}
@@ -104,7 +106,7 @@ export function Bureau({ onRanger }: { onRanger: () => void }) {
           onClick={onRanger}
           variant="ghost"
         >
-          Ranger le bureau
+          {m.bureau.ranger}
         </Button>
       </div>
     </div>

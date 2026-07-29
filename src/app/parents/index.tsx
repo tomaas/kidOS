@@ -1,6 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ChevronRight, Home } from "lucide-react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import {
+  LOCALE_LABELS,
+  LOCALES,
+  type Locale,
+  useLocale,
+  useMessages,
+} from "~/lib/i18n";
+import { saveUiLocaleFn } from "~/server/settings-functions";
 
 export const Route = createFileRoute("/parents/")({
   component: ParentsIndexPage,
@@ -100,6 +109,71 @@ function ParentsIndexPage() {
           </li>
         ))}
       </ul>
+
+      <SectionLangue />
+    </div>
+  );
+}
+
+/**
+ * Le réglage de langue de l'atelier — inline sur cette page (deux options,
+ * pas de sous-page). Enregistré en DB (app_settings) puis router.invalidate()
+ * relance le loader racine : toute l'interface bascule sans rechargement.
+ * L'échec reste calme et local (le libellé vient du catalogue client — le
+ * serveur ne renvoie qu'un booléen). Les autonymes « Français » / « English »
+ * ne sont jamais traduits.
+ */
+function SectionLangue() {
+  const locale = useLocale();
+  const m = useMessages();
+  const router = useRouter();
+  const [etat, setEtat] = useState<"repos" | "enregistre" | "impossible">(
+    "repos"
+  );
+
+  async function choisir(cible: Locale) {
+    if (cible === locale) {
+      return;
+    }
+    const result = await saveUiLocaleFn({ data: { locale: cible } });
+    if (result.success) {
+      setEtat("enregistre");
+      await router.invalidate();
+    } else {
+      setEtat("impossible");
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-4 rounded-2xl border bg-card p-5">
+      <span aria-hidden="true" className="text-4xl leading-none">
+        🌍
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold text-xl">{m.parents.langue.titre}</p>
+        <p className="text-muted-foreground text-sm">{m.parents.langue.hint}</p>
+        {etat === "enregistre" ? (
+          <p className="text-muted-foreground text-sm">
+            {m.parents.langue.enregistre}
+          </p>
+        ) : null}
+        {etat === "impossible" ? (
+          <p className="text-muted-foreground text-sm">
+            {m.parents.langue.enregistrementImpossible}
+          </p>
+        ) : null}
+      </div>
+      <div className="flex shrink-0 gap-2">
+        {LOCALES.map((option) => (
+          <Button
+            key={option}
+            onClick={() => choisir(option)}
+            variant={option === locale ? "default" : "outline"}
+          >
+            {LOCALE_LABELS[option]}
+          </Button>
+        ))}
+      </div>
     </div>
   );
 }

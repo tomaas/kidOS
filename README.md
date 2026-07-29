@@ -15,7 +15,9 @@ library of kept stories.
 The printed A5 booklet that comes out of the printer is often the real magic
 moment.
 
-> The app UI and the generated stories are in **French** — the reading aids
+> The desktop shell (icons, window chrome, entry screen) is bilingual —
+> **French or English**, a parent setting at /parents. The generated stories
+> and the mini-app content are still in **French** — the reading aids
 > (silent letters, liaisons) are specific to French phonics. Docs are in
 > English so anyone can set it up.
 

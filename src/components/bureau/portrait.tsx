@@ -14,8 +14,9 @@
  */
 
 import { useEffect, useState } from "react";
-import { appConfig, childName } from "~/config/app";
+import { brandingFor, childName } from "~/config/app";
 import { matchesChildName } from "~/lib/bureau/identite";
+import { useLocale, useMessages } from "~/lib/i18n";
 import { listHeroesFn } from "~/server/heroes-functions";
 import { isRenderableImagePath } from "~/server/providers/types";
 
@@ -25,6 +26,8 @@ interface PortraitInfo {
 }
 
 export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
+  const locale = useLocale();
+  const m = useMessages();
   const [portrait, setPortrait] = useState<PortraitInfo | null>(null);
   const [imageCassee, setImageCassee] = useState(false);
 
@@ -75,9 +78,9 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
           )}
         </span>
         <span className="font-bold text-4xl">
-          {childName || appConfig.name}
+          {childName || brandingFor(locale).name}
         </span>
-        <span className="text-muted-foreground text-xl">Entrer</span>
+        <span className="text-muted-foreground text-xl">{m.bureau.entrer}</span>
       </button>
     </div>
   );

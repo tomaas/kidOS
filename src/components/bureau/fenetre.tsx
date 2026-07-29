@@ -56,6 +56,7 @@ import {
   type Taille,
 } from "~/lib/bureau/clamp";
 import { cn } from "~/lib/cn";
+import { useMessages } from "~/lib/i18n";
 
 /** Hauteur de la barre de titre — appariée à la classe h-14 (56px) du cadre. */
 export const FENETRE_TITLE_BAR_HEIGHT = 56;
@@ -220,6 +221,7 @@ function CadreFenetre({
   position: Position | null;
   titre: string;
 }) {
+  const m = useMessages();
   // `attributes` de useDraggable est volontairement NON étalé sur la zone de
   // drag : il injecte role="button" + tabIndex=0 — un contrôle tabbable
   // invisible qui ne fait rien au clavier (le clavier est hors périmètre,
@@ -271,10 +273,10 @@ function CadreFenetre({
           {titre}
         </span>
         <Button
-          aria-label="Fermer la fenêtre"
+          aria-label={m.bureau.fermerFenetre}
           className="relative z-10 ml-auto size-12 shrink-0 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
           nativeButton={false}
-          render={<Link aria-label="Fermer la fenêtre" to="/" />}
+          render={<Link aria-label={m.bureau.fermerFenetre} to="/" />}
           variant="ghost"
         >
           <X className="size-6" />

@@ -3,24 +3,18 @@
  *
  * Set `VITE_CHILD_NAME=Léa` (in `.env.local` or your host's env vars) and the
  * browser tab, home screen and printed booklet all become "L'atelier de
- * Léa" / "Une histoire de Léa" — no code change, so a public fork stays
- * generic. `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` / `VITE_STORY_LABEL`
- * override the full strings when the derived phrasing doesn't fit. The values
- * below are the fallbacks. Hero names live in `src/config/characters.ts` (and
- * can also be managed in-app at /parents).
+ * Léa" / "Une histoire de Léa" (or "Léa's workshop" / "A story by Léa" when
+ * the parent switches the UI language) — no code change, so a public fork
+ * stays generic. `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` /
+ * `VITE_STORY_LABEL` override the full strings in BOTH languages when the
+ * derived phrasing doesn't fit. The per-locale derivations (French elision
+ * incluse) live in the pure `buildBranding` (src/lib/i18n/branding.ts,
+ * golden-tested); this file only composes them with the env overrides. Hero
+ * names live in `src/config/characters.ts` (and can also be managed in-app
+ * at /parents).
  */
 
-/**
- * French elision: "de" contracts to "d'" before a vowel sound — "l'atelier
- * d'Arsène" but "de Léa". Vowels (accented included) and mute h elide; names
- * where that's wrong (h aspiré, semi-consonant Y like "de Yann") can use the
- * full-string override vars instead.
- */
-const ELIDING_INITIAL = /^[aàâäæeéèêëiîïoôöœuùûüh]/i;
-
-function withDe(name: string): string {
-  return ELIDING_INITIAL.test(name) ? `d'${name}` : `de ${name}`;
-}
+import { type Branding, buildBranding, type Locale } from "~/lib/i18n";
 
 /**
  * Le prénom configuré, exporté pour l'identité du bureau (T4-A) : le portrait
@@ -29,20 +23,21 @@ function withDe(name: string): string {
  */
 export const childName: string = (import.meta.env.VITE_CHILD_NAME || "").trim();
 
-export const appConfig = {
-  /** One-line description (meta description tag). */
-  description:
-    import.meta.env.VITE_APP_DESCRIPTION ||
-    "Un endroit calme pour lire, inventer et calculer.",
-  /** Display name: browser tab, home header. */
-  name:
-    import.meta.env.VITE_APP_NAME ||
-    (childName ? `L'atelier ${withDe(childName)}` : "Le petit atelier"),
-  /**
-   * Discreet footer printed on the A5 booklet, and the fallback story title
-   * when the model returns none.
-   */
-  storyLabel:
-    import.meta.env.VITE_STORY_LABEL ||
-    (childName ? `Une histoire ${withDe(childName)}` : "Une petite histoire"),
-} as const;
+/** Branding pour la locale UI — dérivation par langue + overrides env. */
+export function brandingFor(locale: Locale): Branding {
+  const derived = buildBranding(locale, childName);
+  return {
+    description: import.meta.env.VITE_APP_DESCRIPTION || derived.description,
+    name: import.meta.env.VITE_APP_NAME || derived.name,
+    storyLabel: import.meta.env.VITE_STORY_LABEL || derived.storyLabel,
+  };
+}
+
+/**
+ * Branding FRANÇAIS figé — pour les consommateurs pas encore par-locale :
+ * le colophon imprimé et le titre d'histoire de repli côté serveur suivront
+ * la langue de l'HISTOIRE (stories.lang), pas la locale UI — branchés aux
+ * phases 3–4 du plan multilangue. Le shell (titre d'onglet, portrait,
+ * meta description) passe déjà par brandingFor(locale).
+ */
+export const appConfig = brandingFor("fr");

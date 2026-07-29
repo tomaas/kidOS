@@ -355,6 +355,24 @@ export const mathSkills = sqliteTable(
   (table) => [uniqueIndex("math_skills_skill_idx").on(table.skill)]
 );
 
+/**
+ * Réglages GLOBAUX de l'app (clé/valeur, un enregistrement par réglage) —
+ * des choix PARENT, jamais un état de l'enfant (contrainte calme : rien ici
+ * ne mesure, ne compte ni n'évalue). Première clé : `ui-language`
+ * ("fr" | "en") — la langue de l'interface (bureau + espace parent), choisie
+ * à /parents et lue par le loader racine. Distincte de `stories.lang` (la
+ * langue d'UNE histoire, figée à sa création) et de DEFAULT_LANG (le défaut
+ * serveur des histoires). Une valeur inconnue est normalisée à la lecture
+ * (normalizeLocale), jamais une erreur.
+ */
+export const appSettings = sqliteTable("app_settings", {
+  key: text("key").primaryKey(),
+  updatedAt: text("updated_at").default(
+    sql`(strftime('%Y-%m-%d %H:%M:%S.000+00', 'now'))`
+  ),
+  value: text("value").notNull(),
+});
+
 export type Story = typeof stories.$inferSelect;
 export type NewStory = typeof stories.$inferInsert;
 export type StorySegment = typeof storySegments.$inferSelect;

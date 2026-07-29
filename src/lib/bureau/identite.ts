@@ -21,6 +21,9 @@ function normalise(name: string): string {
       .normalize("NFC")
       .trim()
       .replace(ELISION_PREFIX, "")
+      // "fr" reste correct pour la locale UI "en" aussi : fr et en n'ont
+      // aucun mapping de casse divergent (le piège, c'est le i turc) — et le
+      // strip d'élision est simplement sans effet sur un label anglais.
       .toLocaleLowerCase("fr")
   );
 }

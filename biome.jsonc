@@ -112,6 +112,7 @@
       // Façades publiques des modules purs — la frontière de module est
       // voulue (cf. CLAUDE.md), pas un barrel accidentel.
       "includes": [
+        "src/lib/i18n/index.ts",
         "src/lib/operations/index.ts",
         "src/lib/reading-aids/index.ts"
       ],
