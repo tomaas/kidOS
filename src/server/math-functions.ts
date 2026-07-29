@@ -100,7 +100,10 @@ const saveSchema = z.object({
 
 export type MathSettingsMutationResult =
   | { success: true; settings: MathSettings }
-  | { success: false; error: string };
+  // Code stable, jamais une phrase : le LIBELLÉ appartient au client
+  // (catalogue i18n) — le serveur ne choisit pas la langue du parent (D7 du
+  // plan multilangue).
+  | { success: false; code: "save-failed" };
 
 export const saveMathSettingsFn = createServerFn({ method: "POST" })
   .validator(saveSchema)
@@ -144,10 +147,11 @@ export const saveMathSettingsFn = createServerFn({ method: "POST" })
       ]);
     } catch (error) {
       // Le détail technique (chaîne Turso, SQL) reste côté serveur — le
-      // parent reçoit un message calme et fixe (security review).
+      // parent reçoit un code calme et fixe (security review), libellé par
+      // le catalogue client.
       console.error("saveMathSettingsFn:", error);
       return {
-        error: "Enregistrement impossible pour le moment — réessaie.",
+        code: "save-failed",
         success: false,
       };
     }

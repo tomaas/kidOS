@@ -39,6 +39,7 @@ import {
   matchesQuota,
   normalizeFamilySettings,
   OBJETS,
+  OBJETS_EN,
   PALIERS,
   palierById,
   paliersByFamille,
@@ -685,6 +686,136 @@ function gabaritOf(phrase: string): string {
   check(
     "énoncé addition solo: plusieurs gabarits sortent sur 100 seeds",
     addSolo.size >= 2
+  );
+}
+
+/* ------------- Énoncés EN (plan multilangue, phase 2) ------------- */
+// Le contrat PRNG bilingue : pools alignés INDEX PAR INDEX et de MÊME
+// longueur — à seed égale, l'énoncé EN est LA TRADUCTION de l'énoncé FR
+// (même objet, même gabarit). Les pins FR ci-dessus restent la référence ;
+// ceux-ci épinglent la traduction du MÊME tirage.
+{
+  check(
+    "énoncés EN: pool d'objets aligné (même longueur que OBJETS)",
+    OBJETS_EN.length === OBJETS.length,
+    `fr=${OBJETS.length} en=${OBJETS_EN.length}`
+  );
+
+  // Pin délibéré du pool de contenants EN (identité, comme CONTENANTS_PIN).
+  const CONTENANTS_EN_PIN = ["baskets", "boxes", "tubs", "bags", "bowls"];
+  check(
+    "énoncés EN: pool de contenants aligné (même longueur que le pin FR)",
+    CONTENANTS_EN_PIN.length === CONTENANTS_PIN.length
+  );
+
+  const op = generateOperation(PALIERS[0].constraints, 1); // 32 + 2
+  check(
+    "énoncé EN épinglé (avec doudou): traduction du MÊME tirage que le pin FR",
+    enonceFor(op, { doudou: "Doudou", hero: "Arsène" }, "en") ===
+      "Arsène puts away 32 feathers, Doudou brings 2 more.",
+    enonceFor(op, { doudou: "Doudou", hero: "Arsène" }, "en")
+  );
+  check(
+    "énoncé EN épinglé (sans doudou): traduction du MÊME tirage que le pin FR",
+    enonceFor(op, { hero: "Arsène" }, "en") ===
+      "Arsène gathers 32 feathers, then 2 more.",
+    enonceFor(op, { hero: "Arsène" }, "en")
+  );
+
+  // Alignement d'index PROUVÉ sur un large échantillon : l'objet tiré en FR
+  // et l'objet tiré en EN sont au MÊME index de leur pool respectif, sur les
+  // trois familles et les deux branches.
+  {
+    let aligne = true;
+    for (const palierIdx of [0, 3, 5]) {
+      for (let seed = 1; seed <= 100; seed += 1) {
+        const o = generateOperation(PALIERS[palierIdx].constraints, seed);
+        for (const entities of [
+          { doudou: "Doudou", hero: "A" },
+          { hero: "A" },
+        ]) {
+          const idxFr = OBJETS.findIndex((mot) =>
+            motsRegex([mot]).test(enonceFor(o, entities))
+          );
+          const idxEn = OBJETS_EN.findIndex((mot) =>
+            motsRegex([mot]).test(enonceFor(o, entities, "en"))
+          );
+          if (idxFr === -1 || idxFr !== idxEn) {
+            aligne = false;
+            break;
+          }
+        }
+      }
+    }
+    check(
+      "énoncés EN: objet au même index que le FR (3 familles × 100 seeds × 2 branches)",
+      aligne
+    );
+  }
+
+  // Calme + sobriété EN, mêmes exigences que le FR : liste anglaise (jamais
+  // well done/won/hurry/wrong…), ≤ 1 point, < 90 caractères — tous les
+  // paliers × 60 seeds × 2 branches.
+  const FORBIDDEN_EN = [
+    "well done",
+    "bravo",
+    " won ",
+    " win ",
+    " lost ",
+    " lose ",
+    "hurry",
+    "quick",
+    " fast ",
+    "wrong",
+    "score",
+    " points",
+    "prize",
+    "reward",
+    " best ",
+  ];
+  let calmEn = true;
+  let sobreEn = true;
+  for (const palier of PALIERS) {
+    for (let seed = 1; seed <= 60; seed += 1) {
+      const o = generateOperation(palier.constraints, seed);
+      const phrases = [
+        enonceFor(o, { doudou: "Doudou", hero: "Arsène" }, "en"),
+        enonceFor(o, { hero: "Arsène" }, "en"),
+      ];
+      for (const phrase of phrases) {
+        if (FORBIDDEN_EN.some((w) => ` ${phrase.toLowerCase()} `.includes(w))) {
+          calmEn = false;
+        }
+        if (!(phrase.split(".").length <= 2 && phrase.length < 90)) {
+          sobreEn = false;
+        }
+      }
+    }
+  }
+  check(
+    "énoncés EN: aucun terme d'enjeu sur tous les paliers × 60 seeds × 2 branches",
+    calmEn
+  );
+  check(
+    "énoncés EN: sobriété (1 phrase, < 90 car.) sur TOUS les gabarits",
+    sobreEn
+  );
+
+  // La variété EN suit le FR par construction (mêmes indices) : preuve
+  // rapide — plusieurs contenants et les deux tournures mult sur 100 seeds.
+  const contenantsVusEn = new Set<string>();
+  for (let seed = 1; seed <= 100; seed += 1) {
+    const mult = generateOperation(PALIERS[5].constraints, seed);
+    const phrase = enonceFor(mult, { hero: "A" }, "en");
+    const contenant = CONTENANTS_EN_PIN.find((c) => phrase.includes(c));
+    if (contenant) {
+      contenantsVusEn.add(contenant);
+    }
+  }
+  check(
+    "énoncés EN multiplication: plusieurs contenants sortent sur 100 seeds",
+    contenantsVusEn.size >= 3,
+    [...contenantsVusEn].join(", ")
   );
 }
 

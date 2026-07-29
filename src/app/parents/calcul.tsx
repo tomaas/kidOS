@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { PrintableOperationsSheet } from "~/components/printable-operations";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
+import { type Messages, useMessages } from "~/lib/i18n";
 import {
   clampSerieSize,
-  FAMILLE_NOMS,
   FAMILLES,
   type FamilleSetting,
   type GeneratedOperation,
@@ -42,10 +42,19 @@ export const Route = createFileRoute("/parents/calcul")({
 
 const FICHE_SIZE = 6;
 
-/** Libellés de cartes dérivés de l'unique mapping lib (maintainability). */
-function familleLabel(op: Operation): string {
-  const nom = FAMILLE_NOMS[op];
+/** Libellés de cartes dérivés du catalogue (m.calcul.familles — le même
+    mapping que l'aria du plateau), capitalisés pour la carte. */
+function familleLabel(m: Messages, op: Operation): string {
+  const nom = m.calcul.familles[op];
   return nom.charAt(0).toUpperCase() + nom.slice(1);
+}
+
+/** Libellé d'un palier par id via le catalogue ; repli sur le `label` FR du
+    module pur si un palier ajouté n'a pas encore son entrée de catalogue —
+    un oubli de traduction ne cache jamais un palier. */
+function palierLabel(m: Messages, id: string, fallback: string): string {
+  const labels: Record<string, string> = m.parents.calcul.paliers;
+  return labels[id] ?? fallback;
 }
 
 /** Réglage local d'une carte : activée + palier (toujours de la famille). */
@@ -93,6 +102,7 @@ function ParentsCalculPage() {
 }
 
 function SettingsUnavailable() {
+  const m = useMessages();
   return (
     <div className="mx-auto w-full max-w-3xl space-y-8">
       <Button
@@ -102,12 +112,11 @@ function SettingsUnavailable() {
         variant="ghost"
       >
         <Home className="size-5" />
-        Espace parent
+        {m.parents.espaceParent}
       </Button>
-      <h1 className="font-bold text-3xl">Les calculs</h1>
+      <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
       <p className="text-muted-foreground">
-        Réglages indisponibles pour le moment — recharge la page dans un
-        instant.
+        {m.parents.calcul.reglagesIndisponibles}
       </p>
     </div>
   );
@@ -124,6 +133,7 @@ function ParentsCalculForm({
   doudouName: string | null;
   onSaved: () => Promise<void>;
 }) {
+  const m = useMessages();
   const [cards, setCards] = useState<CardState>(() =>
     cardStateFrom(settings.familles)
   );
@@ -184,7 +194,8 @@ function ParentsCalculForm({
         },
       });
       if (!result.success) {
-        setSaveError(result.error);
+        // Le serveur renvoie un CODE ; le libellé vient du catalogue (D7).
+        setSaveError(m.parents.enregistrementImpossible);
         return;
       }
       saved = true;
@@ -195,8 +206,8 @@ function ParentsCalculForm({
     } catch {
       setSaveError(
         saved
-          ? "Enregistré — le rechargement a échoué, recharge la page pour vérifier."
-          : "Enregistrement impossible pour le moment — réessaie."
+          ? m.parents.calcul.rechargementEchoue
+          : m.parents.enregistrementImpossible
       );
     } finally {
       setSaving(false);
@@ -224,17 +235,13 @@ function ParentsCalculForm({
           variant="ghost"
         >
           <Home className="size-5" />
-          Espace parent
+          {m.parents.espaceParent}
         </Button>
       </div>
 
       <div className="no-print space-y-2">
-        <h1 className="font-bold text-3xl">Les calculs</h1>
-        <p className="text-muted-foreground">
-          Prépare l'étagère — comme l'éducatrice décide des présentations, c'est
-          toi qui choisis les familles d'opérations disponibles et leur palier.
-          L'enfant choisit son plateau ; rien de tout cela ne lui est montré.
-        </p>
+        <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
+        <p className="text-muted-foreground">{m.parents.calcul.intro}</p>
       </div>
 
       <ul className="no-print space-y-4">
@@ -260,7 +267,7 @@ function ParentsCalculForm({
                     type="checkbox"
                   />
                   <span className="font-semibold text-lg">
-                    {familleLabel(op)}
+                    {familleLabel(m, op)}
                   </span>
                 </label>
                 {card.active ? (
@@ -271,13 +278,13 @@ function ParentsCalculForm({
                     variant="outline"
                   >
                     <Printer className="size-4" />
-                    Imprimer une fiche
+                    {m.parents.calcul.imprimerFiche}
                   </Button>
                 ) : null}
               </div>
               {lastActive ? (
                 <p className="text-muted-foreground text-sm">
-                  Au moins une famille reste sur l'étagère.
+                  {m.parents.calcul.derniereFamille}
                 </p>
               ) : null}
               {card.active ? (
@@ -293,19 +300,18 @@ function ParentsCalculForm({
                             onChange={() => setCard(op, { palier: palier.id })}
                             type="radio"
                           />
-                          <span>{palier.label}</span>
+                          <span>{palierLabel(m, palier.id, palier.label)}</span>
                         </label>
                       </li>
                     ))}
                   </ul>
                   <p className="text-muted-foreground text-sm">
-                    Changer le palier range la série en cours.
+                    {m.parents.calcul.changerPalier}
                   </p>
                 </div>
               ) : (
                 <p className="text-muted-foreground text-sm">
-                  N'apparaît pas sur l'étagère. Désactiver oublie le palier
-                  choisi.
+                  {m.parents.calcul.nApparaitPas}
                 </p>
               )}
             </li>
@@ -316,7 +322,7 @@ function ParentsCalculForm({
       <div className="no-print space-y-2">
         <div className="flex items-center gap-4">
           <label className="text-lg" htmlFor="serie-size">
-            Opérations par série
+            {m.parents.calcul.operationsParSerie}
           </label>
           <select
             className="rounded-xl border bg-card px-3 py-2 text-lg"
@@ -337,13 +343,15 @@ function ParentsCalculForm({
         {/* Même transparence que pour le palier (adversarial #2) : la
             conséquence est dite AVANT le geste, pour toutes les familles. */}
         <p className="text-muted-foreground text-sm">
-          Changer la taille range les séries en cours de toutes les familles.
+          {m.parents.calcul.changerTaille}
         </p>
       </div>
 
       <div className="no-print flex flex-wrap items-center gap-4">
         <Button disabled={!dirty || saving} onClick={save}>
-          {saving ? "Enregistrement…" : "Enregistrer"}
+          {saving
+            ? m.parents.calcul.enregistrement
+            : m.parents.calcul.enregistrer}
         </Button>
         {saveError ? (
           // Distinct des textes d'aide passifs (design review F11) : un échec
@@ -360,7 +368,7 @@ function ParentsCalculForm({
               : undefined
           }
           operations={ficheOperations}
-          title="Des calculs à poser"
+          title={m.parents.calcul.titreFiche}
         />
       ) : null}
     </div>

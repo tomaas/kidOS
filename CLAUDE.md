@@ -38,7 +38,9 @@ yes → don't.
   `test:data-route` pins the `/data/$` media-serving route;
   `test:reading-aids` pins the silent-letter/liaison annotator;
   `test:operations` pins the posed-operations module (seeded generator,
-  layout geometry, palier ladder, énoncé templates, calm-wording scan) and
+  layout geometry, palier ladder, énoncé templates in BOTH languages —
+  EN pool length/index alignment proved, EN pins = translation of the same
+  seeded draw, calm-wording scan fr AND en) and
   the serie-session lifecycle (legacy bridge, authoritative purge,
   resume/purge-on-mismatch, fingerprint round-trip, silent storage
   degradation);
@@ -126,7 +128,17 @@ yes → don't.
   golden-tested via `test:i18n`). `<html lang>` and the tab title/description
   follow. DISTINCT from `stories.lang` (per-story, frozen at creation) and
   `DEFAULT_LANG` (server-side story default) — those move in later phases;
-  stories, mini-app content and /parents copy are still French-only. Bureau
+  stories, the aventure/bibliotheque UI and the non-calcul /parents copy are
+  still French-only. Since phase 2 the CALCUL mini-app is fully bilingual:
+  UI strings via the catalog (aria templates composed with `formatMessage`,
+  the tray aria stays stable AT CONSTANT LANGUAGE), énoncés via per-locale
+  packs inside `enonces.ts` (pools index-aligned and SAME LENGTH — pool
+  length is part of the PRNG contract, same seed → the EN translation of
+  the same sentence; digits-only fingerprint means a language switch never
+  invalidates a série), tray VARIANTES carry one phrase per locale on a
+  single shared pool (counts identical by construction), the A5 sheet
+  prints in the workshop language, and `saveMathSettingsFn` returns a CODE
+  (never a French sentence — the client's catalog labels it). Bureau
   app labels live in the catalog keyed by the registry id
   (`m.bureau.apps[app.id]` — icon and title bar read the same key). URLs
   never localize (test:routes).

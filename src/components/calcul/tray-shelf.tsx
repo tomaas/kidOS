@@ -14,8 +14,10 @@
  * constante (une DB injoignable à l'ouverture replie doudouName sur null,
  * ce qui peut replier la variante doudou sur la boîte : dégradation calme
  * assumée, jamais une erreur). L'aria-label du plateau ne
- * change jamais (« Prendre le plateau des additions ») — l'identité au
- * lecteur d'écran est stable même quand la scène varie. Le plateau « sorti »
+ * change jamais À LANGUE CONSTANTE (« Prendre le plateau des additions » /
+ * « Take the addition tray ») — l'identité au lecteur d'écran est stable
+ * même quand la scène varie ; seule la bascule de langue par le parent le
+ * re-libelle. Le plateau « sorti »
  * (série en cours) est décalé de 18px avec une ombre douce, RIEN d'autre
  * (même taille, même luminosité — au-delà ce serait une suggestion, D-3
  * bornée).
@@ -36,7 +38,8 @@
 import { useState } from "react";
 import { palette } from "~/config/style";
 import { cn } from "~/lib/cn";
-import { FAMILLE_NOMS, type Operation, varianteDuJour } from "~/lib/operations";
+import { formatMessage, type Locale, useLocale, useMessages } from "~/lib/i18n";
+import { type Operation, varianteDuJour } from "~/lib/operations";
 
 export interface TrayInfo {
   op: Operation;
@@ -62,10 +65,15 @@ const SIGNES: Record<Operation, string> = {
  * « pommes » sur une scène de marrons), sans nombres (D-3A/F8). La variante
  * qui met en scène le doudou n'est proposée que s'il existe (needsDoudou) —
  * le repli « boîte » couvre la famille sans doudou.
+ *
+ * BILINGUE : chaque variante porte SES deux phrases (une par locale) — un
+ * seul pool par famille, donc les comptes sont identiques par construction
+ * et varianteDuJour tire la MÊME variante dans les deux langues (la scène ne
+ * change pas quand le parent bascule la langue).
  */
 interface VariantePlateau {
   needsDoudou?: true;
-  phrase: (hero: string, doudou: string | null) => string;
+  phrase: Record<Locale, (hero: string, doudou: string | null) => string>;
   Scene: () => React.ReactNode;
 }
 
@@ -443,25 +451,71 @@ function SacsScene() {
 
 const VARIANTES: Record<Operation, readonly VariantePlateau[]> = {
   addition: [
-    { phrase: (h) => `${h} range des marrons`, Scene: MarronsScene },
-    { phrase: (h) => `${h} ramasse des feuilles`, Scene: FeuillesScene },
-    { phrase: (h) => `${h} cueille des fleurs`, Scene: FleursScene },
+    {
+      phrase: {
+        en: (h) => `${h} puts away some chestnuts`,
+        fr: (h) => `${h} range des marrons`,
+      },
+      Scene: MarronsScene,
+    },
+    {
+      phrase: {
+        en: (h) => `${h} gathers some leaves`,
+        fr: (h) => `${h} ramasse des feuilles`,
+      },
+      Scene: FeuillesScene,
+    },
+    {
+      phrase: {
+        en: (h) => `${h} picks some flowers`,
+        fr: (h) => `${h} cueille des fleurs`,
+      },
+      Scene: FleursScene,
+    },
   ],
   multiplication: [
-    { phrase: (h) => `${h} remplit des paniers`, Scene: PaniersScene },
-    { phrase: (h) => `${h} remplit des bols`, Scene: BolsScene },
-    { phrase: (h) => `${h} remplit des sacs`, Scene: SacsScene },
+    {
+      phrase: {
+        en: (h) => `${h} fills some baskets`,
+        fr: (h) => `${h} remplit des paniers`,
+      },
+      Scene: PaniersScene,
+    },
+    {
+      phrase: {
+        en: (h) => `${h} fills some bowls`,
+        fr: (h) => `${h} remplit des bols`,
+      },
+      Scene: BolsScene,
+    },
+    {
+      phrase: {
+        en: (h) => `${h} fills some bags`,
+        fr: (h) => `${h} remplit des sacs`,
+      },
+      Scene: SacsScene,
+    },
   ],
   soustraction: [
     {
       needsDoudou: true,
       // Repli défensif : la variante est filtrée sans doudou (needsDoudou),
       // mais la phrase ne peut JAMAIS imprimer « à null » pour autant.
-      phrase: (h, d) =>
-        d ? `${h} en donne à ${d}` : `${h} en range dans sa boîte`,
+      phrase: {
+        en: (h, d) =>
+          d ? `${h} gives some to ${d}` : `${h} puts some away in the box`,
+        fr: (h, d) =>
+          d ? `${h} en donne à ${d}` : `${h} en range dans sa boîte`,
+      },
       Scene: DoudouScene,
     },
-    { phrase: (h) => `${h} en range dans sa boîte`, Scene: BoiteScene },
+    {
+      phrase: {
+        en: (h) => `${h} puts some away in the box`,
+        fr: (h) => `${h} en range dans sa boîte`,
+      },
+      Scene: BoiteScene,
+    },
   ],
 };
 
@@ -537,6 +591,8 @@ function Tray({
   jourKey: string;
   onTake: (op: Operation) => void;
 }) {
+  const locale = useLocale();
+  const m = useMessages();
   // Truthiness (pas !== null) : un label vide d'une ligne DB éditée à la
   // main compte comme « pas de doudou » — même règle que enonceFor, jamais
   // une scène doudou avec la phrase boîte.
@@ -544,7 +600,7 @@ function Tray({
   const { Scene } = variante;
   return (
     <button
-      aria-label={`Prendre le plateau des ${FAMILLE_NOMS[tray.op]}${tray.sorti ? " — série en cours" : ""}`}
+      aria-label={`${formatMessage(m.calcul.prendrePlateau, { familles: m.calcul.familles[tray.op] })}${tray.sorti ? m.calcul.serieEnCours : ""}`}
       className={cn(
         // Le plateau ENTIER est la cible (D-7A/F18), ≥160px de haut ; même
         // grammaire que les portes de l'accueil : crème, bord encre doux,
@@ -567,7 +623,7 @@ function Tray({
       </span>
       {heroName ? (
         <span aria-hidden="true" className="text-base text-muted-foreground">
-          {variante.phrase(heroName, doudouName)}
+          {variante.phrase[locale](heroName, doudouName)}
         </span>
       ) : null}
       <span

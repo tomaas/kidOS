@@ -1,3 +1,4 @@
+import { useLocale } from "~/lib/i18n";
 import {
   type EnonceEntities,
   enonceFor,
@@ -70,6 +71,9 @@ function PrintedOperation({
   operation: GeneratedOperation;
   entities?: EnonceEntities;
 }) {
+  // La fiche s'imprime dans la langue de l'atelier au moment de l'impression
+  // (le papier n'a pas de langue figée — c'est le parent qui imprime).
+  const locale = useLocale();
   const layout = layoutOperation(operation);
   const rowStyle: React.CSSProperties = {
     display: "flex",
@@ -83,7 +87,7 @@ function PrintedOperation({
           className="mb-4 text-center"
           style={{ fontSize: "13pt", lineHeight: 1.6 }}
         >
-          {enonceFor(operation, entities)}
+          {enonceFor(operation, entities, locale)}
         </p>
       ) : null}
       <div className="space-y-1">

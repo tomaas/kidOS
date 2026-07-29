@@ -21,6 +21,7 @@ import {
 import { type TrayInfo, TrayShelf } from "~/components/calcul/tray-shelf";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
+import { useLocale, useMessages } from "~/lib/i18n";
 import {
   advanceSerie,
   browserSerieStorage,
@@ -127,6 +128,8 @@ type Phase =
  * (tranche 5) arrives after the school confirms the material.
  */
 function CalculWorkshopPage() {
+  const locale = useLocale();
+  const m = useMessages();
   const { settings: dbSettings, heroName, doudouName } = Route.useLoaderData();
   const [settings, setSettings] = useState<FamilySettings | null>(null);
   const [phase, setPhase] = useState<Phase>({ kind: "shelf" });
@@ -363,10 +366,14 @@ function CalculWorkshopPage() {
       >
         {heroName ? (
           <p className="max-w-md text-center text-muted-foreground text-xl leading-relaxed">
-            {enonceFor(operation, {
-              doudou: doudouName ?? undefined,
-              hero: heroName,
-            })}
+            {enonceFor(
+              operation,
+              {
+                doudou: doudouName ?? undefined,
+                hero: heroName,
+              },
+              locale
+            )}
           </p>
         ) : null}
 
@@ -390,8 +397,8 @@ function CalculWorkshopPage() {
             variant="ghost"
           >
             {serie.index + 1 < serie.serieSize
-              ? "Plateau suivant"
-              : "Ranger l'atelier"}
+              ? m.calcul.plateauSuivant
+              : m.calcul.rangerAtelier}
           </Button>
         ) : (
           <>
@@ -405,7 +412,7 @@ function CalculWorkshopPage() {
               }}
               variant="ghost"
             >
-              J'ai fini, je compare
+              {m.calcul.jaiFiniJeCompare}
             </Button>
           </>
         )}
@@ -442,12 +449,13 @@ function WorkshopShell({
   onReposer?: () => void;
   children: React.ReactNode;
 }) {
+  const m = useMessages();
   return (
     <div className="mx-auto flex min-h-[80vh] w-full max-w-3xl flex-col items-center gap-8 py-6">
       {onReposer ? (
         <div className="w-full">
           <Button
-            aria-label="Reposer le plateau"
+            aria-label={m.calcul.ariaReposerPlateau}
             className="min-h-11 min-w-11 gap-2 text-lg text-muted-foreground"
             onClick={onReposer}
             variant="ghost"
@@ -468,13 +476,16 @@ function WorkshopShell({
  * court-circuite le geste de choix.
  */
 function TidiedMoment() {
+  const m = useMessages();
   return (
     <FadeIn>
       <div className="flex flex-1 flex-col items-center justify-center gap-10 text-center">
         <p aria-hidden="true" className="text-6xl">
           🌿
         </p>
-        <p className="text-2xl text-muted-foreground">L'atelier est rangé.</p>
+        <p className="text-2xl text-muted-foreground">
+          {m.calcul.atelierRange}
+        </p>
       </div>
     </FadeIn>
   );
