@@ -4,6 +4,33 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.4.3.0] - 2026-07-29
+
+### Added
+
+- **L'atelier parle deux langues (phase 1 du plan multilangue)** : un réglage
+  « La langue » dans l'espace parent (🌍, français ou anglais) bascule toute
+  la coquille du bureau — icônes et barres de titre, écran d'entrée, rituel
+  « Ranger le bureau », écrans calmes (souci / page introuvable), titre
+  d'onglet et description — sans rechargement. Le branding dérivé du prénom
+  suit la langue (« L'atelier d'Arsène » / « Arsène's workshop ») ; les
+  overrides `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` / `VITE_STORY_LABEL`
+  gardent la priorité dans les deux langues. Les histoires, les mini-apps et
+  l'espace parent restent en français pour l'instant (phases suivantes).
+- Nouvelle table `app_settings` (migration 0011, clé `ui-language`) — lue par
+  le loader racine, repli silencieux sur le français si la base est
+  injoignable : l'enfant ne voit jamais d'erreur de langue.
+- Nouveau golden `test:i18n` : parité des clés entre les deux catalogues,
+  scan « calme » des deux langues (jamais bravo/gagné/perdu… ni well
+  done/won/lost…), identité byte-exacte des libellés français déplacés, et le
+  branding par locale (élision française, possessif anglais).
+
+### Changed
+
+- Le registre des apps du bureau (`apps.tsx`) porte désormais l'id du
+  libellé (clé de catalogue) au lieu du libellé lui-même — l'icône et sa
+  barre de titre lisent la même clé, dans les deux langues.
+
 ## [0.4.2.0] - 2026-07-23
 
 ### Changed

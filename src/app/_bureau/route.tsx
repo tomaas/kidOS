@@ -8,6 +8,7 @@ import { appPourChemin } from "~/components/bureau/apps";
 import { Fenetre } from "~/components/bureau/fenetre";
 import { EcranPortrait } from "~/components/bureau/portrait";
 import { lireSessionOuverte, ouvrirSession } from "~/lib/bureau/session";
+import { useMessages } from "~/lib/i18n";
 
 /**
  * La route layout pathless du bureau : le CADRE fenêtre autour des trois
@@ -35,9 +36,11 @@ export const Route = createFileRoute("/_bureau")({
 });
 
 function BureauLayout() {
+  const m = useMessages();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // Le titre de la fenêtre = le libellé de l'icône du bureau + son
-  // pictogramme, depuis le registre UNIQUE (components/bureau/apps.tsx).
+  // pictogramme, depuis le registre UNIQUE (components/bureau/apps.tsx) —
+  // même clé de catalogue que l'icône (m.bureau.apps[id]).
   const app = appPourChemin(pathname);
   const Pictogramme = app.icone;
   // false au SSR et au premier rendu client (rendu optimiste D22-A) ; la
@@ -54,7 +57,10 @@ function BureauLayout() {
           rituel n'est pas une sécurité, mais Tab ne doit pas cliquer derrière
           un écran opaque (passes adversariales, cross-model). */}
       <div inert={gateFermee || undefined}>
-        <Fenetre icone={<Pictogramme className="size-5" />} titre={app.libelle}>
+        <Fenetre
+          icone={<Pictogramme className="size-5" />}
+          titre={m.bureau.apps[app.id]}
+        >
           <Outlet />
         </Fenetre>
       </div>

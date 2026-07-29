@@ -45,6 +45,10 @@ yes → don't.
   `test:bureau` pins the desktop layer's pure modules (window clamp incl.
   the committed-position re-clamp `reclampCommitted`, session shape guard,
   icon-selection state machine, childName↔hero identity match);
+  `test:i18n` pins the UI-locale module (fr↔en catalog key parity, the
+  calm-wording scan on BOTH catalogs, byte-identity of the relocated French
+  labels, per-locale branding incl. French elision / English possessive,
+  `normalizeLocale` strictness);
   `test:routes` pins public-URL integrity of the `_bureau/` relocation (no
   URL changed, no stale route id, /parents never under the layout) plus two
   prose contracts: no `ssr:` option under `src/app/_bureau/**` and the
@@ -113,11 +117,27 @@ yes → don't.
   illustration ambiance — time of day, season, weather, light — generated in
   the SAME call as the arc) and `story_segments.scene_hint` (per-beat scene
   description for the illustrator).
+- **UI language (multilang phase 1)**: the desktop SHELL is bilingual fr/en —
+  a PARENT setting (🌍 card on /parents), persisted in the `app_settings`
+  table (key `ui-language`), read ONLY by the `__root` loader
+  (`getUiLocaleFn`, never throws — DB down → "fr") and propagated via
+  `LocaleProvider`/`useMessages()` (`src/lib/i18n/`: typed catalogs
+  `messages/{fr,en}.ts`, pure `buildBranding`, `normalizeLocale`;
+  golden-tested via `test:i18n`). `<html lang>` and the tab title/description
+  follow. DISTINCT from `stories.lang` (per-story, frozen at creation) and
+  `DEFAULT_LANG` (server-side story default) — those move in later phases;
+  stories, mini-app content and /parents copy are still French-only. Bureau
+  app labels live in the catalog keyed by the registry id
+  (`m.bureau.apps[app.id]` — icon and title bar read the same key). URLs
+  never localize (test:routes).
 - **Branding**: `src/config/app.ts` (display name, booklet footer/fallback
-  title) — set `VITE_CHILD_NAME` (build-time Vite var) to derive both
-  ("L'atelier de Léa" / "Une histoire de Léa", with French d'-elision);
-  `VITE_APP_NAME`, `VITE_APP_DESCRIPTION`, `VITE_STORY_LABEL` override the
-  full strings. Sample
+  title) — set `VITE_CHILD_NAME` (build-time Vite var) to derive both, in
+  the UI language ("L'atelier de Léa" / "Une histoire de Léa", with French
+  d'-elision; "Léa's workshop" / "A story by Léa" in English via
+  `brandingFor(locale)`); `VITE_APP_NAME`, `VITE_APP_DESCRIPTION`,
+  `VITE_STORY_LABEL` override the full strings in both languages.
+  `appConfig` stays the frozen FRENCH branding for not-yet-localized
+  consumers (print colophon, server fallback story title). Sample
   heroes in `src/config/characters.ts` — meant to be replaced by each family
   (they only seed empty tables; an already-populated db wins).
 - **LLM**: Vercel AI SDK (`ai` + `@ai-sdk/anthropic`), `generateObject` + the

@@ -1,9 +1,11 @@
 /**
- * Le registre UNIQUE des apps du bureau — icône, libellé, teinte, chemin.
+ * Le registre UNIQUE des apps du bureau — icône, teinte, chemin, et l'ID qui
+ * est AUSSI la clé du libellé dans le catalogue i18n (m.bureau.apps[id]).
  * Consommé par le bureau (les icônes) ET par la layout _bureau (le titre de
- * fenêtre = libellé + pictogramme de l'icône) : renommer une app ou changer
- * son glyphe ne peut plus désynchroniser l'icône de sa barre de titre
- * (finding maintainability pré-landing).
+ * fenêtre = libellé + pictogramme de l'icône) : les deux lisent la MÊME clé
+ * de catalogue — renommer une app ou changer son glyphe ne peut plus
+ * désynchroniser l'icône de sa barre de titre (finding maintainability
+ * pré-landing), dans aucune langue.
  *
  * /parents n'y figure JAMAIS : hors de l'OS, hors de la grammaire enfant.
  */
@@ -11,10 +13,12 @@
 import { BookHeart, Grid3x3, Leaf, type LucideIcon } from "lucide-react";
 import type { TeinteIcone } from "~/components/bureau/icone";
 
+/** Les ids du registre = les clés de `bureau.apps` du catalogue (Messages). */
+export type AppBureauId = "histoires" | "calculs" | "bibliotheque";
+
 export interface AppBureau {
   icone: LucideIcon;
-  id: string;
-  libelle: string;
+  id: AppBureauId;
   teinte: TeinteIcone;
   to: "/aventure" | "/calcul" | "/bibliotheque";
 }
@@ -26,7 +30,6 @@ export const APPS_BUREAU: readonly AppBureau[] = [
   {
     icone: Leaf,
     id: "histoires",
-    libelle: "Histoires",
     teinte: {
       glyphe: "text-accent-foreground",
       tuile:
@@ -37,7 +40,6 @@ export const APPS_BUREAU: readonly AppBureau[] = [
   {
     icone: Grid3x3,
     id: "calculs",
-    libelle: "Calculs",
     teinte: {
       glyphe: "text-secondary-foreground",
       tuile:
@@ -48,7 +50,6 @@ export const APPS_BUREAU: readonly AppBureau[] = [
   {
     icone: BookHeart,
     id: "bibliotheque",
-    libelle: "Bibliothèque",
     teinte: {
       glyphe: "text-primary",
       tuile: "border-primary/20 bg-gradient-to-b from-primary/10 to-primary/25",
@@ -59,8 +60,9 @@ export const APPS_BUREAU: readonly AppBureau[] = [
 
 /**
  * L'app dont la fenêtre est ouverte pour ce chemin — le titre de la fenêtre
- * est le libellé de l'icône du bureau. Repli sur la première app (Histoires)
- * pour les chemins profonds de sa famille (/aventure/$id).
+ * est le libellé de l'icône du bureau (même clé de catalogue, par id). Repli
+ * sur la première app (Histoires) pour les chemins profonds de sa famille
+ * (/aventure/$id).
  */
 export function appPourChemin(pathname: string): AppBureau {
   return (
