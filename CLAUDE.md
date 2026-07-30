@@ -142,9 +142,14 @@ yes → don't.
   substring scan). Reading aids (French phonics) are gated to
   `story.lang === "fr"` (player + print: annotations off, toggles hidden);
   the cursive font toggle stays in both. TTS voice map carries
-  en-US-AnaNeural. The aventure/bibliotheque UI chrome and the non-calcul
-  /parents copy are still French-only (phase 4). Since phase 2 the CALCUL
-  mini-app is fully bilingual:
+  en-US-AnaNeural. Since phase 4 the WHOLE UI is bilingual — the aventure
+  wizard/player chrome, bibliotheque, and every /parents page (entity pages,
+  the four CRUD forms via the shared `parents.formulaires` section, the
+  playground); templated aria-labels compose via `formatMessage`
+  ("Modifier {label}"). What stays family-language ON PURPOSE (decision D5):
+  entity DATA (heroes/places/elements/doudous labels + promptHints, DB rows
+  and config seeds) and `config/image-models.ts` notes — user data, not UI.
+  Since phase 2 the CALCUL mini-app is fully bilingual:
   UI strings via the catalog (aria templates composed with `formatMessage`,
   the tray aria stays stable AT CONSTANT LANGUAGE), énoncés via per-locale
   packs inside `enonces.ts` (pools index-aligned and SAME LENGTH — pool

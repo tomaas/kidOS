@@ -3,6 +3,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { useMessages } from "~/lib/i18n";
 import type { DbPlace } from "~/server/db/schema";
 
 export interface PlaceFormValues {
@@ -30,6 +31,7 @@ const FIELD_CLASS = "md:text-base";
  * UPLOAD is out of scope (a manual path string only).
  */
 export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
+  const m = useMessages();
   const [label, setLabel] = useState(initial?.label ?? "");
   const [emoji, setEmoji] = useState(initial?.emoji ?? "");
   const [imagePath, setImagePath] = useState(initial?.imagePath ?? "");
@@ -63,20 +65,20 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
     >
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="place-label">
-          Nom (montré à l'enfant)
+          {m.parents.formulaires.nom}
         </Label>
         <Input
           className={FIELD_CLASS}
           id="place-label"
           onChange={(e) => setLabel(e.target.value)}
-          placeholder="le jardin de papy"
+          placeholder={m.parents.formulaires.placeholders.lieu.nom}
           value={label}
         />
       </div>
 
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="place-emoji">
-          Emoji (facultatif)
+          {m.parents.formulaires.emoji}
         </Label>
         <Input
           className={`w-24 ${FIELD_CLASS}`}
@@ -90,36 +92,40 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
 
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="place-hint">
-          Description pour l'histoire (l'enfant ne la voit pas)
+          {m.parents.formulaires.descriptionHistoire}
         </Label>
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="place-hint"
           onChange={(e) => setPromptHint(e.target.value)}
-          placeholder="dans le jardin de papy, avec ses fleurs, ses légumes et un vieux pommier"
+          placeholder={
+            m.parents.formulaires.placeholders.lieu.descriptionHistoire
+          }
           value={promptHint}
         />
       </div>
 
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="place-image">
-          Chemin d'image (facultatif, avancé)
+          {m.parents.formulaires.cheminImage}
         </Label>
         <Input
           className={FIELD_CLASS}
           id="place-image"
           onChange={(e) => setImagePath(e.target.value)}
-          placeholder="(vide)"
+          placeholder={m.parents.formulaires.placeholders.vide}
           value={imagePath}
         />
       </div>
 
       <div className="flex gap-2 pt-2">
         <Button disabled={!canSubmit || submitting} type="submit">
-          {initial ? "Enregistrer" : "Ajouter"}
+          {initial
+            ? m.parents.formulaires.enregistrer
+            : m.parents.formulaires.ajouter}
         </Button>
         <Button onClick={onCancel} type="button" variant="ghost">
-          Annuler
+          {m.parents.formulaires.annuler}
         </Button>
       </div>
     </form>

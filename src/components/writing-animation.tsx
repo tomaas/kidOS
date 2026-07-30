@@ -1,3 +1,5 @@
+import { useMessages } from "~/lib/i18n";
+
 /**
  * Calm, reassuring waiting state. A gently floating feather and three
  * breathing dots — NO progress bar, NO percentage, NO countdown.
@@ -6,6 +8,7 @@
  * the illustration is being drawn) while keeping the identical calm visual.
  */
 export function WritingAnimation({ message }: { message?: string }) {
+  const m = useMessages();
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-8 text-center">
       <span
@@ -17,7 +20,7 @@ export function WritingAnimation({ message }: { message?: string }) {
       </span>
 
       <p className="font-semibold text-3xl">
-        {message ?? "L'histoire s'écrit…"}
+        {message ?? m.aventure.histoireSecrit}
       </p>
 
       <div aria-hidden="true" className="flex gap-3">

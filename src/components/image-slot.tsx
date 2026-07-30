@@ -4,6 +4,7 @@ import {
   GENERATED_IMAGE_HEIGHT,
   GENERATED_IMAGE_WIDTH,
 } from "~/lib/generated-image";
+import { useMessages } from "~/lib/i18n";
 import type { ImageStatus } from "~/server/providers/types";
 
 interface ImageSlotProps {
@@ -57,6 +58,7 @@ interface ImageSlotProps {
  * error, no stakes (calm-tool rule); a retry failure can never crash the page. */
 function FailedState({ onRetry }: { onRetry?: () => Promise<void> }) {
   const [retrying, setRetrying] = useState(false);
+  const m = useMessages();
   const [retryFailed, setRetryFailed] = useState(false);
 
   async function handleRetry() {
@@ -82,7 +84,7 @@ function FailedState({ onRetry }: { onRetry?: () => Promise<void> }) {
         🌙
       </span>
       <p className="font-medium text-lg text-muted-foreground">
-        L'image fait dodo aujourd'hui.
+        {m.aventure.image.dodo}
       </p>
       {onRetry ? (
         <>
@@ -93,11 +95,13 @@ function FailedState({ onRetry }: { onRetry?: () => Promise<void> }) {
             type="button"
           >
             <span aria-hidden="true">🔄</span>
-            {retrying ? "On réessaie…" : "Réessayer"}
+            {retrying
+              ? m.aventure.image.onReessaie
+              : m.aventure.image.reessayer}
           </button>
           {retryFailed ? (
             <p className="text-muted-foreground/70 text-sm">
-              Ça n'a pas marché, réessaie plus tard.
+              {m.aventure.image.pasMarche}
             </p>
           ) : null}
         </>

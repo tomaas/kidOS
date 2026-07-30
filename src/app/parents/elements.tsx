@@ -3,6 +3,7 @@ import { Home, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ElementForm } from "~/components/element-form";
 import { Button } from "~/components/ui/button";
+import { formatMessage, useMessages } from "~/lib/i18n";
 import type { DbElement } from "~/server/db/schema";
 import {
   createElementFn,
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/parents/elements")({
  * already-created story (each story froze its element label + hint at creation).
  */
 function ParentsElementsPage() {
+  const m = useMessages();
   const router = useRouter();
   const elements = Route.useLoaderData();
   // null = no form open; "new" = add form; an element = editing it.
@@ -37,9 +39,7 @@ function ParentsElementsPage() {
   async function handleDelete(id: string) {
     if (
       // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
-      !window.confirm(
-        "Retirer cet élément ? Les histoires déjà créées ne changeront pas."
-      )
+      !window.confirm(m.parents.entites.elements.confirmRetrait)
     ) {
       return;
     }
@@ -72,16 +72,16 @@ function ParentsElementsPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">Les éléments</h1>
+        <h1 className="font-bold text-3xl">
+          {m.parents.entites.elements.titre}
+        </h1>
         <p className="text-muted-foreground">
-          Ajoute, modifie ou retire les éléments surprise proposés à l'enfant.
-          L'enfant peut en choisir un ou deux pour une même histoire. Les
-          histoires déjà créées gardent leur élément d'origine.
+          {m.parents.entites.elements.intro}
         </p>
       </div>
 
@@ -98,7 +98,7 @@ function ParentsElementsPage() {
           type="button"
         >
           <Plus className="size-5" />
-          Ajouter un élément
+          {m.parents.entites.elements.ajouter}
         </Button>
       )}
 
@@ -119,7 +119,9 @@ function ParentsElementsPage() {
             </div>
             <div className="flex shrink-0 gap-1">
               <Button
-                aria-label={`Modifier ${element.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaModifier, {
+                  label: element.label,
+                })}
                 onClick={() => setEditing(element)}
                 size="icon"
                 type="button"
@@ -128,7 +130,9 @@ function ParentsElementsPage() {
                 <Pencil className="size-4" />
               </Button>
               <Button
-                aria-label={`Retirer ${element.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaRetirer, {
+                  label: element.label,
+                })}
                 onClick={() => handleDelete(element.id)}
                 size="icon"
                 type="button"

@@ -1,5 +1,6 @@
 import { Link2, Sparkle } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 
 /**
  * Toggles for the two CP-book reading aids (faded lettres muettes, liaison
@@ -21,6 +22,7 @@ export function ReadingAidsToggles({
   onToggleSilent: () => void;
   onToggleLiaisons: () => void;
 }) {
+  const m = useMessages();
   return (
     <>
       <Button
@@ -32,7 +34,7 @@ export function ReadingAidsToggles({
         variant={showSilent ? "default" : "secondary"}
       >
         <Sparkle className="size-6" />
-        Lettres muettes
+        {m.aventure.lecture.lettresMuettes}
       </Button>
       <Button
         aria-pressed={showLiaisons}
@@ -43,7 +45,7 @@ export function ReadingAidsToggles({
         variant={showLiaisons ? "default" : "secondary"}
       >
         <Link2 className="size-6" />
-        Liaisons
+        {m.aventure.lecture.liaisons}
       </Button>
     </>
   );

@@ -1,6 +1,7 @@
 import { ArrowRight, Dices } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 import { PickerGrid, type PickerItem } from "./picker-grid";
 
 interface MultiPickStepProps {
@@ -47,6 +48,7 @@ export function MultiPickStep({
   skipIcon,
   minOne,
 }: MultiPickStepProps) {
+  const m = useMessages();
   const continueDisabled = minOne === true && selectedIds.length === 0;
   return (
     <div className="space-y-8">
@@ -64,7 +66,7 @@ export function MultiPickStep({
           size="lg"
           type="button"
         >
-          suite
+          {m.aventure.suite}
           <ArrowRight className="size-5" />
         </Button>
 
@@ -75,7 +77,7 @@ export function MultiPickStep({
           variant="ghost"
         >
           <Dices className="size-5" />
-          au hasard
+          {m.aventure.auHasard}
         </Button>
 
         {/* Equal-weight skip (optional steps only): clears the selection and
@@ -89,7 +91,7 @@ export function MultiPickStep({
             variant="ghost"
           >
             {skipIcon}
-            {skipLabel ?? "passer"}
+            {skipLabel ?? m.aventure.passer}
           </Button>
         ) : null}
       </div>

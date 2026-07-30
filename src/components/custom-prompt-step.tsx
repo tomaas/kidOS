@@ -2,6 +2,7 @@ import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
+import { useMessages } from "~/lib/i18n";
 
 interface CustomPromptStepProps {
   // Called with the (possibly empty) free text when the child continues.
@@ -19,20 +20,23 @@ const MAX_LENGTH = 500;
  * gate; it's pure invitation, skippable in one tap.
  */
 export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
+  const m = useMessages();
   const [text, setText] = useState("");
 
   return (
     <div className="space-y-8">
       <h1 className="text-center font-bold text-4xl leading-tight">
-        Tu veux ajouter quelque chose ?
+        {m.aventure.questionSaveur}
       </h1>
-      <p className="text-center text-muted-foreground text-xl">(facultatif)</p>
+      <p className="text-center text-muted-foreground text-xl">
+        {m.aventure.facultatifParenthese}
+      </p>
 
       <Textarea
         className="min-h-32 rounded-3xl border-2 p-5 text-2xl leading-relaxed md:text-2xl"
         maxLength={MAX_LENGTH}
         onChange={(e) => setText(e.target.value)}
-        placeholder="par exemple : avec un petit chat tout doux…"
+        placeholder={m.aventure.placeholderSaveur}
         value={text}
       />
 
@@ -44,7 +48,7 @@ export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
           type="button"
         >
           <Sparkles className="size-5" />
-          C'est parti
+          {m.aventure.cestParti}
         </Button>
         <Button
           className="h-14 rounded-2xl px-8 text-lg text-muted-foreground"
@@ -52,7 +56,7 @@ export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
           type="button"
           variant="ghost"
         >
-          passer
+          {m.aventure.passer}
         </Button>
       </div>
     </div>

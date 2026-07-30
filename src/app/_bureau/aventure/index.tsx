@@ -16,7 +16,7 @@ import { places as configPlaces } from "~/config/places";
 import { pickRandomDoudouIds, toDoudouItems } from "~/lib/doudou-items";
 import { pickRandomElementIds, toElementItems } from "~/lib/element-items";
 import { pickRandomHeroIds, toHeroItems } from "~/lib/hero-items";
-import { useLocale } from "~/lib/i18n";
+import { useLocale, useMessages } from "~/lib/i18n";
 import { toPlaceItems } from "~/lib/place-items";
 import { previousStep, type WizardStep } from "~/lib/wizard-steps";
 import { listDoudousFn } from "~/server/doudous-functions";
@@ -222,6 +222,7 @@ function AventurePage() {
   // ensuite sur la ligne stories.lang) — le parent qui met l'atelier en
   // anglais obtient des histoires en anglais, sans étape wizard en plus.
   const locale = useLocale();
+  const m = useMessages();
   const navigate = useNavigate();
   const { heroItems, elementItems, placeItems, doudouItems } =
     Route.useLoaderData();
@@ -418,14 +419,14 @@ function AventurePage() {
         <p aria-hidden="true" className="text-6xl">
           🌧️
         </p>
-        <p className="font-semibold text-3xl">On réessaie ?</p>
+        <p className="font-semibold text-3xl">{m.aventure.onReessaie}</p>
         <Button
           className="h-14 rounded-2xl px-8 text-xl"
           onClick={() => setStep("extra")}
           size="lg"
           type="button"
         >
-          Oui
+          {m.aventure.oui}
         </Button>
       </div>
     );
@@ -443,7 +444,7 @@ function AventurePage() {
           variant="ghost"
         >
           <ArrowLeft className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
@@ -465,7 +466,7 @@ function AventurePage() {
           onRandom={() => setHeroesPersisted(pickRandomHeroIds(heroItems))}
           onToggle={toggleHero}
           selectedIds={heroIds}
-          title="Qui est le héros ?"
+          title={m.aventure.titreHero}
         />
       ) : null}
 
@@ -474,7 +475,7 @@ function AventurePage() {
           items={placeItems}
           onPick={goToElement}
           selectedId={placeId}
-          title="Où se passe l'histoire ?"
+          title={m.aventure.titreLieu}
         />
       ) : null}
 
@@ -488,7 +489,7 @@ function AventurePage() {
           }
           onToggle={toggleElement}
           selectedIds={elementIds}
-          title="Et avec quoi ?"
+          title={m.aventure.titreElement}
         />
       ) : null}
 

@@ -1,4 +1,5 @@
 import { Cloud } from "lucide-react";
+import { useMessages } from "~/lib/i18n";
 import { MultiPickStep } from "./multi-pick-step";
 import type { PickerItem } from "./picker-grid";
 
@@ -30,6 +31,7 @@ export function DoudouMultiStep({
   onSkip,
   onRandom,
 }: DoudouMultiStepProps) {
+  const m = useMessages();
   return (
     <MultiPickStep
       items={items}
@@ -39,8 +41,8 @@ export function DoudouMultiStep({
       onToggle={onToggle}
       selectedIds={selectedIds}
       skipIcon={<Cloud className="size-5" />}
-      skipLabel="sans doudou"
-      title="Avec quels doudous ?"
+      skipLabel={m.aventure.sansDoudou}
+      title={m.aventure.titreDoudous}
     />
   );
 }

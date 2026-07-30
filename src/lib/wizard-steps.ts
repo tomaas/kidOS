@@ -11,21 +11,21 @@ export type WizardStep = "hero" | "place" | "element" | "doudou" | "extra";
 
 export interface WizardStepMeta {
   emoji: string;
-  /** Short label shown under the emoji in the stepper. */
-  label: string;
   /** Required steps gate forward jumps; optional ones (doudou, extra) never do
-   * and are shown visually lighter with a "facultatif" hint. */
+   * and are shown visually lighter with a "facultatif" hint. The short label
+   * shown under the emoji lives in the i18n catalog, keyed by `step`
+   * (m.aventure.etapes[step]) — this module stays pure and language-free. */
   required: boolean;
   step: WizardStep;
 }
 
 /** Ordered setup steps (the order the child walks through). */
 export const WIZARD_STEPS: WizardStepMeta[] = [
-  { emoji: "🦸", label: "Héros", required: true, step: "hero" },
-  { emoji: "📍", label: "Lieu", required: true, step: "place" },
-  { emoji: "✨", label: "Élément", required: true, step: "element" },
-  { emoji: "🧸", label: "Doudou", required: false, step: "doudou" },
-  { emoji: "✏️", label: "Touche perso", required: false, step: "extra" },
+  { emoji: "🦸", required: true, step: "hero" },
+  { emoji: "📍", required: true, step: "place" },
+  { emoji: "✨", required: true, step: "element" },
+  { emoji: "🧸", required: false, step: "doudou" },
+  { emoji: "✏️", required: false, step: "extra" },
 ];
 
 /** The picks made so far, used to decide which steps are reachable + complete.

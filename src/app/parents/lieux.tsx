@@ -3,6 +3,7 @@ import { Home, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { PlaceForm } from "~/components/place-form";
 import { Button } from "~/components/ui/button";
+import { formatMessage, useMessages } from "~/lib/i18n";
 import type { DbPlace } from "~/server/db/schema";
 import {
   createPlaceFn,
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/parents/lieux")({
  * story (each story froze its place label + hint at creation).
  */
 function ParentsLieuxPage() {
+  const m = useMessages();
   const router = useRouter();
   const places = Route.useLoaderData();
   // null = no form open; "new" = add form; a place = editing it.
@@ -39,9 +41,7 @@ function ParentsLieuxPage() {
   async function handleDelete(id: string) {
     if (
       // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
-      !window.confirm(
-        "Supprimer ce lieu ? Les histoires déjà créées ne changeront pas."
-      )
+      !window.confirm(m.parents.entites.lieux.confirmRetrait)
     ) {
       return;
     }
@@ -74,16 +74,13 @@ function ParentsLieuxPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">Les lieux</h1>
-        <p className="text-muted-foreground">
-          Ajoute, modifie ou retire les lieux proposés à l'enfant. Les histoires
-          déjà créées gardent leur lieu d'origine.
-        </p>
+        <h1 className="font-bold text-3xl">{m.parents.entites.lieux.titre}</h1>
+        <p className="text-muted-foreground">{m.parents.entites.lieux.intro}</p>
       </div>
 
       {editing ? (
@@ -99,7 +96,7 @@ function ParentsLieuxPage() {
           type="button"
         >
           <Plus className="size-5" />
-          Ajouter un lieu
+          {m.parents.entites.lieux.ajouter}
         </Button>
       )}
 
@@ -120,7 +117,9 @@ function ParentsLieuxPage() {
             </div>
             <div className="flex shrink-0 gap-1">
               <Button
-                aria-label={`Modifier ${place.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaModifier, {
+                  label: place.label,
+                })}
                 onClick={() => setEditing(place)}
                 size="icon"
                 type="button"
@@ -129,7 +128,9 @@ function ParentsLieuxPage() {
                 <Pencil className="size-4" />
               </Button>
               <Button
-                aria-label={`Supprimer ${place.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaSupprimer, {
+                  label: place.label,
+                })}
                 onClick={() => handleDelete(place.id)}
                 size="icon"
                 type="button"

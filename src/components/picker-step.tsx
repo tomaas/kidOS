@@ -1,5 +1,6 @@
 import { Dices } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 import { PickerGrid, type PickerItem } from "./picker-grid";
 
 interface PickerStepProps {
@@ -27,6 +28,7 @@ export function PickerStep({
   onSkip,
   skipLabel,
 }: PickerStepProps) {
+  const m = useMessages();
   function pickRandom() {
     const item = items[Math.floor(Math.random() * items.length)];
     onPick(item.id);
@@ -46,7 +48,7 @@ export function PickerStep({
           variant="ghost"
         >
           <Dices className="size-5" />
-          au hasard
+          {m.aventure.auHasard}
         </Button>
         {onSkip ? (
           <Button
@@ -55,7 +57,7 @@ export function PickerStep({
             type="button"
             variant="ghost"
           >
-            {skipLabel ?? "passer"}
+            {skipLabel ?? m.aventure.passer}
           </Button>
         ) : null}
       </div>

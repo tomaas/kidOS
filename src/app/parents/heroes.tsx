@@ -3,6 +3,7 @@ import { Home, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { HeroForm } from "~/components/hero-form";
 import { Button } from "~/components/ui/button";
+import { formatMessage, useMessages } from "~/lib/i18n";
 import type { DbHero } from "~/server/db/schema";
 import {
   createHeroFn,
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/parents/heroes")({
  * story (each story froze its hero label + hints at creation).
  */
 function ParentsHeroesPage() {
+  const m = useMessages();
   const router = useRouter();
   const heroes = Route.useLoaderData();
   // null = no form open; "new" = add form; a hero = editing it.
@@ -37,9 +39,7 @@ function ParentsHeroesPage() {
   async function handleDelete(id: string) {
     if (
       // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
-      !window.confirm(
-        "Retirer ce héros ? Les histoires déjà créées ne changeront pas."
-      )
+      !window.confirm(m.parents.entites.heroes.confirmRetrait)
     ) {
       return;
     }
@@ -73,16 +73,14 @@ function ParentsHeroesPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">Les héros</h1>
+        <h1 className="font-bold text-3xl">{m.parents.entites.heroes.titre}</h1>
         <p className="text-muted-foreground">
-          Ajoute, modifie ou retire les héros proposés à l'enfant. L'enfant peut
-          en choisir un ou deux pour une même histoire. Les histoires déjà
-          créées gardent leur héros d'origine.
+          {m.parents.entites.heroes.intro}
         </p>
       </div>
 
@@ -99,7 +97,7 @@ function ParentsHeroesPage() {
           type="button"
         >
           <Plus className="size-5" />
-          Ajouter un héros
+          {m.parents.entites.heroes.ajouter}
         </Button>
       )}
 
@@ -120,7 +118,9 @@ function ParentsHeroesPage() {
             </div>
             <div className="flex shrink-0 gap-1">
               <Button
-                aria-label={`Modifier ${hero.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaModifier, {
+                  label: hero.label,
+                })}
                 onClick={() => setEditing(hero)}
                 size="icon"
                 type="button"
@@ -129,7 +129,9 @@ function ParentsHeroesPage() {
                 <Pencil className="size-4" />
               </Button>
               <Button
-                aria-label={`Retirer ${hero.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaRetirer, {
+                  label: hero.label,
+                })}
                 onClick={() => handleDelete(hero.id)}
                 size="icon"
                 type="button"

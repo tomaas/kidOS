@@ -3,6 +3,7 @@ import { Home, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { DoudouForm } from "~/components/doudou-form";
 import { Button } from "~/components/ui/button";
+import { formatMessage, useMessages } from "~/lib/i18n";
 import type { DbDoudou } from "~/server/db/schema";
 import {
   createDoudouFn,
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/parents/doudous")({
  * story (each story froze its doudou label + hints at creation).
  */
 function ParentsDoudousPage() {
+  const m = useMessages();
   const router = useRouter();
   const doudous = Route.useLoaderData();
   // null = no form open; "new" = add form; a doudou = editing it.
@@ -37,9 +39,7 @@ function ParentsDoudousPage() {
   async function handleDelete(id: string) {
     if (
       // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
-      !window.confirm(
-        "Retirer ce doudou ? Les histoires déjà créées ne changeront pas."
-      )
+      !window.confirm(m.parents.entites.doudous.confirmRetrait)
     ) {
       return;
     }
@@ -73,16 +73,16 @@ function ParentsDoudousPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">Les doudous</h1>
+        <h1 className="font-bold text-3xl">
+          {m.parents.entites.doudous.titre}
+        </h1>
         <p className="text-muted-foreground">
-          Ajoute, modifie ou retire les doudous proposés à l'enfant. Le doudou
-          est facultatif : l'enfant peut toujours choisir de ne pas en prendre.
-          Les histoires déjà créées gardent leur doudou d'origine.
+          {m.parents.entites.doudous.intro}
         </p>
       </div>
 
@@ -99,7 +99,7 @@ function ParentsDoudousPage() {
           type="button"
         >
           <Plus className="size-5" />
-          Ajouter un doudou
+          {m.parents.entites.doudous.ajouter}
         </Button>
       )}
 
@@ -120,7 +120,9 @@ function ParentsDoudousPage() {
             </div>
             <div className="flex shrink-0 gap-1">
               <Button
-                aria-label={`Modifier ${doudou.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaModifier, {
+                  label: doudou.label,
+                })}
                 onClick={() => setEditing(doudou)}
                 size="icon"
                 type="button"
@@ -129,7 +131,9 @@ function ParentsDoudousPage() {
                 <Pencil className="size-4" />
               </Button>
               <Button
-                aria-label={`Retirer ${doudou.label}`}
+                aria-label={formatMessage(m.parents.entites.ariaRetirer, {
+                  label: doudou.label,
+                })}
                 onClick={() => handleDelete(doudou.id)}
                 size="icon"
                 type="button"

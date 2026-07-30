@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { cn } from "~/lib/cn";
+import { useMessages } from "~/lib/i18n";
 import {
   canJumpTo,
   isStepCompleted,
@@ -40,8 +41,9 @@ function pillTone(isCurrent: boolean, completed: boolean): string {
  * how much left".
  */
 export function Stepper({ current, progress, onJump }: StepperProps) {
+  const m = useMessages();
   return (
-    <nav aria-label="Étapes de l'histoire" className="no-print">
+    <nav aria-label={m.aventure.etapesAria} className="no-print">
       {/* Horizontal scroll on small screens so the 5 pills never squash; they
           fit comfortably on a normal screen. */}
       <ol className="flex items-stretch gap-2 overflow-x-auto pb-1 sm:justify-center">
@@ -50,12 +52,13 @@ export function Stepper({ current, progress, onJump }: StepperProps) {
           const completed = isStepCompleted(meta.step, current, progress);
           const reachable = canJumpTo(meta.step, current, progress);
           const tappable = reachable && !isCurrent;
+          const label = m.aventure.etapes[meta.step];
           return (
             <li className="shrink-0" key={meta.step}>
               <button
                 aria-current={isCurrent ? "step" : undefined}
-                aria-label={`${meta.label}${meta.required ? "" : " (facultatif)"}${
-                  completed ? " — terminé" : ""
+                aria-label={`${label}${meta.required ? "" : m.aventure.etapeAriaFacultatif}${
+                  completed ? m.aventure.etapeAriaTermine : ""
                 }`}
                 className={cn(
                   "flex min-w-[5rem] flex-col items-center gap-1 rounded-2xl border-2 px-3 py-2 text-center transition-all",
@@ -84,11 +87,11 @@ export function Stepper({ current, progress, onJump }: StepperProps) {
                     isCurrent ? "text-foreground" : "text-muted-foreground"
                   )}
                 >
-                  {meta.label}
+                  {label}
                 </span>
                 {meta.required ? null : (
                   <span className="text-[0.65rem] text-muted-foreground/70 leading-none">
-                    facultatif
+                    {m.aventure.facultatif}
                   </span>
                 )}
               </button>

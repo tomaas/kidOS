@@ -1,5 +1,6 @@
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 
 interface WizardControlsProps {
   /** Go to the previous step. Omitted on the first step (no back). */
@@ -15,11 +16,12 @@ interface WizardControlsProps {
  * so a child won't tap it by accident; it resets the parcours to the start.
  */
 export function WizardControls({ onBack, onRestart }: WizardControlsProps) {
+  const m = useMessages();
   function handleRestart() {
     // A light confirm so an accidental tap doesn't wipe the picks. Calm wording,
     // no stakes. (window.confirm matches the parent pages' delete confirms.)
     // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
-    if (window.confirm("On recommence depuis le début ?")) {
+    if (window.confirm(m.aventure.recommencerConfirm)) {
       onRestart();
     }
   }
@@ -34,14 +36,14 @@ export function WizardControls({ onBack, onRestart }: WizardControlsProps) {
           variant="ghost"
         >
           <ArrowLeft className="size-4" />
-          Retour
+          {m.aventure.retour}
         </Button>
       ) : (
         <span />
       )}
 
       <Button
-        aria-label="Recommencer depuis le début"
+        aria-label={m.aventure.recommencerAria}
         className="gap-1.5 text-muted-foreground/70 text-sm hover:text-muted-foreground"
         onClick={handleRestart}
         size="sm"
@@ -49,7 +51,7 @@ export function WizardControls({ onBack, onRestart }: WizardControlsProps) {
         variant="ghost"
       >
         <RotateCcw className="size-3.5" />
-        Recommencer
+        {m.aventure.recommencer}
       </Button>
     </div>
   );
