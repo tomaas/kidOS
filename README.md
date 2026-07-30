@@ -76,42 +76,28 @@ Two files to personalize (plus in-app management at `/parents`):
 
 ## Getting started
 
-Requirements: [Bun](https://bun.sh), an [Anthropic API
-key](https://console.anthropic.com/), and a free [Turso](https://turso.tech)
-database (the app is cloud-DB only; network required, no offline mode).
+Requirements: [Bun](https://bun.sh) and an [Anthropic API
+key](https://console.anthropic.com/). The database is a local SQLite file
+(created automatically under `data/` on first start — nothing to set up).
 
-### 1. Create the Turso database (once)
+### 1. Fill `.env.local`
 
-With the Turso CLI (`brew install tursodatabase/tap/turso`, then
-`turso auth login`):
-
-```
-turso db create my-stories          # create the db
-turso db show --url my-stories      # print the URL  (libsql://…turso.io)
-turso db tokens create my-stories   # create an access token
-```
-
-### 2. Fill `.env.local`
-
-Copy `.env.example` to `.env.local` and paste the values:
+Copy `.env.example` to `.env.local` and paste the value:
 
 ```
 ANTHROPIC_API_KEY=your-anthropic-key
-DATABASE_URL=libsql://<your-db>.turso.io
-TURSO_AUTH_TOKEN=your-turso-token
 ```
 
 Images and voice are **disabled** by default — the app works great text-only
-(only the 3 values above are required).
+(only the value above is required).
 
-### 3. Install + prepare the database
+### 2. Install
 
 ```
 bun install
-bun run db:migrate   # creates the tables in Turso
 ```
 
-### 4. Run
+### 3. Run
 
 ```
 bun run dev
@@ -131,8 +117,7 @@ bun run start
 | Setting | What it does |
 | --- | --- |
 | `ANTHROPIC_API_KEY` | **Required.** The key that writes the stories. |
-| `DATABASE_URL` | **Required.** The Turso URL (`libsql://…turso.io`). |
-| `TURSO_AUTH_TOKEN` | **Required.** The Turso access token. |
+| `DATABASE_URL` | Optional. Moves the SQLite file (`file:` URL only; defaults to `file:<DATA_DIR>/app.db`). |
 | `STORY_MODEL` | The model used (fine as-is). |
 | `IMAGE_ENABLED` | `true` to add illustrations (otherwise a soft color block). |
 | `GEMINI_API_KEY` | The Google key, needed IF images are enabled. |
@@ -148,20 +133,21 @@ The repo ships a `Dockerfile` (multi-stage: Bun build → `node:22-slim`
 runtime) and a `compose.yml`. On the deploy machine:
 
 1. Create `.env.production` at the repo root with the runtime settings
-   (same names as the table above: `ANTHROPIC_API_KEY`, `DATABASE_URL`,
-   `TURSO_AUTH_TOKEN`, plus any optional image/TTS settings).
+   (same names as the table above: `ANTHROPIC_API_KEY`, plus any optional
+   image/TTS settings).
 2. The `VITE_*` branding vars are baked in at **build time**. `compose.yml`
    forwards `VITE_CHILD_NAME` from a root `.env` file (Docker Compose reads
    it for `${...}` substitution); the three full-string overrides
    (`VITE_APP_NAME`, `VITE_APP_DESCRIPTION`, `VITE_STORY_LABEL`) currently
    need a `compose.override.yml` or explicit build args.
-3. Run the migrations once from the checkout (`bun run db:migrate`), then:
+3. Then:
 
 ```
 bun run deploy   # = docker compose up -d --build
 ```
 
-The app listens on **127.0.0.1:3009** (loopback only, on purpose) and
+Migrations apply automatically when the app starts. The app listens on
+**127.0.0.1:3009** (loopback only, on purpose); the SQLite database and
 generated images/audio persist in the `app-data` volume. To customize the
 setup for your machine, drop a `compose.override.yml` next to `compose.yml`
 (gitignored) — Compose merges it automatically.
@@ -176,7 +162,32 @@ Production notes:
   use the cursive mode — the font is gitignored (license) and won't be in a
   fresh clone.
 - On ephemeral filesystems (no volume), set `BLOB_READ_WRITE_TOKEN`
-  (Vercel Blob) instead so generated media persists.
+  (Vercel Blob) so generated media persists — media only: the SQLite
+  database file still needs a persistent disk.
+- Migrating from a previous Turso deployment: dump the remote db
+  (`turso db shell my-stories .dump > dump.sql`) and load it into the local
+  file **before starting the new version**, into a **fresh** file (if an
+  `app.db` already exists there, delete `app.db*` first — importing over an
+  existing db half-applies silently). Use `-bail` so any error stops the
+  import. For a local run: `sqlite3 -bail data/app.db < dump.sql`. For
+  Docker, the db lives in the `app-data` **named volume**, not the
+  checkout — load it there:
+
+  ```
+  docker run --rm -i -v look-i-can-read_app-data:/data -w /data \
+    alpine sh -c 'apk add -q sqlite && sqlite3 -bail app.db' < dump.sql
+  ```
+
+  Sanity check after the load: `select count(*) from stories` should match
+  the old library, and `select count(*) from __drizzle_migrations` the
+  number of files in `drizzle/*.sql`. Keep the old `.env.production` values
+  (and the Turso db) aside until you're happy — rolling back to the
+  previous image needs them, and anything written to the SQLite file after
+  cutover won't exist on Turso.
+- Backing up the db: it runs in WAL mode, so copy `app.db` **and**
+  `app.db-wal` together (or stop the container first). The app also keeps a
+  rolling `app.db.pre-migrate` snapshot, taken just before it applies new
+  migrations.
 
 ## How it works for the child
 
@@ -261,7 +272,7 @@ action — decide it BEFORE the evening you ship it, not during.
 ## Technical notes
 
 - **Stack**: TanStack Start (React 19, file-based routes), Tailwind CSS v4,
-  Drizzle ORM on Turso (libSQL), Vercel AI SDK (`generateObject` + Zod) with
+  Drizzle ORM on a local SQLite file (libSQL), Vercel AI SDK (`generateObject` + Zod) with
   Anthropic for text, Gemini for images, Edge/ElevenLabs for TTS.
 - **All keys and model calls live in server functions** — nothing sensitive
   ever reaches the browser.
