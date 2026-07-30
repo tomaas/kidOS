@@ -11,7 +11,7 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 - **Les retenues posées se voient enfin** : dans l'opération posée, le chiffre
   écrit dans la petite case de retenue s'encre en trait plein sur un fond
   doucement surligné (le même ton que la sélection), au lieu de rester gris
-  pointillé comme une case vide — l'enfant garde sa retenue sous les yeux en
+  comme une case vide — l'enfant garde sa retenue sous les yeux en
   descendant la colonne. La case grandit un peu ; la case vide reste un
   brouillon discret et rien ne juge jamais le chiffre.
 
