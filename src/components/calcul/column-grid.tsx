@@ -171,18 +171,25 @@ function CarryCell({
     id: `drop-carry-${col}`,
   });
   return (
-    // Touch target ≥ 44px for small fingers: 24px box + 2×10px vertical slop
-    // = 44px tall, 48px wide (negative margins keep the visual layout). The
+    // Touch target ≥ 44px for small fingers: 28px box + 2×8px vertical slop
+    // = 44px tall, 52px wide (negative margins keep the visual layout). The
     // slop also enlarges the droppable rect registered via setNodeRef.
     <button
-      className="-mx-2 -my-2.5 px-2 py-2.5"
+      className="-mx-2 -my-2 px-2 py-2"
       onClick={() => onSelect?.({ col, row: "carry" })}
       ref={setNodeRef}
       type="button"
     >
+      {/* Empty = discreet dashed scratch box; once a carry is posed the digit
+          inks (foreground, semibold) on a softly highlighted background —
+          like a highlighter stroke — so the child keeps seeing it while
+          working down the column. */}
       <span
         className={cn(
-          "flex h-6 w-8 items-center justify-center rounded-lg border border-muted-foreground/30 border-dashed text-muted-foreground text-sm",
+          "flex h-7 w-9 items-center justify-center rounded-lg border border-muted-foreground/30 border-dashed text-base",
+          value
+            ? "bg-primary/10 font-semibold text-foreground"
+            : "text-muted-foreground",
           (selected || isOver) && "border-2 border-primary border-solid"
         )}
       >

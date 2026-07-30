@@ -4,6 +4,17 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.5.1.1] - 2026-07-30
+
+### Changed
+
+- **Les retenues posées se voient enfin** : dans l'opération posée, le chiffre
+  écrit dans la petite case de retenue s'encre en trait plein sur un fond
+  doucement surligné (le même ton que la sélection), au lieu de rester gris
+  comme une case vide — l'enfant garde sa retenue sous les yeux en
+  descendant la colonne. La case grandit un peu ; la case vide reste un
+  brouillon discret et rien ne juge jamais le chiffre.
+
 ## [0.5.1.0] - 2026-07-30
 
 ### Added
