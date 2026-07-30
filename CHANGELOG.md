@@ -4,6 +4,20 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.5.2.2] - 2026-07-31
+
+### Changed
+
+- **Le nom du projet se corrige en `kidOS`** (et non `kidsOS`) : dépôt,
+  paquet, image et conteneur Docker. Rien ne change pour l'enfant ni pour le
+  parent — l'app garde son nom de famille dérivé de `VITE_CHILD_NAME`
+  (« L'atelier de Léa »), ses URLs et ses données.
+- Côté machine, le nom de projet Compose passe de `kidsos` à `kidos` : les
+  volumes nommés deviennent `kidos_app-data` (base SQLite + médias générés).
+  Les anciens volumes `kidsos_*` sont **conservés intacts** comme sauvegarde
+  après recopie du contenu — à supprimer à la main quand la nouvelle version
+  a tourné quelques jours (`docker volume rm kidsos_app-data`).
+
 ## [0.5.2.1] - 2026-07-30
 
 ### Changed

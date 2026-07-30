@@ -1,7 +1,7 @@
-# Project name pinned so the named volumes stay `kidsos_*` whatever the
+# Project name pinned so the named volumes stay `kidos_*` whatever the
 # checkout folder is called — renaming the clone must never orphan the
 # app-data volume (it holds the SQLite db and the generated media).
-name: kidsos
+name: kidos
 
 services:
   app:
@@ -9,8 +9,8 @@ services:
       context: .
       args:
         VITE_CHILD_NAME: ${VITE_CHILD_NAME:-}
-    image: kidsos
-    container_name: kidsos
+    image: kidos
+    container_name: kidos
     env_file: .env.production
     ports:
       # Loopback only — the app has no auth; exposing it beyond this
