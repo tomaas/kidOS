@@ -28,6 +28,9 @@
 /data/*
 !/data/.gitkeep
 
+# db dumps taken at the repo root (family data — never publish)
+/dump.sql
+
 # cursive reading font — personal-use license, not redistributable
 # (see public/fonts/README.md)
 /public/fonts/cursive.woff

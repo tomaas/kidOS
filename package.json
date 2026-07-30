@@ -1,6 +1,6 @@
 {
-  "name": "look-i-can-read",
-  "version": "0.5.2.0",
+  "name": "kidsos",
+  "version": "0.5.2.1",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,4 +1,4 @@
-# Look, I Can Read! 📖
+# kidsOS 📖
 
 A tiny web app that invents calm, illustrated, read-aloud mini-stories in
 **French** where **your child is the hero**. Built as a quiet parent-and-child
@@ -173,11 +173,11 @@ Production notes:
   import. For a local run: `sqlite3 -bail data/app.db < dump.sql`. For
   Docker, the db lives in the `app-data` **named volume**, not the
   checkout — load it there (the volume's full name is prefixed by the
-  Compose project name, the checkout folder by default — check
-  `docker volume ls`):
+  Compose project name, pinned to `kidsos` in `compose.yml` so renaming the
+  checkout folder never orphans it — check `docker volume ls`):
 
   ```
-  docker run --rm -i -v look-i-can-read_app-data:/data -w /data \
+  docker run --rm -i -v kidsos_app-data:/data -w /data \
     alpine sh -c 'apk add -q sqlite && sqlite3 -bail app.db' < dump.sql
   ```
 
