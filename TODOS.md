@@ -4,7 +4,7 @@
 
 ### Demander à l'éducatrice où en est Arsène + l'observer manipuler
 **Priority:** P1
-**Contexte :** L'assignment du design doc (`~/.gstack/projects/Tomaas-kidsOS/user-main-design-20260717-165844.md`). À la rentrée (fin août) : perles dorées ? jeu des timbres déjà présenté ? quelle opération ? Observer ses mains sur le vrai matériel sans l'aider — le design du geste tactile (tranche 5) doit copier ce qu'il fait réellement. **GO/NO-GO** : si les timbres n'ont pas été présentés en classe, l'app ne les introduit pas.
+**Contexte :** L'assignment du design doc (`~/.gstack/projects/tomaas-kidOS/user-main-design-20260717-165844.md`). À la rentrée (fin août) : perles dorées ? jeu des timbres déjà présenté ? quelle opération ? Observer ses mains sur le vrai matériel sans l'aider — le design du geste tactile (tranche 5) doit copier ce qu'il fait réellement. **GO/NO-GO** : si les timbres n'ont pas été présentés en classe, l'app ne les introduit pas.
 **Depends on:** la rentrée scolaire.
 
 ### Observer le geste de l'étagère après ship (protocole 1 semaine)
@@ -27,7 +27,7 @@
 ### Observer le bureau après ship (protocole 1 semaine)
 **Priority:** P2
 **Contexte :** Quatre décisions du design doc du bureau
-(`~/.gstack/projects/Tomaas-kidsOS/user-main-design-20260721-141546.md`)
+(`~/.gstack/projects/tomaas-kidOS/user-main-design-20260721-141546.md`)
 sont parquées sur l'observation, jamais sur la mesure : (a) le drag de fenêtre —
 valeur ou friction ? s'il ne déplace jamais la fenêtre, la fenêtre devient fixe ;
 (b) les tailles de cibles (icônes, croix) — copient ses mains ; (c) le ressenti
