@@ -3,6 +3,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { useMessages } from "~/lib/i18n";
 import type { DbElement } from "~/server/db/schema";
 
 export interface ElementFormValues {
@@ -30,6 +31,7 @@ const FIELD_CLASS = "md:text-base";
  * Emoji + image path are optional; image UPLOAD is out of scope.
  */
 export function ElementForm({ initial, onSubmit, onCancel }: ElementFormProps) {
+  const m = useMessages();
   const [label, setLabel] = useState(initial?.label ?? "");
   const [emoji, setEmoji] = useState(initial?.emoji ?? "");
   const [imagePath, setImagePath] = useState(initial?.imagePath ?? "");
@@ -63,20 +65,20 @@ export function ElementForm({ initial, onSubmit, onCancel }: ElementFormProps) {
     >
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="element-label">
-          Nom (montré à l'enfant)
+          {m.parents.formulaires.nom}
         </Label>
         <Input
           className={FIELD_CLASS}
           id="element-label"
           onChange={(e) => setLabel(e.target.value)}
-          placeholder="une clé magique"
+          placeholder={m.parents.formulaires.placeholders.element.nom}
           value={label}
         />
       </div>
 
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="element-emoji">
-          Emoji (facultatif)
+          {m.parents.formulaires.emoji}
         </Label>
         <Input
           className={`w-24 ${FIELD_CLASS}`}
@@ -90,36 +92,40 @@ export function ElementForm({ initial, onSubmit, onCancel }: ElementFormProps) {
 
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="element-hint">
-          Description pour l'histoire (l'enfant ne la voit pas)
+          {m.parents.formulaires.descriptionHistoire}
         </Label>
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="element-hint"
           onChange={(e) => setPromptHint(e.target.value)}
-          placeholder="une clé magique qui ouvre des portes surprenantes et douces"
+          placeholder={
+            m.parents.formulaires.placeholders.element.descriptionHistoire
+          }
           value={promptHint}
         />
       </div>
 
       <div className="space-y-2">
         <Label className={LABEL_CLASS} htmlFor="element-image">
-          Chemin d'image (facultatif, avancé)
+          {m.parents.formulaires.cheminImage}
         </Label>
         <Input
           className={FIELD_CLASS}
           id="element-image"
           onChange={(e) => setImagePath(e.target.value)}
-          placeholder="(vide)"
+          placeholder={m.parents.formulaires.placeholders.vide}
           value={imagePath}
         />
       </div>
 
       <div className="flex gap-2 pt-2">
         <Button disabled={!canSubmit || submitting} type="submit">
-          {initial ? "Enregistrer" : "Ajouter"}
+          {initial
+            ? m.parents.formulaires.enregistrer
+            : m.parents.formulaires.ajouter}
         </Button>
         <Button onClick={onCancel} type="button" variant="ghost">
-          Annuler
+          {m.parents.formulaires.annuler}
         </Button>
       </div>
     </form>

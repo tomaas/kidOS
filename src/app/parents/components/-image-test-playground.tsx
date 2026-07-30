@@ -5,6 +5,7 @@ import {
   GENERATED_IMAGE_HEIGHT,
   GENERATED_IMAGE_WIDTH,
 } from "~/lib/generated-image";
+import { useMessages } from "~/lib/i18n";
 import { generateTestImageFn, type TestImageResult } from "~/server/functions";
 
 /**
@@ -35,11 +36,12 @@ interface ResultEntry extends TestImageResult {
 /** One result card: the preview + a caption (model · ms · resolution), or a
  * calm inline message on a skip/failure. Parent-facing, so plain wording. */
 function ResultCard({ entry }: { entry: ResultEntry }) {
+  const m = useMessages();
   return (
     <li className="overflow-hidden rounded-2xl border bg-card">
       {entry.imageStatus === "ready" && entry.imagePath ? (
         <img
-          alt="Aperçu généré"
+          alt={m.parents.playground.altApercu}
           className="aspect-[4/3] w-full object-cover"
           height={GENERATED_IMAGE_HEIGHT}
           src={entry.imagePath}
@@ -49,8 +51,8 @@ function ResultCard({ entry }: { entry: ResultEntry }) {
         <div className="flex aspect-[4/3] w-full items-center justify-center px-6 text-center">
           <p className="text-muted-foreground">
             {entry.imageStatus === "skipped"
-              ? "Les images sont désactivées (IMAGE_ENABLED). Active-les pour tester."
-              : "Le dessin n'a pas pu être généré."}
+              ? m.parents.playground.imagesDesactivees
+              : m.parents.playground.pasPuGenerer}
           </p>
         </div>
       )}
@@ -68,6 +70,7 @@ export function ImageTestPlayground({
   /** The currently-persisted default model — seeds the test selector only. */
   initialModel: string;
 }) {
+  const m = useMessages();
   const promptId = useId();
   const modelId = useId();
   const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
@@ -109,16 +112,13 @@ export function ImageTestPlayground({
   return (
     <section className="space-y-5 border-t pt-8">
       <div className="space-y-2">
-        <h2 className="font-bold text-2xl">Tester un prompt</h2>
-        <p className="text-muted-foreground">
-          Génère une image d'essai pour comparer les modèles. Chaque essai
-          s'ajoute à la liste — tu peux les regarder côte à côte.
-        </p>
+        <h2 className="font-bold text-2xl">{m.parents.playground.titre}</h2>
+        <p className="text-muted-foreground">{m.parents.playground.intro}</p>
       </div>
 
       <div className="space-y-2">
         <label className="font-medium text-sm" htmlFor={promptId}>
-          Prompt
+          {m.parents.playground.prompt}
         </label>
         <textarea
           className="min-h-32 w-full rounded-2xl border bg-card p-4 text-base leading-relaxed"
@@ -131,7 +131,7 @@ export function ImageTestPlayground({
       <div className="flex flex-wrap items-end gap-4">
         <div className="space-y-2">
           <label className="font-medium text-sm" htmlFor={modelId}>
-            Modèle
+            {m.parents.playground.modele}
           </label>
           <select
             className="block rounded-2xl border bg-card p-3 text-base"
@@ -153,7 +153,9 @@ export function ImageTestPlayground({
           onClick={generate}
           type="button"
         >
-          {generating ? "Je dessine…" : "Générer"}
+          {generating
+            ? m.parents.playground.jeDessine
+            : m.parents.playground.generer}
         </Button>
       </div>
 

@@ -144,11 +144,149 @@ export const fr = {
     },
     enregistrementImpossible:
       "Enregistrement impossible pour le moment — réessaie.",
+    // Pages CRUD des entités (héros, lieux, doudous, éléments) — titres,
+    // intros et confirmations déplacés verbatim depuis les routes.
+    entites: {
+      // Gabarits d'aria partagés ({label} = le nom de l'entrée) ; lieux dit
+      // « Supprimer », les trois autres « Retirer » — distinction historique.
+      ariaModifier: "Modifier {label}",
+      ariaRetirer: "Retirer {label}",
+      ariaSupprimer: "Supprimer {label}",
+      doudous: {
+        ajouter: "Ajouter un doudou",
+        confirmRetrait:
+          "Retirer ce doudou ? Les histoires déjà créées ne changeront pas.",
+        intro:
+          "Ajoute, modifie ou retire les doudous proposés à l'enfant. Le doudou est facultatif : l'enfant peut toujours choisir de ne pas en prendre. Les histoires déjà créées gardent leur doudou d'origine.",
+        titre: "Les doudous",
+      },
+      elements: {
+        ajouter: "Ajouter un élément",
+        confirmRetrait:
+          "Retirer cet élément ? Les histoires déjà créées ne changeront pas.",
+        intro:
+          "Ajoute, modifie ou retire les éléments surprise proposés à l'enfant. L'enfant peut en choisir un ou deux pour une même histoire. Les histoires déjà créées gardent leur élément d'origine.",
+        titre: "Les éléments",
+      },
+      heroes: {
+        ajouter: "Ajouter un héros",
+        confirmRetrait:
+          "Retirer ce héros ? Les histoires déjà créées ne changeront pas.",
+        intro:
+          "Ajoute, modifie ou retire les héros proposés à l'enfant. L'enfant peut en choisir un ou deux pour une même histoire. Les histoires déjà créées gardent leur héros d'origine.",
+        titre: "Les héros",
+      },
+      lieux: {
+        ajouter: "Ajouter un lieu",
+        confirmRetrait:
+          "Supprimer ce lieu ? Les histoires déjà créées ne changeront pas.",
+        intro:
+          "Ajoute, modifie ou retire les lieux proposés à l'enfant. Les histoires déjà créées gardent leur lieu d'origine.",
+        titre: "Les lieux",
+      },
+    },
     espaceParent: "Espace parent",
+    // Formulaires d'entité — libellés et actions PARTAGÉS entre les quatre
+    // formulaires ; les placeholders (des exemples) restent par entité.
+    formulaires: {
+      ajouter: "Ajouter",
+      annuler: "Annuler",
+      cheminImage: "Chemin d'image (facultatif, avancé)",
+      descriptionHistoire:
+        "Description pour l'histoire (l'enfant ne la voit pas)",
+      descriptionIllustration:
+        "Description pour l'illustration (l'enfant ne la voit pas)",
+      emoji: "Emoji (facultatif)",
+      enregistrer: "Enregistrer",
+      nom: "Nom (montré à l'enfant)",
+      placeholders: {
+        doudou: {
+          descriptionHistoire:
+            "un petit lapin tout doux, compagnon calme qui rassure le héros et reste près de lui",
+          descriptionIllustration:
+            "une peluche lapin toute douce aux longues oreilles, couleur crème",
+          nom: "un petit lapin en peluche",
+        },
+        element: {
+          descriptionHistoire:
+            "une clé magique qui ouvre des portes surprenantes et douces",
+          nom: "une clé magique",
+        },
+        hero: {
+          descriptionHistoire:
+            "Mona, la grande sœur de Jules, gentille et courageuse",
+          descriptionIllustration:
+            "un petit garçon aux cheveux bruns, au sourire doux",
+          prenom: "Mona",
+        },
+        lieu: {
+          descriptionHistoire:
+            "dans le jardin de papy, avec ses fleurs, ses légumes et un vieux pommier",
+          nom: "le jardin de papy",
+        },
+        vide: "(vide)",
+      },
+      prenom: "Prénom (montré à l'enfant)",
+    },
+    imageModel: {
+      intro:
+        "Choisis le modèle Google qui dessine les illustrations. Le choix s'applique aux prochaines images, sur cet appareil. Les histoires déjà dessinées ne changent pas.",
+      parDefaut: "par défaut",
+      titre: "Le modèle d'image",
+    },
+    // La page d'accueil de l'espace parent — une carte par sous-page.
+    index: {
+      intro:
+        "Gère ce que l'enfant peut choisir : héros, lieux, éléments et doudous. Les histoires déjà créées ne changent jamais.",
+      sections: {
+        calcul: {
+          description:
+            "Le palier des opérations posées, la taille des séries et les fiches à imprimer.",
+          titre: "Les calculs",
+        },
+        doudous: {
+          description: "Les compagnons rassurants, toujours facultatifs.",
+          titre: "Les doudous",
+        },
+        elements: {
+          description: "Les éléments surprise qui pimentent l'histoire.",
+          titre: "Les éléments",
+        },
+        heroes: {
+          description:
+            "Les personnages proposés à l'enfant. Ajoute, modifie ou retire un héros.",
+          titre: "Les héros",
+        },
+        imageModel: {
+          description:
+            "Choisis le modèle Google qui dessine les illustrations (qualité / prix / vitesse).",
+          titre: "Le modèle d'image",
+        },
+        lieux: {
+          description: "Les endroits où l'histoire peut se passer.",
+          titre: "Les lieux",
+        },
+      },
+    },
     langue: {
       enregistre: "Enregistré.",
       hint: "La langue de l'atelier — le bureau et l'espace parent. Les histoires déjà créées ne changent jamais.",
       titre: "La langue",
+    },
+    // Le bac à essai d'images (sous le choix du modèle) — le prompt par
+    // défaut reste dans le composant : c'est une entrée de test, pas de l'UI.
+    playground: {
+      altApercu: "Aperçu généré",
+      generer: "Générer",
+      imagesDesactivees:
+        "Les images sont désactivées (IMAGE_ENABLED). Active-les pour tester.",
+      intro:
+        "Génère une image d'essai pour comparer les modèles. Chaque essai s'ajoute à la liste — tu peux les regarder côte à côte.",
+      jeDessine: "Je dessine…",
+      modele: "Modèle",
+      pasPuGenerer: "Le dessin n'a pas pu être généré.",
+      prompt: "Prompt",
+      titre: "Tester un prompt",
     },
   },
 };

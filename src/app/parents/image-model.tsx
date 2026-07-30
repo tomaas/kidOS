@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, Home } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { IMAGE_MODELS } from "~/config/image-models";
+import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
 import { getFlagsFn } from "~/server/functions";
 import { ImageTestPlayground } from "./components/-image-test-playground";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/parents/image-model")({
  * the model against the allowlist (loud fallback log) before any generation.
  */
 function ParentsImageModelPage() {
+  const m = useMessages();
   const flags = Route.useLoaderData();
   const { model, setModel } = useImageModel(flags.imageModel);
 
@@ -38,17 +40,13 @@ function ParentsImageModelPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">Le modèle d'image</h1>
-        <p className="text-muted-foreground">
-          Choisis le modèle Google qui dessine les illustrations. Le choix
-          s'applique aux prochaines images, sur cet appareil. Les histoires déjà
-          dessinées ne changent pas.
-        </p>
+        <h1 className="font-bold text-3xl">{m.parents.imageModel.titre}</h1>
+        <p className="text-muted-foreground">{m.parents.imageModel.intro}</p>
       </div>
 
       <ul className="space-y-3">
@@ -80,7 +78,7 @@ function ParentsImageModelPage() {
                     <p className="font-semibold text-lg">{option.label}</p>
                     {isDefault ? (
                       <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs">
-                        par défaut
+                        {m.parents.imageModel.parDefaut}
                       </span>
                     ) : null}
                   </div>

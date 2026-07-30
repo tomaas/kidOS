@@ -4,6 +4,23 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.5.1.0] - 2026-07-30
+
+### Added
+
+- **Toute l'interface parle les deux langues (phase 4, dernière du plan
+  multilangue)** : le parcours de création d'histoire (étapes, boutons
+  « au hasard / suite / passer / sans doudou », la question saveur, les
+  attentes calmes, l'écran « On réessaie ? »), le lecteur d'histoire
+  (Imprimer, Une autre histoire, les boutons de lecture), la bibliothèque,
+  et tout l'espace parent (les pages héros/lieux/éléments/doudous et leurs
+  formulaires, le modèle d'image, le banc d'essai) suivent le réglage de
+  langue. Les libellés d'accessibilité paramétrés (« Modifier {label} »)
+  passent par le même gabarit que le plateau de calcul.
+- Restent volontairement dans la langue de la famille (décision D5 du plan) :
+  les DONNÉES d'entités (noms et descriptions des héros, lieux, éléments,
+  doudous — éditables à /parents) et les notes des modèles d'image.
+
 ## [0.5.0.0] - 2026-07-29
 
 ### Added
