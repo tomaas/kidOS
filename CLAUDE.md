@@ -1,4 +1,4 @@
-# CLAUDE.md — kidsOS
+# CLAUDE.md — kidOS
 
 Single-family web app, a calm fake-OS desktop (the "bureau") for one child:
 calm illustrated read-aloud stories in French where the configured child hero

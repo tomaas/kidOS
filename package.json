@@ -1,6 +1,6 @@
 {
-  "name": "kidsos",
-  "version": "0.5.2.1",
+  "name": "kidos",
+  "version": "0.5.2.2",
   "private": true,
   "type": "module",
   "scripts": {
