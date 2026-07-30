@@ -53,6 +53,7 @@ function AventureStoryPage() {
         initialSegments={segments}
         readOnly={readOnly}
         storyId={story.id}
+        storyLang={story.lang}
         title={story.title}
       />
     </div>

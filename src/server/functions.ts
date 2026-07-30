@@ -109,7 +109,7 @@ export const synthesizeFn = createServerFn({ method: "POST" })
     try {
       const audioPath = await provider.synthesize(
         fullText,
-        story.lang as "fr" | "ru"
+        story.lang === "ru" || story.lang === "en" ? story.lang : "fr"
       );
       await db
         .update(stories)

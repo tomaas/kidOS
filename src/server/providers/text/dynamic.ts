@@ -14,6 +14,25 @@ import {
 } from "./custom-prompt";
 import { DOUDOU_SYSTEM_CLAUSE, doudouUserBlock } from "./doudou-prompt";
 import { elementsUserBlock } from "./element-prompt";
+// Le corpus ANGLAIS vit dans son module (english.ts) : le chemin FR/RU
+// historique ci-dessous reste byte-intouché (goldens) — les fonctions
+// publiques ne font que BRANCHER vers lui quand lang === "en".
+import {
+  ARC_SCHEMA_EN,
+  ARC_SYSTEM_EN,
+  BEAT_SCHEMA_EN,
+  buildPromptEn,
+  buildSystemEn,
+  customPromptUserBlockEn,
+  doudouUserBlockEn,
+  elementsUserBlockEn,
+  heroesUserBlockEn,
+  heroesVisualAnchorBlockEn,
+  LANDING_BEAT_SCHEMA_EN,
+  safetyProblemsEn,
+  scanForbiddenEn,
+  structureProblemsEn,
+} from "./english";
 import { FORBIDDEN_TERMS } from "./forbidden-terms";
 import {
   heroesUserBlock,
@@ -167,7 +186,16 @@ const STAKES_TERMS = [
  * are always hard: a beat with any of these is rejected, even the final beat.
  */
 // Exported for the standalone assertion script (test:coherence) only.
-export function safetyProblems(beat: DynamicBeat, heroName: string): string[] {
+// `lang` par défaut "fr" : les appels historiques (goldens compris) gardent
+// leurs octets ; "en" délègue au corpus anglais (scan word-boundary).
+export function safetyProblems(
+  beat: DynamicBeat,
+  heroName: string,
+  lang: GenerateBeatInput["lang"] = "fr"
+): string[] {
+  if (lang === "en") {
+    return safetyProblemsEn(beat, heroName);
+  }
   const problems: string[] = [];
   const labels = beat.choices ?? [];
   // sceneHint is scanned too: it drives the ILLUSTRATION prompt, so a scary
@@ -223,8 +251,12 @@ export function softnessTicCount(text: string): number {
 export function structureProblems(
   beat: DynamicBeat,
   mustEnd: boolean,
-  landing: boolean
+  landing: boolean,
+  lang: GenerateBeatInput["lang"] = "fr"
 ): string[] {
+  if (lang === "en") {
+    return structureProblemsEn(beat, mustEnd, landing);
+  }
   const problems: string[] = [];
 
   // Decrescendo nudge (NON-fatal): a landing beat (last 2 choices + final)
@@ -304,16 +336,20 @@ function validateBeat(
   beat: DynamicBeat,
   heroName: string,
   mustEnd: boolean,
-  landing: boolean
+  landing: boolean,
+  lang: GenerateBeatInput["lang"]
 ): string[] {
   return [
-    ...safetyProblems(beat, heroName),
-    ...structureProblems(beat, mustEnd, landing),
+    ...safetyProblems(beat, heroName, lang),
+    ...structureProblems(beat, mustEnd, landing, lang),
   ];
 }
 
 // Exported for the standalone assertion script (test:coherence) only.
 export function buildSystem(lang: GenerateBeatInput["lang"]): string {
+  if (lang === "en") {
+    return buildSystemEn();
+  }
   const langLine =
     lang === "ru" ? "Écris en russe, naturellement." : "Écris en français.";
   return [
@@ -375,6 +411,9 @@ export function buildPrompt(
   corrections?: string[],
   dropCustomPrompt = false
 ): string {
+  if (input.lang === "en") {
+    return buildPromptEn(input, corrections, dropCustomPrompt);
+  }
   const { heroes, place, elements, doudous, history, mustEnd } = input;
   // Single hero / single element emit BYTE-IDENTICAL lines to the pre-multi code
   // (`Héros : …` / `Élément surprise : ….`) — see hero-prompt.ts / element-prompt.ts.
@@ -480,10 +519,15 @@ async function generateOnce(
 ): Promise<DynamicBeat> {
   const anthropic = createAnthropic({ apiKey: serverEnv.anthropicApiKey });
   const startedAt = Date.now();
+  // Les descriptions du schéma sont visibles du modèle → schéma dans la
+  // langue de l'histoire (même forme, même ordre de clés — épinglé).
+  const landingSchema =
+    input.lang === "en" ? LANDING_BEAT_SCHEMA_EN : LANDING_BEAT_SCHEMA;
+  const beatSchema = input.lang === "en" ? BEAT_SCHEMA_EN : BEAT_SCHEMA;
   const { object, usage } = await generateObject({
     model: anthropic(serverEnv.storyModel),
     prompt: buildPrompt(input, corrections, dropCustomPrompt),
-    schema: isLanding(input) ? LANDING_BEAT_SCHEMA : BEAT_SCHEMA,
+    schema: isLanding(input) ? landingSchema : beatSchema,
     system: buildSystem(input.lang),
   });
   logTextGen("beat", attempt, Date.now() - startedAt, usage);
@@ -515,7 +559,8 @@ async function generateOnce(
 export function coerceBeat(
   beat: DynamicBeat,
   heroName: string,
-  mustEnd: boolean
+  mustEnd: boolean,
+  lang: GenerateBeatInput["lang"] = "fr"
 ): DynamicBeat | null {
   if (mustEnd || beat.isFinal) {
     const coerced: DynamicBeat = {
@@ -525,7 +570,9 @@ export function coerceBeat(
       sceneHint: beat.sceneHint,
       title: beat.title,
     };
-    return safetyProblems(coerced, heroName).length === 0 ? coerced : null;
+    return safetyProblems(coerced, heroName, lang).length === 0
+      ? coerced
+      : null;
   }
 
   // Non-final: only salvageable if 2 real, distinct, short choices exist.
@@ -545,7 +592,9 @@ export function coerceBeat(
       sceneHint: beat.sceneHint,
       title: beat.title,
     };
-    return safetyProblems(coerced, heroName).length === 0 ? coerced : null;
+    return safetyProblems(coerced, heroName, lang).length === 0
+      ? coerced
+      : null;
   }
   return null;
 }
@@ -582,7 +631,13 @@ const arcSchema = ARC_SCHEMA;
  * lists. Returns the FIRST matched term (for logging) or null when clean. Used
  * to gate the creation-time author notes before they poison every prompt.
  */
-export function scanForbidden(text: string): string | null {
+export function scanForbidden(
+  text: string,
+  lang: GenerateBeatInput["lang"] = "fr"
+): string | null {
+  if (lang === "en") {
+    return scanForbiddenEn(text);
+  }
   const lower = text.toLowerCase();
   return (
     [...FORBIDDEN_TERMS, ...STAKES_TERMS].find((t) => lower.includes(t)) ?? null
@@ -595,8 +650,11 @@ export function scanForbidden(text: string): string | null {
  * whole arc — outfit is the least-critical of the three notes). A billed extra
  * generation must never silently disable a feature, so a scan drop is logged.
  */
-export function safeOutfitOrNull(outfit: string): string | null {
-  const hit = scanForbidden(outfit);
+export function safeOutfitOrNull(
+  outfit: string,
+  lang: GenerateBeatInput["lang"] = "fr"
+): string | null {
+  const hit = scanForbidden(outfit, lang);
   if (hit) {
     console.warn(
       `[stories] story outfit dropped by the safety scan (matched « ${hit} »); illustrations keep prior clothing behavior.`
@@ -631,11 +689,12 @@ export async function generateStoryArc(
 
   // The arc must be in the STORY's language: it is quoted verbatim inside every
   // beat prompt, and a French arc would steer a Russian story's wording.
+  // lang === "en" → le corpus anglais entier (system, blocs, schéma).
   const arcLangLine =
     input.lang === "ru"
       ? "à l'enfant. Écris-le en russe, en 2 ou 3 phrases simples :"
       : "à l'enfant. Écris-le en français, en 2 ou 3 phrases simples :";
-  const system = [
+  const systemFr = [
     "Tu prépares EN SECRET le fil d'une histoire « dont tu es le héros » pour un",
     "enfant de 6–7 ans. Ce fil est une note interne pour l'auteur, jamais montrée",
     arcLangLine,
@@ -658,8 +717,9 @@ export async function generateStoryArc(
     "Évite les mots « doux », « douce », « doucement » (ils déteignent sur le",
     "texte final) : dis calme, paisible, tendre, tranquille.",
   ].join("\n");
+  const system = input.lang === "en" ? ARC_SYSTEM_EN : systemFr;
 
-  const lines = [
+  const linesFr = [
     heroesUserBlock(input.heroes),
     // Give the wardrobe generator each hero's fixed imageHint so it REUSES any
     // clothing already pinned there instead of inventing a contradictory one.
@@ -672,7 +732,20 @@ export async function generateStoryArc(
     customPromptUserBlock(input.customPrompt),
     "",
     "Écris le fil de cette histoire.",
-  ].filter(Boolean);
+  ];
+  const linesEn = [
+    heroesUserBlockEn(input.heroes),
+    heroesVisualAnchorBlockEn(input.heroes),
+    input.place.promptHint
+      ? `Setting: the story takes place ${input.place.promptHint}.`
+      : "",
+    elementsUserBlockEn(input.elements),
+    doudouUserBlockEn(input.doudous),
+    customPromptUserBlockEn(input.customPrompt),
+    "",
+    "Write the thread of this story.",
+  ];
+  const lines = (input.lang === "en" ? linesEn : linesFr).filter(Boolean);
 
   // Why the arc was ultimately dropped — an unsafe-text DROP is very different
   // from a generation FAILURE when reading logs (a substring false positive on
@@ -689,7 +762,7 @@ export async function generateStoryArc(
         abortSignal: AbortSignal.timeout(15_000),
         model: anthropic(serverEnv.storyModel),
         prompt: lines.join("\n"),
-        schema: arcSchema,
+        schema: input.lang === "en" ? ARC_SCHEMA_EN : arcSchema,
         system,
       });
       logTextGen("arc", attempt + 1, Date.now() - startedAt, usage);
@@ -701,11 +774,15 @@ export async function generateStoryArc(
       // drops the WHOLE result. Substring matching over-blocks by design (same
       // safety bias as safetyProblems): "charme" contains "arme" — an
       // over-block costs one retry then an arc-less story, never an unsafe one.
-      const hit = scanForbidden(`${arc}\n${visualWorld}`);
+      const hit = scanForbidden(`${arc}\n${visualWorld}`, input.lang);
       if (!hit && arc.length > 0 && visualWorld.length > 0) {
         // The outfit is scanned SEPARATELY (see safeOutfitOrNull): a forbidden
         // word in the wardrobe drops only the outfit line, never the whole arc.
-        return { arc, outfit: safeOutfitOrNull(outfit), visualWorld };
+        return {
+          arc,
+          outfit: safeOutfitOrNull(outfit, input.lang),
+          visualWorld,
+        };
       }
       dropReason = hit
         ? `arc text dropped by the safety scan (matched « ${hit} »)`
@@ -780,14 +857,15 @@ export async function generateBeat(
       beat,
       heroName,
       input.mustEnd,
-      isLanding(input)
+      isLanding(input),
+      input.lang
     );
     if (problems.length === 0) {
       return beat;
     }
     last = beat;
     lastProblems = problems;
-    lastSafetyFailed = safetyProblems(beat, heroName).length > 0;
+    lastSafetyFailed = safetyProblems(beat, heroName, input.lang).length > 0;
   }
 
   // Robust fallback (any beat): if the remaining problems are only STRUCTURAL
@@ -795,7 +873,7 @@ export async function generateBeat(
   // Guarantees the child almost never sees "On réessaie ?" — especially on
   // beat 0 — while the safety guard-rail stays absolute.
   if (last) {
-    const coerced = coerceBeat(last, heroName, input.mustEnd);
+    const coerced = coerceBeat(last, heroName, input.mustEnd, input.lang);
     if (coerced) {
       // Server-side diagnostic (TanStack swallows thrown errors client-side).
       console.warn(

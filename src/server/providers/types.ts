@@ -1,6 +1,6 @@
 import type { Place } from "~/config/places";
 
-export type Lang = "fr" | "ru";
+export type Lang = "fr" | "ru" | "en";
 
 /**
  * The optional comforting companion, resolved (snapshot or config) for prompt

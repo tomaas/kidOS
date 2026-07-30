@@ -61,7 +61,7 @@ export const serverEnv = {
   blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? "",
 
   // Misc.
-  defaultLang: (process.env.DEFAULT_LANG ?? "fr") as "fr" | "ru",
+  defaultLang: (process.env.DEFAULT_LANG ?? "fr") as "fr" | "ru" | "en",
   dataDir: process.env.DATA_DIR ?? "./data",
 
   // Database — remote Turso cloud (required, no local/offline mode).
@@ -131,7 +131,7 @@ validateServerEnv();
  * "Écouter" button and the illustration slot. No secrets here.
  */
 export interface PublicFlags {
-  defaultLang: "fr" | "ru";
+  defaultLang: "fr" | "ru" | "en";
   imageEnabled: boolean;
   // The env default image model, mirrored so the /parents picker's "par défaut"
   // badge + the localStorage hook's default track the deployed env (not a

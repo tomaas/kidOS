@@ -18,7 +18,7 @@
     "test": "bun run test:golden && bun run test:coherence && bun run test:media && bun run test:data-route && bun run test:reading-aids && bun run test:operations && bun run test:bureau && bun run test:i18n && bun run test:routes",
     "test:golden": "bun run src/server/providers/text/__tests__/prompt-identity.golden.ts && bun run src/server/providers/image/__tests__/segment-image-prompt.golden.ts",
     "test:reading-aids": "bun run src/lib/reading-aids/__tests__/reading-aids.golden.ts",
-    "test:coherence": "SKIP_ENV_VALIDATION=1 bun run src/server/providers/text/__tests__/story-coherence.golden.ts",
+    "test:coherence": "SKIP_ENV_VALIDATION=1 bun run src/server/providers/text/__tests__/story-coherence.golden.ts && SKIP_ENV_VALIDATION=1 bun run src/server/providers/text/__tests__/english-coherence.golden.ts",
     "test:media": "SKIP_ENV_VALIDATION=1 bun run src/server/providers/__tests__/media-store.golden.ts",
     "test:operations": "bun run src/lib/operations/__tests__/operations.golden.ts && bun run src/lib/operations/__tests__/serie-session.golden.ts",
     "test:data-route": "SKIP_ENV_VALIDATION=1 bun run src/server/providers/__tests__/data-route.golden.ts",

@@ -15,11 +15,11 @@ library of kept stories.
 The printed A5 booklet that comes out of the printer is often the real magic
 moment.
 
-> The desktop shell (icons, window chrome, entry screen) is bilingual —
-> **French or English**, a parent setting at /parents. The generated stories
-> and the mini-app content are still in **French** — the reading aids
-> (silent letters, liaisons) are specific to French phonics. Docs are in
-> English so anyone can set it up.
+> The app is bilingual — **French or English**, a parent setting at
+> /parents: the desktop shell, the sums mini-app AND the generated stories
+> follow it (each story keeps the language it was created in). The reading
+> aids (silent letters, liaisons) are specific to French phonics and only
+> appear on French stories. Docs are in English so anyone can set it up.
 
 ## Features
 
