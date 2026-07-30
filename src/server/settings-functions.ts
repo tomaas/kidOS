@@ -58,7 +58,7 @@ export const saveUiLocaleFn = createServerFn({ method: "POST" })
         });
       return { success: true };
     } catch (error) {
-      // Le détail technique (chaîne Turso, SQL) reste côté serveur — le
+      // Le détail technique (chemin du fichier SQLite, SQL) reste côté serveur — le
       // parent reçoit un état calme, libellé par le catalogue client.
       console.error("saveUiLocaleFn:", error);
       return { success: false };

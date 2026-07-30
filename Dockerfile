@@ -20,5 +20,8 @@ FROM node:22-slim
 WORKDIR /app
 ENV NODE_ENV=production PORT=3009
 COPY --from=build /app/.output ./.output
+# Migrations auto-apply at startup (src/server/db/index.ts) and are resolved
+# from the CWD — ship the folder next to the server bundle.
+COPY --from=build /app/drizzle ./drizzle
 EXPOSE 3009
 CMD ["node", ".output/server/index.mjs"]

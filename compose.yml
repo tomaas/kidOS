@@ -12,7 +12,7 @@ services:
       # machine must be a deliberate operator choice.
       - "127.0.0.1:3009:3009"
     volumes:
-      # Generated images/audio (the db itself is remote Turso).
+      # Generated images/audio + the SQLite db file (data/app.db).
       - app-data:/app/data
     restart: unless-stopped
 
