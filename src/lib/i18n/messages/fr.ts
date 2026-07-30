@@ -14,6 +14,63 @@
  */
 
 export const fr = {
+  aventure: {
+    auHasard: "au hasard",
+    cestParti: "C'est parti",
+    continuer: "Continuer",
+    // Suffixes d'aria du stepper — concaténés à libellé constant (l'aria est
+    // stable à langue constante, même contrat que le plateau de calcul).
+    etapeAriaFacultatif: " (facultatif)",
+    etapeAriaTermine: " — terminé",
+    // Libellés des étapes du wizard, par id (lib/wizard-steps.ts).
+    etapes: {
+      doudou: "Doudou",
+      element: "Élément",
+      extra: "Touche perso",
+      hero: "Héros",
+      place: "Lieu",
+    },
+    etapesAria: "Étapes de l'histoire",
+    facultatif: "facultatif",
+    facultatifParenthese: "(facultatif)",
+    histoireReprend: "L'histoire reprend doucement.",
+    histoireSecrit: "L'histoire s'écrit…",
+    histoireSeDessine: "L'histoire se dessine…",
+    image: {
+      dodo: "L'image fait dodo aujourd'hui.",
+      onReessaie: "On réessaie…",
+      pasMarche: "Ça n'a pas marché, réessaie plus tard.",
+      reessayer: "Réessayer",
+    },
+    imprimer: "Imprimer",
+    lecture: {
+      lettresAttachees: "Lettres attachées",
+      lettresMuettes: "Lettres muettes",
+      lettresNormales: "Lettres normales",
+      liaisons: "Liaisons",
+    },
+    onReessaie: "On réessaie ?",
+    oui: "Oui",
+    passer: "passer",
+    placeholderSaveur: "par exemple : avec un petit chat tout doux…",
+    questionSaveur: "Tu veux ajouter quelque chose ?",
+    recommencer: "Recommencer",
+    recommencerAria: "Recommencer depuis le début",
+    recommencerConfirm: "On recommence depuis le début ?",
+    retour: "Retour",
+    sansDoudou: "sans doudou",
+    suite: "suite",
+    titreDoudous: "Avec quels doudous ?",
+    titreElement: "Et avec quoi ?",
+    titreHero: "Qui est le héros ?",
+    titreLieu: "Où se passe l'histoire ?",
+    uneAutreHistoire: "Une autre histoire",
+  },
+  bibliotheque: {
+    histoireOuTuChoisis: "Histoire où tu choisis",
+    titre: "Ma bibliothèque",
+    vide: "Il n'y a pas encore d'histoire ici.",
+  },
   bureau: {
     // Libellés des apps, par id du registre (components/bureau/apps.tsx) —
     // consommés par l'icône ET la barre de titre, toujours via la même clé.
@@ -43,6 +100,9 @@ export const fr = {
     prendrePlateau: "Prendre le plateau des {familles}",
     rangerAtelier: "Ranger l'atelier",
     serieEnCours: " — série en cours",
+  },
+  commun: {
+    accueil: "Accueil",
   },
   ecrans: {
     pageIntrouvableTitre: "Cette page n'existe pas",

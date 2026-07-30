@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Printer, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
 import { useImageReveal } from "~/lib/use-image-reveal";
 import { type ReadingAidsFlags, useReadingAids } from "~/lib/use-reading-aids";
@@ -288,6 +289,7 @@ function LiveBeat({
   aids: ReadingAidsFlags;
   onRevealed: (revealed: boolean) => void;
 }) {
+  const m = useMessages();
   const {
     revealed,
     imagePath: revealedPath,
@@ -339,7 +341,7 @@ function LiveBeat({
       : undefined;
 
   if (!revealed) {
-    return <WritingAnimation message="L'histoire se dessine…" />;
+    return <WritingAnimation message={m.aventure.histoireSeDessine} />;
   }
 
   return (
@@ -379,6 +381,7 @@ export function DynamicStoryPlayer({
   imageModel: envImageModel,
   readOnly = false,
 }: DynamicStoryPlayerProps) {
+  const m = useMessages();
   const [segments, setSegments] = useState<StorySegment[]>(initialSegments);
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -482,14 +485,14 @@ export function DynamicStoryPlayer({
         <p aria-hidden="true" className="text-6xl">
           🌧️
         </p>
-        <p className="font-semibold text-3xl">L'histoire reprend doucement.</p>
+        <p className="font-semibold text-3xl">{m.aventure.histoireReprend}</p>
         <Button
           className="h-14 rounded-2xl px-8 text-xl"
           onClick={retry}
           size="lg"
           type="button"
         >
-          Continuer
+          {m.aventure.continuer}
         </Button>
       </div>
     );
@@ -615,6 +618,7 @@ function ClosingActions({
   onToggleSilent: () => void;
   onToggleLiaisons: () => void;
 }) {
+  const m = useMessages();
   return (
     <div className="flex flex-wrap justify-center gap-4 pt-4">
       {aidesVisibles ? (
@@ -635,7 +639,7 @@ function ClosingActions({
         variant="secondary"
       >
         <Printer className="size-6" />
-        Imprimer
+        {m.aventure.imprimer}
       </Button>
 
       <Button
@@ -645,7 +649,7 @@ function ClosingActions({
         size="lg"
       >
         <Sparkles className="size-6" />
-        Une autre histoire
+        {m.aventure.uneAutreHistoire}
       </Button>
     </div>
   );

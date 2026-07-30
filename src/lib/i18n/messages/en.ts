@@ -12,6 +12,60 @@
 import type { Messages } from "./fr";
 
 export const en: Messages = {
+  aventure: {
+    auHasard: "surprise me",
+    cestParti: "Here we go",
+    continuer: "Continue",
+    etapeAriaFacultatif: " (optional)",
+    etapeAriaTermine: " — done",
+    etapes: {
+      doudou: "Cuddly",
+      element: "Element",
+      extra: "Your touch",
+      hero: "Hero",
+      place: "Place",
+    },
+    etapesAria: "Story steps",
+    facultatif: "optional",
+    facultatifParenthese: "(optional)",
+    histoireReprend: "The story picks up again in a moment.",
+    histoireSecrit: "The story is writing itself…",
+    histoireSeDessine: "The story is drawing itself…",
+    image: {
+      dodo: "The picture is napping today.",
+      onReessaie: "Trying again…",
+      pasMarche: "That didn't work, try again later.",
+      reessayer: "Try again",
+    },
+    imprimer: "Print",
+    lecture: {
+      lettresAttachees: "Joined-up letters",
+      lettresMuettes: "Silent letters",
+      lettresNormales: "Plain letters",
+      liaisons: "Liaisons",
+    },
+    onReessaie: "Shall we try again?",
+    oui: "Yes",
+    passer: "skip",
+    placeholderSaveur: "for example: with a soft little cat…",
+    questionSaveur: "Would you like to add anything?",
+    recommencer: "Start over",
+    recommencerAria: "Start over from the beginning",
+    recommencerConfirm: "Start again from the beginning?",
+    retour: "Back",
+    sansDoudou: "no cuddly toy",
+    suite: "next",
+    titreDoudous: "Which cuddly toys come along?",
+    titreElement: "And with what?",
+    titreHero: "Who is the hero?",
+    titreLieu: "Where does the story happen?",
+    uneAutreHistoire: "Another story",
+  },
+  bibliotheque: {
+    histoireOuTuChoisis: "A story where you choose",
+    titre: "My library",
+    vide: "There are no stories here yet.",
+  },
   bureau: {
     apps: {
       bibliotheque: "Library",
@@ -36,6 +90,9 @@ export const en: Messages = {
     prendrePlateau: "Take the {familles} tray",
     rangerAtelier: "Tidy up the workshop",
     serieEnCours: " — series in progress",
+  },
+  commun: {
+    accueil: "Home",
   },
   ecrans: {
     pageIntrouvableTitre: "This page doesn't exist",

@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Home } from "lucide-react";
 import { DynamicStoryPlayer } from "~/components/dynamic-story-player";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 import { getDynamicStoryFn } from "~/server/dynamic-functions";
 import { getFlagsFn } from "~/server/functions";
 
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_bureau/aventure/$id")({
 });
 
 function AventureStoryPage() {
+  const m = useMessages();
   const { story, segments, flags } = Route.useLoaderData();
 
   // Only COMPLETE beats are part of the fixed, replayable path. A trailing
@@ -43,7 +45,7 @@ function AventureStoryPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 

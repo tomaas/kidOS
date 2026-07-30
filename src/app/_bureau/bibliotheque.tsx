@@ -5,6 +5,7 @@ import {
   GENERATED_IMAGE_HEIGHT,
   GENERATED_IMAGE_WIDTH,
 } from "~/lib/generated-image";
+import { useMessages } from "~/lib/i18n";
 import { getLibraryFn } from "~/server/functions";
 import { isRenderableImagePath } from "~/server/providers/types";
 
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_bureau/bibliotheque")({
  * no counter, no performance metric.
  */
 function LibraryPage() {
+  const m = useMessages();
   const stories = Route.useLoaderData();
 
   return (
@@ -33,11 +35,11 @@ function LibraryPage() {
           variant="ghost"
         >
           <Home className="size-5" />
-          Accueil
+          {m.commun.accueil}
         </Button>
       </div>
 
-      <h1 className="text-center font-bold text-4xl">Ma bibliothèque</h1>
+      <h1 className="text-center font-bold text-4xl">{m.bibliotheque.titre}</h1>
 
       {stories.length === 0 ? (
         <div className="flex flex-col items-center gap-8 py-12 text-center">
@@ -45,7 +47,7 @@ function LibraryPage() {
             📖
           </p>
           <p className="text-2xl text-muted-foreground">
-            Il n'y a pas encore d'histoire ici.
+            {m.bibliotheque.vide}
           </p>
           <Button
             className="h-14 gap-3 rounded-2xl px-6 text-xl"
@@ -54,7 +56,7 @@ function LibraryPage() {
             size="lg"
           >
             <Leaf className="size-6" />
-            Histoire où tu choisis
+            {m.bibliotheque.histoireOuTuChoisis}
           </Button>
         </div>
       ) : (

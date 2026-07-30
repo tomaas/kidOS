@@ -1,5 +1,6 @@
 import { PenLine } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useMessages } from "~/lib/i18n";
 
 /**
  * Toggle for the optional cursive ("lettres attachées") reading mode. Mirrors
@@ -17,6 +18,7 @@ export function ReadingFontToggle({
   isCursive: boolean;
   onToggle: () => void;
 }) {
+  const m = useMessages();
   return (
     <Button
       aria-pressed={isCursive}
@@ -27,7 +29,9 @@ export function ReadingFontToggle({
       variant={isCursive ? "default" : "secondary"}
     >
       <PenLine className="size-6" />
-      {isCursive ? "Lettres normales" : "Lettres attachées"}
+      {isCursive
+        ? m.aventure.lecture.lettresNormales
+        : m.aventure.lecture.lettresAttachees}
     </Button>
   );
 }
