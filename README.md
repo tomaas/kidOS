@@ -293,8 +293,9 @@ action — decide it BEFORE the evening you ship it, not during.
   network hiccup).
 - **Tests**: `bun run test` runs golden assertion scripts (prompt identity,
   coherence validators, media store, media data route, reading aids, posed
-  operations, the desktop layer's pure modules, and public-URL integrity of
-  the route relocation) — plain Bun, no test runner needed.
+  operations, the desktop layer's pure modules, public-URL integrity of
+  the route relocation, and the local-SQLite bootstrap — a real boot on a
+  blank folder, migrations applied) — plain Bun, no test runner needed.
 
 ## License
 

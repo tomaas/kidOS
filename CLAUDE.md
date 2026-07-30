@@ -58,7 +58,11 @@ yes → don't.
   `test:routes` pins public-URL integrity of the `_bureau/` relocation (no
   URL changed, no stale route id, /parents never under the layout) plus two
   prose contracts: no `ssr:` option under `src/app/_bureau/**` and the
-  closed-session gate CALLED in exactly two files, never `__root`.
+  closed-session gate CALLED in exactly two files, never `__root`;
+  `test:db` pins the local-SQLite bootstrap (`file:` URL derivation +
+  env validations, real boot on a blank dir with all migrations applied,
+  idempotent restart, no spurious `.pre-migrate` snapshot, and the
+  Dockerfile contract — `drizzle/` shipped next to the server bundle).
 - Migrations AUTO-APPLY at app startup (`db/index.ts`, idempotent) — no
   setup step. `db:generate` creates a new migration from schema edits;
   `db:migrate` applies them manually (rarely needed); `db:push` is also
