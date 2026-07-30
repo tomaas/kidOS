@@ -118,6 +118,7 @@ bun run start
 | --- | --- |
 | `ANTHROPIC_API_KEY` | **Required.** The key that writes the stories. |
 | `DATABASE_URL` | Optional. Moves the SQLite file (`file:` URL only; defaults to `file:<DATA_DIR>/app.db`). |
+| `DATA_DIR` | Optional. Where the SQLite db and generated media live (default `./data`; in Docker, the `app-data` volume). |
 | `STORY_MODEL` | The model used (fine as-is). |
 | `IMAGE_ENABLED` | `true` to add illustrations (otherwise a soft color block). |
 | `GEMINI_API_KEY` | The Google key, needed IF images are enabled. |
@@ -171,7 +172,9 @@ Production notes:
   existing db half-applies silently). Use `-bail` so any error stops the
   import. For a local run: `sqlite3 -bail data/app.db < dump.sql`. For
   Docker, the db lives in the `app-data` **named volume**, not the
-  checkout — load it there:
+  checkout — load it there (the volume's full name is prefixed by the
+  Compose project name, the checkout folder by default — check
+  `docker volume ls`):
 
   ```
   docker run --rm -i -v look-i-can-read_app-data:/data -w /data \
@@ -187,7 +190,7 @@ Production notes:
 - Backing up the db: it runs in WAL mode, so copy `app.db` **and**
   `app.db-wal` together (or stop the container first). The app also keeps a
   rolling `app.db.pre-migrate` snapshot, taken just before it applies new
-  migrations.
+  migrations (of `app.db` alone — the same WAL caveat applies).
 
 ## How it works for the child
 

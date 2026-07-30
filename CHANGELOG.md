@@ -9,8 +9,8 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 ### Changed
 
 - **La base de données vit maintenant à la maison** : plus de compte Turso ni
-  de réseau requis — les histoires, héros et réglages sont rangés dans un
-  simple fichier SQLite à côté des images et des voix (le volume `app-data`
+  de réseau requis pour la base — les histoires, héros et réglages sont
+  rangés dans un simple fichier SQLite à côté des images et des voix (le volume `app-data`
   en Docker, `data/app.db` en local). Installer l'app ne demande plus qu'une
   clé Anthropic.
 - **Les migrations s'appliquent toutes seules au démarrage** : plus d'étape
