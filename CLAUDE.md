@@ -4,8 +4,9 @@ Single-family web app, a calm fake-OS desktop (the "bureau") for one child:
 calm illustrated read-aloud stories in French where the configured child hero
 stars, plus a "Poser des calculs" mini-app (posed column arithmetic, no LLM),
 each opening in its own window. TanStack Start + React 19.
-Deploys via Docker (Compose) and runs locally; either way REQUIRES network +
-a Turso cloud database (no offline mode). No authentication — the compose
+Deploys via Docker (Compose) and runs locally; the database is a local
+SQLite file under `DATA_DIR` (in Docker: the app-data volume) — no cloud
+db, no db setup. No authentication — the compose
 file binds to loopback only; exposing it further is the operator's problem.
 
 ## THE NON-NEGOTIABLE CONSTRAINT
@@ -57,12 +58,17 @@ yes → don't.
   `test:routes` pins public-URL integrity of the `_bureau/` relocation (no
   URL changed, no stale route id, /parents never under the layout) plus two
   prose contracts: no `ssr:` option under `src/app/_bureau/**` and the
-  closed-session gate CALLED in exactly two files, never `__root`.
-- `bun run db:migrate` — apply migrations to the remote Turso db (run once on
-  setup / after schema changes). `db:generate` creates a new migration from
-  schema edits; `db:push` is also available for quick dev sync to remote —
-  but it syncs SCHEMA only and never runs DATA migrations (e.g. 0010): any
-  release whose migration rewrites rows must go through `db:migrate`.
+  closed-session gate CALLED in exactly two files, never `__root`;
+  `test:db` pins the local-SQLite bootstrap (`file:` URL derivation +
+  env validations, real boot on a blank dir with all migrations applied,
+  idempotent restart, no spurious `.pre-migrate` snapshot, and the
+  Dockerfile contract — `drizzle/` shipped next to the server bundle).
+- Migrations AUTO-APPLY at app startup (`db/index.ts`, idempotent) — no
+  setup step. `db:generate` creates a new migration from schema edits;
+  `db:migrate` applies them manually (rarely needed); `db:push` is also
+  available for quick dev schema sync — but it syncs SCHEMA only and never
+  runs DATA migrations (e.g. 0010): never rely on it for a release whose
+  migration rewrites rows.
 - `bun run deploy` — `docker compose up -d --build` (see Nitro bullet; needs
   `.env.production` + optionally `.env` for build-time `VITE_*` args).
 - Releases: 4-digit `VERSION` + `CHANGELOG.md` (French, Keep-a-Changelog
@@ -105,10 +111,12 @@ yes → don't.
   `app-data` volume on `/app/data`, secrets via `env_file: .env.production`).
   Machine-specific compose changes go in a gitignored `compose.override.yml`,
   never in `compose.yml`.
-- **DB**: remote Turso cloud (libSQL) via `@libsql/client/node` + Drizzle.
-  `db/index.ts` is just `createClient({ url: DATABASE_URL, authToken:
-  TURSO_AUTH_TOKEN })`. Schema is applied to the remote db via drizzle
-  migrations — run `bun run db:migrate` on setup. Persisted tables
+- **DB**: local SQLite file (libSQL `file:` URL, default
+  `file:<DATA_DIR>/app.db`) via `@libsql/client` + Drizzle. `db/index.ts`
+  creates the parent dir, opens the client and AUTO-APPLIES drizzle
+  migrations at startup (skipped when `SKIP_ENV_VALIDATION` is set, i.e.
+  during build; the Dockerfile ships `drizzle/` next to the server bundle
+  since the folder is resolved from the CWD). Persisted tables
   (`src/server/db/schema.ts`): `stories`, `story_segments`, `places`,
   `doudous`, `heroes`, `elements`, plus `math_skills` (migration 0009 ; the
   DATA migration 0010, guarded/idempotent, rekeyed it) — one row per
@@ -303,7 +311,7 @@ setup for the posed-operation sheets (triggered from /parents/calcul).
 - Merge method: merge commit (matches PR #1-#6 history)
 - Project type: web app (SSR, TanStack Start)
 - Post-deploy health check: `curl -sf http://localhost:3009/` (expect 200 +
-  page content; run `bun run db:migrate` first if the release adds migrations)
+  page content; migrations auto-apply when the container starts)
 
 ### Custom deploy hooks
 - Pre-merge: `bun run check-types && bun run lint && bun run test`

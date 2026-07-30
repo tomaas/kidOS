@@ -146,7 +146,7 @@ export const saveMathSettingsFn = createServerFn({ method: "POST" })
         ),
       ]);
     } catch (error) {
-      // Le détail technique (chaîne Turso, SQL) reste côté serveur — le
+      // Le détail technique (chemin du fichier SQLite, SQL) reste côté serveur — le
       // parent reçoit un code calme et fixe (security review), libellé par
       // le catalogue client.
       console.error("saveMathSettingsFn:", error);

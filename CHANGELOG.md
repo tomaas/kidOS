@@ -4,6 +4,34 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.5.2.0] - 2026-07-30
+
+### Changed
+
+- **La base de données vit maintenant à la maison** : plus de compte Turso ni
+  de réseau requis pour la base — les histoires, héros et réglages sont
+  rangés dans un simple fichier SQLite à côté des images et des voix (le volume `app-data`
+  en Docker, `data/app.db` en local). Installer l'app ne demande plus qu'une
+  clé Anthropic.
+- **Les migrations s'appliquent toutes seules au démarrage** : plus d'étape
+  `db:migrate` à ne pas oublier — une nouvelle version apporte son schéma
+  avec elle, dans le bon ordre (le code et sa migration arrivent ensemble).
+- **Le fichier est protégé** : avant d'appliquer une nouvelle migration,
+  l'app garde un instantané `app.db.pre-migrate` à côté de la base ; le mode
+  WAL évite qu'une génération d'histoire bloque une lecture ; une URL de base
+  malformée (`file://hôte`, query string) ou un reste de configuration Turso
+  est refusé ou signalé clairement au démarrage.
+- Le README documente la migration depuis un déploiement Turso existant
+  (dump → import `-bail` dans le volume Docker, vérifications, sauvegarde et
+  retour arrière).
+
+### Added
+
+- Une suite d'assertions `test:db` épingle le nouveau socle : dérivation de
+  l'URL `file:`, validations, démarrage réel sur dossier vierge (12
+  migrations appliquées), redémarrage idempotent, absence d'instantané
+  intempestif, et le contrat Dockerfile (`drizzle/` embarqué dans l'image).
+
 ## [0.5.1.1] - 2026-07-30
 
 ### Changed

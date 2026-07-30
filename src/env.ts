@@ -37,6 +37,11 @@ const ttsProvider = (process.env.TTS_PROVIDER ?? "edge") as
   | "edge"
   | "elevenlabs";
 
+// The SQLite file lives under DATA_DIR by default (in Docker: the app-data
+// volume, next to the generated media). DATABASE_URL can still override the
+// location, but it must stay a `file:` URL.
+const dataDir = process.env.DATA_DIR ?? "./data";
+
 // biome-ignore assist/source/useSortedKeys: groupement SÉMANTIQUE (requis vs optionnel, par fonctionnalité) — les commentaires de section documentent chaque groupe.
 export const serverEnv = {
   // Text generation (required).
@@ -62,11 +67,10 @@ export const serverEnv = {
 
   // Misc.
   defaultLang: (process.env.DEFAULT_LANG ?? "fr") as "fr" | "ru" | "en",
-  dataDir: process.env.DATA_DIR ?? "./data",
+  dataDir,
 
-  // Database — remote Turso cloud (required, no local/offline mode).
-  databaseUrl: process.env.DATABASE_URL ?? "",
-  tursoAuthToken: process.env.TURSO_AUTH_TOKEN ?? "",
+  // Database — local SQLite file (libSQL `file:` URL).
+  databaseUrl: process.env.DATABASE_URL ?? `file:${dataDir}/app.db`,
 } as const;
 
 /**
@@ -86,21 +90,31 @@ function validateServerEnv(): void {
     errors.push("ANTHROPIC_API_KEY est requis.");
   }
 
-  if (!serverEnv.databaseUrl) {
-    errors.push("DATABASE_URL est requis (Turso cloud).");
-  } else if (
-    !(
-      serverEnv.databaseUrl.startsWith("libsql://") ||
-      serverEnv.databaseUrl.startsWith("https://")
-    )
-  ) {
+  if (!serverEnv.databaseUrl.startsWith("file:")) {
     errors.push(
-      "DATABASE_URL doit être une URL Turso (libsql://<db>.turso.io). Le mode fichier local n'est plus supporté."
+      "DATABASE_URL doit être une URL fichier locale (file:./data/app.db). Le mode Turso distant n'est plus supporté."
+    );
+  } else if (
+    serverEnv.databaseUrl.startsWith("file://") &&
+    !serverEnv.databaseUrl.startsWith("file:///")
+  ) {
+    // `file://data/app.db` fait de "data" une AUTORITÉ d'URL : libsql et le
+    // mkdir du bootstrap divergeraient sur le chemin réel. Refuser tôt.
+    errors.push(
+      "DATABASE_URL en forme file://<hôte>/… n'est pas supporté — utilisez file:./chemin ou file:///chemin/absolu."
+    );
+  } else if (serverEnv.databaseUrl.includes("?")) {
+    errors.push(
+      "DATABASE_URL ne doit pas porter de query string (?mode=…) — le chemin du fichier doit être nu."
     );
   }
 
-  if (!serverEnv.tursoAuthToken) {
-    errors.push("TURSO_AUTH_TOKEN est requis (Turso cloud).");
+  if (process.env.TURSO_AUTH_TOKEN) {
+    // Tripwire config pré-migration : le token n'est plus lu. Si la base n'a
+    // pas encore été rapatriée (dump → fichier local), voir le README.
+    console.warn(
+      "TURSO_AUTH_TOKEN est défini mais n'est plus utilisé (base SQLite locale). Vérifiez que les données Turso ont été importées — voir README « Migrating from a previous Turso deployment »."
+    );
   }
 
   if (serverEnv.imageEnabled && !serverEnv.geminiApiKey) {
