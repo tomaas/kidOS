@@ -27,7 +27,7 @@
  * (câblé en `bun run test:settings`). Sort non-zéro à la moindre déviation.
  */
 
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -99,8 +99,9 @@ if (mode === "child:roundtrip") {
   ]);
   const afterDisjoint = await read();
 
-  // Patch INVALIDE (clé inconnue) : jette, et l'opération valide du même
-  // patch n'est PAS appliquée — un patch qui échoue ne change rien.
+  // Patch INVALIDE (clé inconnue) : rejeté par la PRÉ-VALIDATION (avant
+  // toute construction de batch) — l'opération valide du même patch n'est
+  // pas appliquée.
   let invalidPatchThrew = false;
   try {
     await applySettingsPatch([
@@ -111,6 +112,26 @@ if (mode === "child:roundtrip") {
     invalidPatchThrew = true;
   }
   const afterInvalidPatch = await read();
+
+  // ROLLBACK RÉEL dans db.batch (codex diff-review #3) : un échec SQL sur
+  // un statement ULTÉRIEUR (violation NOT NULL sur `value`, injectée en
+  // contournant le type — la clé, elle, est valide) doit annuler le
+  // statement PRÉCÉDENT du même batch. C'est l'atomicité de libsql batch
+  // elle-même qui est prouvée ici, pas la pré-validation.
+  let sqlFailureThrew = false;
+  try {
+    await applySettingsPatch([
+      { key: "image:resolution", op: "set", value: "2K" },
+      {
+        key: "tts:provider",
+        op: "set",
+        value: null as unknown as string,
+      },
+    ]);
+  } catch {
+    sqlFailureThrew = true;
+  }
+  const rowsAfterSqlFailure = await getSettingRows();
 
   // ui-language passe par le même écrivain central.
   await setSetting("ui-language", "en");
@@ -128,9 +149,49 @@ if (mode === "child:roundtrip") {
       afterSetKey: afterSet.anthropicApiKey,
       blankKey: blank.anthropicApiKey,
       invalidPatchThrew,
+      sqlFailure: {
+        resolutionRowAfter: rowsAfterSqlFailure.get("image:resolution") ?? null,
+        threw: sqlFailureThrew,
+        ttsProviderRowAfter: rowsAfterSqlFailure.get("tts:provider") ?? null,
+      },
       uiLanguageRow: rows.get("ui-language") ?? null,
     })
   );
+  process.exit(0);
+}
+
+if (mode === "child:plant-secrets") {
+  // Pose les secrets DB pour le test de frontière HTTP (même DATA_DIR que
+  // le serveur dev éphémère — WAL rend l'écriture inter-processus sûre).
+  const { setSetting } = await import("~/server/app-config");
+  await setSetting("image:gemini-api-key", PLANTED.gemini);
+  await setSetting("tts:elevenlabs-api-key", PLANTED.elevenlabs);
+  console.log(JSON.stringify({ planted: true }));
+  process.exit(0);
+}
+
+if (mode === "child:writer") {
+  // Écrivain CONCURRENT (codex diff-review #2) : son propre processus, donc
+  // son propre client libsql sur le MÊME fichier — verrous SQLite réels.
+  const [, , , keysCsv, prefix, iterationsRaw] = process.argv;
+  const { applySettingsPatch } = await import("~/server/app-config");
+  const keys = (keysCsv ?? "").split(",");
+  const iterations = Number(iterationsRaw ?? "0");
+  for (let i = 1; i <= iterations; i += 1) {
+    // biome-ignore lint/performance/noAwaitInLoops: écritures SÉQUENTIELLES par processus, la concurrence vient des DEUX processus.
+    await applySettingsPatch(
+      keys.map((key) => ({ key, op: "set" as const, value: `${prefix}-${i}` }))
+    );
+  }
+  console.log(JSON.stringify({ done: true }));
+  process.exit(0);
+}
+
+if (mode === "child:read-rows") {
+  // Lecture simple des lignes (boot la base au passage — migrations).
+  const { getSettingRows } = await import("~/server/app-config");
+  const rows = await getSettingRows();
+  console.log(JSON.stringify({ rows: Object.fromEntries(rows) }));
   process.exit(0);
 }
 
@@ -518,16 +579,253 @@ const dbSandbox = mkdtempSync(join(tmpdir(), "app-config-golden-db-"));
     JSON.stringify(j.afterDisjoint)
   );
   check(
-    "roundtrip: invalid patch throws and writes NOTHING",
+    "roundtrip: unknown-key patch is rejected by PRE-validation, writes NOTHING",
     j.invalidPatchThrew === true &&
       j.afterInvalidPatchStoryModel === "claude-test-model",
     JSON.stringify(j)
   );
+  {
+    const sqlFailure = j.sqlFailure as {
+      resolutionRowAfter: string | null;
+      threw: boolean;
+      ttsProviderRowAfter: string | null;
+    };
+    check(
+      "roundtrip: a REAL SQL failure on a LATER batch statement rolls back the earlier one (libsql batch atomicity)",
+      sqlFailure.threw === true &&
+        sqlFailure.resolutionRowAfter === null &&
+        sqlFailure.ttsProviderRowAfter === null,
+      JSON.stringify(sqlFailure)
+    );
+  }
   check(
     "roundtrip: ui-language writes through the central writer",
     j.uiLanguageRow === "en"
   );
 }
+// ── 9. Frontière server-fn RÉELLE (HTTP, runtime dev) ───────────────────────
+// codex diff-review #1 : les createServerFn compilés ne s'exécutent que dans
+// le runtime Start — on démarre donc un serveur dev ÉPHÉMÈRE et on scanne les
+// OCTETS RÉELLEMENT SÉRIALISÉS sur le fil : la réponse RPC de
+// getAppSettingsStatusFn, celle de saveAppSettingsFn, et la page SSR de
+// /parents/reglages (loaders dehydratés). Secrets plantés côté DB ET env.
+
+async function bodyOf(response: Response): Promise<string> {
+  return await response.text();
+}
+
+{
+  const httpSandbox = mkdtempSync(join(tmpdir(), "app-config-golden-http-"));
+  // Port dédié hors des ports d'agents (3009 dev, 3011/3012 QA) ; on prend
+  // le premier libre de la plage.
+  let port = 3960;
+  const portTaken = async (p: number) => {
+    try {
+      await fetch(`http://localhost:${p}/`, {
+        signal: AbortSignal.timeout(700),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  // biome-ignore lint/performance/noAwaitInLoops: sondage séquentiel de ports par nature.
+  while ((await portTaken(port)) && port < 3980) {
+    port += 1;
+  }
+
+  const serverEnv: NodeJS.ProcessEnv = { ...process.env };
+  serverEnv.DATABASE_URL = undefined;
+  Object.assign(serverEnv, {
+    ANTHROPIC_API_KEY: PLANTED.anthropic,
+    DATA_DIR: httpSandbox,
+  });
+  const server = spawn("bun", ["run", "dev", "--port", String(port)], {
+    cwd: repoRoot,
+    env: serverEnv,
+    stdio: "ignore",
+  });
+  const base = `http://localhost:${port}`;
+  let up = false;
+  for (let i = 0; i < 60 && !up; i += 1) {
+    try {
+      // biome-ignore lint/performance/noAwaitInLoops: attente de démarrage.
+      const r = await fetch(`${base}/`, { signal: AbortSignal.timeout(2000) });
+      up = r.ok;
+    } catch {
+      // pas encore prêt
+    }
+    if (!up) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+  check("http boundary: ephemeral dev server boots", up, `port=${port}`);
+
+  if (up) {
+    // Secrets DB plantés par un processus frère sur le même DATA_DIR.
+    const planted = runChild("child:plant-secrets", { DATA_DIR: httpSandbox });
+    check(
+      "http boundary: db secrets planted",
+      planted.status === 0,
+      planted.stderr
+    );
+
+    // Les functionIds RÉELS, extraits du module client transformé par vite —
+    // jamais des ids devinés (ils encodent {file, export} en base64).
+    const moduleSource = await bodyOf(
+      await fetch(`${base}/src/server/settings-functions.ts`)
+    );
+    const ids = new Map<string, string>();
+    for (const match of moduleSource.matchAll(
+      /createClientRpc\("([^"]+)"\)/g
+    )) {
+      const [, id] = match;
+      try {
+        const meta = JSON.parse(atob(id)) as { export?: string };
+        if (meta.export) {
+          ids.set(meta.export, id);
+        }
+      } catch {
+        // id illisible — ignoré, le check ci-dessous échouera si absent.
+      }
+    }
+    const statusId = ids.get("getAppSettingsStatusFn_createServerFn_handler");
+    const saveId = ids.get("saveAppSettingsFn_createServerFn_handler");
+    check(
+      "http boundary: both server-fn RPC ids resolved from the transformed module",
+      Boolean(statusId && saveId),
+      JSON.stringify([...ids.keys()])
+    );
+
+    const rpcHeaders = {
+      accept:
+        "application/x-tss-framed, application/x-ndjson, application/json",
+      "sec-fetch-site": "same-origin",
+      "x-tsr-serverFn": "true",
+    };
+
+    // 9a. La réponse RPC de getAppSettingsStatusFn (GET).
+    const statusWire = statusId
+      ? await bodyOf(
+          await fetch(`${base}/_serverFn/${statusId}`, {
+            headers: rpcHeaders,
+          })
+        )
+      : "";
+
+    // 9b. La réponse RPC de saveAppSettingsFn (POST, corps seroval — le même
+    // encodage que serverFnFetcher côté client).
+    const { toJSONAsync } = await import("seroval");
+    const saveBody = JSON.stringify(
+      await toJSONAsync({
+        data: {
+          operations: [
+            {
+              key: "text:anthropic-api-key",
+              op: "set",
+              value: PLANTED.anthropic,
+            },
+          ],
+        },
+      })
+    );
+    const saveWire = saveId
+      ? await bodyOf(
+          await fetch(`${base}/_serverFn/${saveId}`, {
+            body: saveBody,
+            headers: { ...rpcHeaders, "content-type": "application/json" },
+            method: "POST",
+          })
+        )
+      : "";
+
+    // 9c. La page SSR /parents/reglages (loaders dehydratés dans le HTML).
+    const pageWire = await bodyOf(await fetch(`${base}/parents/reglages`));
+
+    const leaked: string[] = [];
+    for (const [name, secret] of Object.entries(PLANTED)) {
+      for (const [wireName, wire] of [
+        ["status-rpc", statusWire],
+        ["save-rpc", saveWire],
+        ["ssr-page", pageWire],
+      ] as const) {
+        if (wire.includes(secret)) {
+          leaked.push(`${name} in ${wireName}`);
+        }
+      }
+    }
+    check(
+      "http boundary: NO planted secret (db gemini/elevenlabs, env+saved anthropic) in any wire response",
+      statusWire.length > 0 &&
+        saveWire.length > 0 &&
+        pageWire.length > 0 &&
+        leaked.length === 0,
+      `leaked=${JSON.stringify(leaked)}`
+    );
+    check(
+      "http boundary: the status RPC still proves configuration (masked hint of the db gemini key)",
+      statusWire.includes("…0Xw"),
+      statusWire.slice(0, 400)
+    );
+    check(
+      "http boundary: the save RPC answers success + fresh masked status (hint of the just-saved key)",
+      saveWire.includes("success") && saveWire.includes("…7Yq"),
+      saveWire.slice(0, 400)
+    );
+  }
+
+  server.kill();
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  rmSync(httpSandbox, { force: true, recursive: true });
+}
+
+// ── 10. Concurrence RÉELLE : deux processus, deux clients, clés disjointes ──
+
+{
+  const concurrentSandbox = mkdtempSync(
+    join(tmpdir(), "app-config-golden-concurrent-")
+  );
+  const env = { DATA_DIR: concurrentSandbox };
+  // Boot séquentiel d'abord (migrations), pour que les deux écrivains ne se
+  // disputent pas la première création du schéma.
+  runChild("child:read-rows", env);
+  const spawnWriter = (keysCsv: string, prefix: string) =>
+    new Promise<number>((resolve) => {
+      const childEnv: NodeJS.ProcessEnv = { ...process.env };
+      childEnv.DATABASE_URL = undefined;
+      Object.assign(childEnv, env);
+      const child = spawn(
+        "bun",
+        [thisFile, "child:writer", keysCsv, prefix, "25"],
+        { cwd: repoRoot, env: childEnv, stdio: "ignore" }
+      );
+      child.on("exit", (code) => resolve(code ?? 1));
+    });
+  const [codeA, codeB] = await Promise.all([
+    spawnWriter("text:story-model,image:model", "a"),
+    spawnWriter("branding:app-name,branding:story-label", "b"),
+  ]);
+  const finalRows = (
+    runChild("child:read-rows", env).json() as {
+      rows?: Record<string, string>;
+    }
+  ).rows;
+  check(
+    "concurrent: both writer processes finish cleanly (WAL + busy_timeout absorb the contention)",
+    codeA === 0 && codeB === 0,
+    `codes=${codeA},${codeB}`
+  );
+  check(
+    "concurrent: disjoint keys from two clients never clobber each other (last write of EACH writer survives)",
+    finalRows?.["text:story-model"] === "a-25" &&
+      finalRows?.["image:model"] === "a-25" &&
+      finalRows?.["branding:app-name"] === "b-25" &&
+      finalRows?.["branding:story-label"] === "b-25",
+    JSON.stringify(finalRows)
+  );
+  rmSync(concurrentSandbox, { force: true, recursive: true });
+}
+
 {
   const r = runChild("child:db-fails", {
     ANTHROPIC_API_KEY: "env-anthropic-key-123456",

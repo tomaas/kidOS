@@ -122,6 +122,26 @@ function MessageEtat({ etat }: { etat: EtatEnregistrement }) {
   return null;
 }
 
+/** La ligne de statut « en pause » (code serveur features.* = "missing-key")
+ * — discrète et calme, rendue en tête de section : la fonction est activée
+ * mais aucune clé n'est en place, donc rien ne se génère. "off" n'affiche
+ * rien (l'interrupteur le dit déjà), "ready" non plus (le calme d'abord). */
+function LigneStatutFonction({
+  statut,
+}: {
+  statut: "ready" | "off" | "missing-key";
+}) {
+  const m = useMessages();
+  if (statut !== "missing-key") {
+    return null;
+  }
+  return (
+    <p className="text-muted-foreground text-sm">
+      {m.parents.reglages.fonctionEnPause}
+    </p>
+  );
+}
+
 function BadgeDefaut() {
   const m = useMessages();
   return (
@@ -454,6 +474,7 @@ function SectionHistoires({ status }: { status: AppSettingsStatus }) {
 
   return (
     <CarteSection description={t.description} emoji="📖" titre={t.titre}>
+      <LigneStatutFonction statut={status.features.text} />
       <ChampSecret
         label={t.cle}
         onChange={setNouvelleCle}
@@ -532,6 +553,7 @@ function SectionImages({ status }: { status: AppSettingsStatus }) {
 
   return (
     <CarteSection description={t.description} emoji="🎨" titre={t.titre}>
+      <LigneStatutFonction statut={status.features.image} />
       <ChoixBinaire
         label={t.etat}
         labelActive={t.activees}
@@ -618,6 +640,7 @@ function SectionVoix({ status }: { status: AppSettingsStatus }) {
 
   return (
     <CarteSection description={t.description} emoji="🔊" titre={t.titre}>
+      <LigneStatutFonction statut={status.features.tts} />
       <ChoixBinaire
         label={t.etat}
         labelActive={t.activee}

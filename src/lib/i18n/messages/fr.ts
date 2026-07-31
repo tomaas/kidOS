@@ -309,6 +309,10 @@ export const fr = {
       effacer: "Effacer la clé",
       enregistre: "Enregistré.",
       enregistrer: "Enregistrer",
+      // Statut « missing-key » (code serveur, features.*) — neutre et calme :
+      // jamais une urgence, jamais du rouge.
+      fonctionEnPause:
+        "Sans clé configurée, cette fonction reste en pause pour le moment.",
       garderCle: "Laisse vide pour garder la clé actuelle.",
       intro:
         "Les clés, modèles et options de l'atelier. Un réglage posé ici s'applique aux prochaines histoires, sans redéploiement ; sans réglage, la valeur du déploiement s'applique.",

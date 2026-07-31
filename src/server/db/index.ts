@@ -36,8 +36,12 @@ if (!process.env.SKIP_ENV_VALIDATION) {
   // WAL + busy timeout: story generation holds long bursty writes; without
   // this a concurrent read/write surfaces as SQLITE_BUSY on a request.
   // (Backups must include app.db-wal, or checkpoint first — see README.)
-  await client.execute("PRAGMA journal_mode=WAL");
+  // ORDER MATTERS: busy_timeout FIRST (connection-local, no lock needed) —
+  // the journal_mode switch takes a lock, and without a timeout already in
+  // place a SECOND process booting while the first writes crashes ici en
+  // SQLITE_BUSY (trouvé par le golden de concurrence de test:settings).
   await client.execute("PRAGMA busy_timeout=5000");
+  await client.execute("PRAGMA journal_mode=WAL");
 
   // This file is the family's ONLY copy of the data and some migrations
   // rewrite rows (e.g. 0010). Before applying anything NEW, keep one rolling
