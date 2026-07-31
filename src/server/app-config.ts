@@ -113,18 +113,35 @@ const IMAGE_RESOLUTIONS: readonly ImageResolution[] = ["512", "1K", "2K", "4K"];
 const TTS_PROVIDERS: readonly TtsProviderName[] = ["edge", "elevenlabs"];
 const STORY_LANGS: readonly StoryLang[] = ["fr", "ru", "en"];
 
+/** VITE_* legacy en secours : process.env (runtime — Docker/­dev shell)
+ * d'abord, puis la valeur BAKÉE au build (import.meta.env — l'ancien canal),
+ * pour qu'un déploiement existant garde exactement sa marque. */
+function viteFallback(runtime: string | undefined, baked: unknown): string {
+  return runtime ?? (typeof baked === "string" ? baked : "");
+}
+
 /**
  * La config « env seulement » : ce que l'app ferait sans aucune ligne DB.
- * Les VITE_* sont lues côté serveur via process.env à l'appel (le Dockerfile
- * les passe aussi en env runtime tant que le fallback legacy vit).
  */
 export function envFallbackConfig(): AppConfig {
   return Object.freeze({
     branding: Object.freeze({
-      appDescription: process.env.VITE_APP_DESCRIPTION ?? "",
-      appName: process.env.VITE_APP_NAME ?? "",
-      childName: process.env.VITE_CHILD_NAME ?? "",
-      storyLabel: process.env.VITE_STORY_LABEL ?? "",
+      appDescription: viteFallback(
+        process.env.VITE_APP_DESCRIPTION,
+        import.meta.env.VITE_APP_DESCRIPTION
+      ),
+      appName: viteFallback(
+        process.env.VITE_APP_NAME,
+        import.meta.env.VITE_APP_NAME
+      ),
+      childName: viteFallback(
+        process.env.VITE_CHILD_NAME,
+        import.meta.env.VITE_CHILD_NAME
+      ),
+      storyLabel: viteFallback(
+        process.env.VITE_STORY_LABEL,
+        import.meta.env.VITE_STORY_LABEL
+      ),
     }),
     provider: Object.freeze({
       anthropicApiKey: serverEnv.anthropicApiKey,

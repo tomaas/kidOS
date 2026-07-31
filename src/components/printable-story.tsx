@@ -1,4 +1,5 @@
-import { appConfig } from "~/config/app";
+import { getRouteApi } from "@tanstack/react-router";
+import { composeBranding } from "~/config/app";
 import {
   GENERATED_IMAGE_HEIGHT,
   GENERATED_IMAGE_WIDTH,
@@ -8,17 +9,29 @@ import type { StorySegment } from "~/server/db/schema";
 import { isRenderableImagePath } from "~/server/providers/types";
 import { HighlightableText } from "./highlightable-text";
 
+const rootRoute = getRouteApi("__root__");
+
 /**
  * The discreet colophon printed at the end of every booklet.
  * Shared with the operations sheet (printable-operations.tsx).
+ *
+ * `lang` = la langue du CONTENU imprimé : la langue FIGÉE de l'histoire
+ * (stories.lang — une histoire anglaise imprimée sous une UI française garde
+ * sa marque anglaise, codex #5), la locale de l'atelier pour la fiche
+ * d'opérations. La source de marque vient du loader racine (réglage parent
+ * en base, VITE_* en secours).
  */
-export function Colophon() {
+export function Colophon({ lang }: { lang: string }) {
+  const { brandingSource } = rootRoute.useLoaderData();
+  // stories.lang est une colonne non typée — une valeur inconnue retombe sur
+  // la marque française historique, jamais une erreur.
+  const brandingLang = lang === "en" || lang === "ru" ? lang : "fr";
   return (
     <p
       className="mt-16 text-center italic"
       style={{ fontSize: "12pt", opacity: 0.6 }}
     >
-      {appConfig.storyLabel}
+      {composeBranding(brandingLang, brandingSource).storyLabel}
     </p>
   );
 }
@@ -36,10 +49,13 @@ export function PrintableDynamicStory({
   title,
   segments,
   aids,
+  lang,
 }: {
   title: string;
   segments: StorySegment[];
   aids: ReadingAidsFlags;
+  /** La langue FIGÉE de l'histoire — pilote la marque du colophon. */
+  lang: string;
 }) {
   return (
     <article className="printable-story hidden">
@@ -81,7 +97,7 @@ export function PrintableDynamicStory({
         ))}
       </div>
 
-      <Colophon />
+      <Colophon lang={lang} />
     </article>
   );
 }

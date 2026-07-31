@@ -7,14 +7,14 @@ import {
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Toaster } from "~/components/ui/sonner";
-import { brandingFor } from "~/config/app";
 import {
+  buildBranding,
   type Locale,
   LocaleProvider,
   MESSAGES,
   normalizeLocale,
 } from "~/lib/i18n";
-import { getUiLocaleFn } from "~/server/settings-functions";
+import { getShellContextFn } from "~/server/settings-functions";
 import appCss from "./globals.css?url";
 
 /**
@@ -47,8 +47,12 @@ export const Route = createRootRoute({
   errorComponent: () => <EcranCalme variante="souci" />,
   head: ({ loaderData }) => {
     // Le titre d'onglet et la meta description suivent la locale UI (réglage
-    // parent) ; les overrides VITE_* gardent la priorité dans les 2 langues.
-    const branding = brandingFor(normalizeLocale(loaderData?.locale));
+    // parent) et la marque posée en base (branding:* — env VITE_* en
+    // secours), composées par le SERVEUR dans le loader. Repli générique si
+    // le loader n'a rien fourni (erreur très tôt) — jamais une exception.
+    const branding =
+      loaderData?.branding ??
+      buildBranding(normalizeLocale(loaderData?.locale), "");
     return {
       links: [
         { href: "https://fonts.googleapis.com", rel: "preconnect" },
@@ -77,11 +81,13 @@ export const Route = createRootRoute({
       ],
     };
   },
-  // La locale UI (réglage parent, table app_settings) entre dans l'app par
-  // CE loader et nulle part ailleurs. getUiLocaleFn ne jette jamais (repli
-  // "fr" en interne) — le shell rend toujours. staleTime: Infinity : la
-  // langue ne change que par /parents, qui fait router.invalidate().
-  loader: () => getUiLocaleFn(),
+  // La locale UI ET la marque (réglages parent, table app_settings) entrent
+  // dans l'app par CE loader et nulle part ailleurs. getShellContextFn ne
+  // jette jamais (replis internes) — le shell rend toujours.
+  // staleTime: Infinity : ces réglages ne changent que par /parents, qui
+  // fait router.invalidate() ; un AUTRE onglet converge à son prochain
+  // rechargement — le rechargement est la frontière de cohérence documentée.
+  loader: () => getShellContextFn(),
   notFoundComponent: () => <EcranCalme variante="introuvable" />,
   staleTime: Number.POSITIVE_INFINITY,
 });

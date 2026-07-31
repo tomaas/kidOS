@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, asc, eq, isNotNull, isNull, lt, ne } from "drizzle-orm";
 import { z } from "zod";
-import { appConfig } from "~/config/app";
+import { composeBranding } from "~/config/app";
 import { resolveImageModel } from "~/config/image-models";
 import { getAppConfig, type ProviderConfig } from "~/server/app-config";
 import { db } from "~/server/db";
@@ -108,9 +108,11 @@ function beatToSegmentValues(beat: DynamicBeat) {
 export const startDynamicStoryFn = createServerFn({ method: "POST" })
   .validator(startSchema)
   .handler(async ({ data }): Promise<DynamicStartResult> => {
-    // UN instantané de config pour TOUTE l'opération (arc + beat + défauts) —
-    // jamais deux générations de réglages dans une même histoire qui démarre.
-    const { provider } = await getAppConfig();
+    // UN instantané de config pour TOUTE l'opération (arc + beat + défauts +
+    // marque) — jamais deux générations de réglages dans une même histoire
+    // qui démarre.
+    const config = await getAppConfig();
+    const { provider } = config;
     if (!provider.anthropicApiKey) {
       // Point d'usage : clé absente (ni ligne DB ni env) → AUCUN appel
       // provider ; l'enfant garde le soft-fail calme existant, le statut
@@ -246,7 +248,11 @@ export const startDynamicStoryFn = createServerFn({ method: "POST" })
         placeLabel: place.label,
         placePromptHint: place.promptHint,
         storyArc,
-        title: beat.title?.trim() || appConfig.storyLabel,
+        // Titre de repli dans la langue de l'HISTOIRE (jamais la locale UI —
+        // codex #5), depuis la marque du MÊME instantané.
+        title:
+          beat.title?.trim() ||
+          composeBranding(lang, config.branding).storyLabel,
         // Frozen with the arc (same call): the story's default illustration
         // ambiance. Null when arc gen soft-failed → image prompts as before.
         visualWorld: arcResult?.visualWorld ?? null,
