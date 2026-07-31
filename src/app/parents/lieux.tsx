@@ -1,5 +1,5 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { Home, Pencil, Plus, Trash2 } from "lucide-react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { PlaceForm } from "~/components/place-form";
 import { Button } from "~/components/ui/button";
@@ -65,19 +65,7 @@ function ParentsLieuxPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div>
-        <Button
-          className="gap-2 text-lg text-muted-foreground"
-          nativeButton={false}
-          render={<Link to="/" />}
-          variant="ghost"
-        >
-          <Home className="size-5" />
-          {m.commun.accueil}
-        </Button>
-      </div>
-
+    <>
       <div className="space-y-2">
         <h1 className="font-bold text-3xl">{m.parents.entites.lieux.titre}</h1>
         <p className="text-muted-foreground">{m.parents.entites.lieux.intro}</p>
@@ -142,6 +130,6 @@ function ParentsLieuxPage() {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }

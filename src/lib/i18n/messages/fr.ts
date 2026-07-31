@@ -118,12 +118,20 @@ export const fr = {
     description: "Rejoins une page de l'espace parent.",
     groupeAtelier: "L'atelier",
     groupeParent: "Espace parent",
-    // Le rappel du raccourci, sur /parents seulement — jamais côté enfant.
+    // Le rappel du raccourci, dans le pied du panneau latéral de l'espace
+    // parent seulement — jamais côté enfant.
     indice: "Astuce : ⌘K (ou Ctrl+K) ouvre le menu de navigation.",
     placeholder: "Chercher une page…",
     titre: "Menu de navigation",
   },
   parents: {
+    // La barre latérale de l'espace parent (app/parents/route.tsx) — seul le
+    // déclencheur (icône seule) a besoin d'un libellé ; les entrées de
+    // navigation portent leur libellé visible (parents.index.sections).
+    barreLaterale: {
+      basculer: "Ouvrir ou fermer le panneau",
+      description: "La navigation de l'espace parent.",
+    },
     calcul: {
       changerPalier: "Changer le palier range la série en cours.",
       changerTaille:
@@ -247,10 +255,9 @@ export const fr = {
       parDefaut: "par défaut",
       titre: "Le modèle d'image",
     },
-    // La page d'accueil de l'espace parent — une carte par sous-page.
+    // Les sections de l'espace parent — libellés du panneau latéral et de la
+    // palette ⌘K (l'ancien hub à cartes est retiré ; /parents redirige).
     index: {
-      intro:
-        "Gère ce que l'enfant peut choisir : héros, lieux, éléments et doudous. Les histoires déjà créées ne changent jamais.",
       sections: {
         calcul: {
           description:

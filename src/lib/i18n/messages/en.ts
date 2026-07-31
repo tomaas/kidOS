@@ -110,6 +110,10 @@ export const en: Messages = {
     titre: "Navigation menu",
   },
   parents: {
+    barreLaterale: {
+      basculer: "Open or close the panel",
+      description: "The parent space navigation.",
+    },
     calcul: {
       changerPalier: "Changing the level puts the current series away.",
       changerTaille:
@@ -224,8 +228,6 @@ export const en: Messages = {
       titre: "The image model",
     },
     index: {
-      intro:
-        "Manage what the child can choose: heroes, places, elements and cuddly toys. Stories already created never change.",
       sections: {
         calcul: {
           description:

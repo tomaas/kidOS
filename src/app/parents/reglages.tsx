@@ -1,11 +1,17 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { Home } from "lucide-react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { composeBranding } from "~/config/app";
-import { formatMessage, useLocale, useMessages } from "~/lib/i18n";
+import {
+  formatMessage,
+  LOCALE_LABELS,
+  LOCALES,
+  type Locale,
+  useLocale,
+  useMessages,
+} from "~/lib/i18n";
 import type {
   AppSettingsStatus,
   SecretStatus,
@@ -14,6 +20,7 @@ import type {
 import {
   getAppSettingsStatusFn,
   saveAppSettingsFn,
+  saveUiLocaleFn,
 } from "~/server/settings-functions";
 
 export const Route = createFileRoute("/parents/reglages")({
@@ -52,29 +59,18 @@ function ParentsReglagesPage() {
   const status = Route.useLoaderData();
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div>
-        <Button
-          className="gap-2 text-lg text-muted-foreground"
-          nativeButton={false}
-          render={<Link to="/" />}
-          variant="ghost"
-        >
-          <Home className="size-5" />
-          {m.commun.accueil}
-        </Button>
-      </div>
-
+    <>
       <div className="space-y-2">
         <h1 className="font-bold text-3xl">{m.parents.reglages.titre}</h1>
         <p className="text-muted-foreground">{m.parents.reglages.intro}</p>
       </div>
 
+      <SectionLangue />
       <SectionAtelier status={status} />
       <SectionHistoires status={status} />
       <SectionImages status={status} />
       <SectionVoix status={status} />
-    </div>
+    </>
   );
 }
 
@@ -340,6 +336,68 @@ function CarteSection({
 }
 
 /* ── Sections ────────────────────────────────────────────────────────────── */
+
+/**
+ * La langue de l'atelier — déménagée depuis l'ancien hub /parents (retiré au
+ * profit du panneau latéral) ; deux options, pas de sous-page. Enregistrée en
+ * DB (app_settings) puis router.invalidate() relance le loader racine : toute
+ * l'interface bascule sans rechargement. L'échec reste calme et local (le
+ * libellé vient du catalogue client — le serveur ne renvoie qu'un booléen).
+ * Les autonymes « Français » / « English » ne sont jamais traduits.
+ */
+function SectionLangue() {
+  const locale = useLocale();
+  const m = useMessages();
+  const router = useRouter();
+  const [etat, setEtat] = useState<"repos" | "enregistre" | "impossible">(
+    "repos"
+  );
+
+  async function choisir(cible: Locale) {
+    if (cible === locale) {
+      return;
+    }
+    const result = await saveUiLocaleFn({ data: { locale: cible } });
+    if (result.success) {
+      setEtat("enregistre");
+      await router.invalidate();
+    } else {
+      setEtat("impossible");
+    }
+  }
+
+  return (
+    <CarteSection
+      description={m.parents.langue.hint}
+      emoji="🌍"
+      titre={m.parents.langue.titre}
+    >
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex gap-2">
+          {LOCALES.map((option) => (
+            <Button
+              key={option}
+              onClick={() => choisir(option)}
+              variant={option === locale ? "default" : "outline"}
+            >
+              {LOCALE_LABELS[option]}
+            </Button>
+          ))}
+        </div>
+        {etat === "enregistre" ? (
+          <p className="text-muted-foreground text-sm">
+            {m.parents.langue.enregistre}
+          </p>
+        ) : null}
+        {etat === "impossible" ? (
+          <p className="text-muted-foreground text-sm">
+            {m.parents.enregistrementImpossible}
+          </p>
+        ) : null}
+      </div>
+    </CarteSection>
+  );
+}
 
 /**
  * Le prénom & les textes de l'atelier — la marque, posée en base (plus
