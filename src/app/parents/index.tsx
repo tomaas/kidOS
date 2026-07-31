@@ -9,25 +9,29 @@ import {
   useLocale,
   useMessages,
 } from "~/lib/i18n";
+import {
+  SECTIONS_PARENTS,
+  type SectionParentsId,
+} from "~/lib/parents/sections";
 import { saveUiLocaleFn } from "~/server/settings-functions";
 
 export const Route = createFileRoute("/parents/")({
   component: ParentsIndexPage,
 });
 
-// The parent-facing sub-pages. URL-only section (not linked from the child
-// flow); this index is the one landing that gathers them. Each card mirrors the
-// emoji + one-line description style of the lists inside each sub-page; title +
-// description come from the catalog (parents.index.sections) via `key`.
-const SECTIONS = [
-  { emoji: "🧒", key: "heroes", to: "/parents/heroes" },
-  { emoji: "📍", key: "lieux", to: "/parents/lieux" },
-  { emoji: "✨", key: "elements", to: "/parents/elements" },
-  { emoji: "🧸", key: "doudous", to: "/parents/doudous" },
-  { emoji: "🔢", key: "calcul", to: "/parents/calcul" },
-  { emoji: "🎨", key: "imageModel", to: "/parents/image-model" },
-  { emoji: "🔧", key: "reglages", to: "/parents/reglages" },
-] as const;
+// The section list lives in the pure registry `~/lib/parents/sections` (shared
+// with the sidebar and the goldens); only the emoji decoration stays local to
+// this hub — title + description come from the catalog
+// (parents.index.sections) via the section id.
+const SECTION_EMOJIS: Record<SectionParentsId, string> = {
+  calcul: "🔢",
+  doudous: "🧸",
+  elements: "✨",
+  heroes: "🧒",
+  imageModel: "🎨",
+  lieux: "📍",
+  reglages: "🔧",
+};
 
 /**
  * Parent-only landing (URL-only, NOT linked from the child flow) that gathers
@@ -56,8 +60,8 @@ function ParentsIndexPage() {
       </div>
 
       <ul className="space-y-3">
-        {SECTIONS.map((section) => {
-          const card = m.parents.index.sections[section.key];
+        {SECTIONS_PARENTS.map((section) => {
+          const card = m.parents.index.sections[section.id];
           return (
             <li key={section.to}>
               <Link
@@ -65,7 +69,7 @@ function ParentsIndexPage() {
                 to={section.to}
               >
                 <span aria-hidden="true" className="text-4xl leading-none">
-                  {section.emoji}
+                  {SECTION_EMOJIS[section.id]}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-xl">{card.titre}</p>
