@@ -124,6 +124,12 @@ export const fr = {
     titre: "Menu de navigation",
   },
   parents: {
+    // La barre latérale de l'espace parent (app/parents/route.tsx) — seul le
+    // déclencheur (icône seule) a besoin d'un libellé ; les entrées de
+    // navigation portent leur libellé visible (parents.index.sections).
+    barreLaterale: {
+      basculer: "Ouvrir ou fermer le panneau",
+    },
     calcul: {
       changerPalier: "Changer le palier range la série en cours.",
       changerTaille:

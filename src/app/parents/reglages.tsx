@@ -1,5 +1,4 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { Home } from "lucide-react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
@@ -52,19 +51,7 @@ function ParentsReglagesPage() {
   const status = Route.useLoaderData();
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div>
-        <Button
-          className="gap-2 text-lg text-muted-foreground"
-          nativeButton={false}
-          render={<Link to="/" />}
-          variant="ghost"
-        >
-          <Home className="size-5" />
-          {m.commun.accueil}
-        </Button>
-      </div>
-
+    <>
       <div className="space-y-2">
         <h1 className="font-bold text-3xl">{m.parents.reglages.titre}</h1>
         <p className="text-muted-foreground">{m.parents.reglages.intro}</p>
@@ -74,7 +61,7 @@ function ParentsReglagesPage() {
       <SectionHistoires status={status} />
       <SectionImages status={status} />
       <SectionVoix status={status} />
-    </div>
+    </>
   );
 }
 

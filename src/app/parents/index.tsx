@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -41,19 +41,7 @@ const SECTION_EMOJIS: Record<SectionParentsId, string> = {
 function ParentsIndexPage() {
   const m = useMessages();
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div>
-        <Button
-          className="gap-2 text-lg text-muted-foreground"
-          nativeButton={false}
-          render={<Link to="/" />}
-          variant="ghost"
-        >
-          <Home className="size-5" />
-          {m.commun.accueil}
-        </Button>
-      </div>
-
+    <>
       <div className="space-y-2">
         <h1 className="font-bold text-3xl">{m.parents.espaceParent}</h1>
         <p className="text-muted-foreground">{m.parents.index.intro}</p>
@@ -89,7 +77,7 @@ function ParentsIndexPage() {
       {/* Le rappel du raccourci vit ICI, côté parent, et nulle part dans la
           couche enfant : la palette reste une porte discrète, comme /parents. */}
       <p className="text-muted-foreground text-sm">{m.palette.indice}</p>
-    </div>
+    </>
   );
 }
 

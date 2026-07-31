@@ -1,6 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, Home } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
+import { Check } from "lucide-react";
 import { IMAGE_MODELS } from "~/config/image-models";
 import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
@@ -31,19 +30,7 @@ function ParentsImageModelPage() {
   const { model, setModel } = useImageModel(flags.imageModel);
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div>
-        <Button
-          className="gap-2 text-lg text-muted-foreground"
-          nativeButton={false}
-          render={<Link to="/" />}
-          variant="ghost"
-        >
-          <Home className="size-5" />
-          {m.commun.accueil}
-        </Button>
-      </div>
-
+    <>
       <div className="space-y-2">
         <h1 className="font-bold text-3xl">{m.parents.imageModel.titre}</h1>
         <p className="text-muted-foreground">{m.parents.imageModel.intro}</p>
@@ -96,6 +83,6 @@ function ParentsImageModelPage() {
       </ul>
 
       <ImageTestPlayground initialModel={model} />
-    </div>
+    </>
   );
 }

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
+import { Route as ParentsRouteRouteImport } from './app/parents/route'
 import { Route as BureauRouteRouteImport } from './app/_bureau/route'
 import { Route as IndexRouteImport } from './app/index'
 import { Route as ParentsIndexRouteImport } from './app/parents/index'
@@ -25,6 +26,11 @@ import { Route as BureauCalculIndexRouteImport } from './app/_bureau/calcul/inde
 import { Route as BureauAventureIndexRouteImport } from './app/_bureau/aventure/index'
 import { Route as BureauAventureIdRouteImport } from './app/_bureau/aventure/$id'
 
+const ParentsRouteRoute = ParentsRouteRouteImport.update({
+  id: '/parents',
+  path: '/parents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BureauRouteRoute = BureauRouteRouteImport.update({
   id: '/_bureau',
   getParentRoute: () => rootRouteImport,
@@ -35,44 +41,44 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParentsIndexRoute = ParentsIndexRouteImport.update({
-  id: '/parents/',
-  path: '/parents/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsReglagesRoute = ParentsReglagesRouteImport.update({
-  id: '/parents/reglages',
-  path: '/parents/reglages',
-  getParentRoute: () => rootRouteImport,
+  id: '/reglages',
+  path: '/reglages',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsLieuxRoute = ParentsLieuxRouteImport.update({
-  id: '/parents/lieux',
-  path: '/parents/lieux',
-  getParentRoute: () => rootRouteImport,
+  id: '/lieux',
+  path: '/lieux',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsImageModelRoute = ParentsImageModelRouteImport.update({
-  id: '/parents/image-model',
-  path: '/parents/image-model',
-  getParentRoute: () => rootRouteImport,
+  id: '/image-model',
+  path: '/image-model',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsHeroesRoute = ParentsHeroesRouteImport.update({
-  id: '/parents/heroes',
-  path: '/parents/heroes',
-  getParentRoute: () => rootRouteImport,
+  id: '/heroes',
+  path: '/heroes',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsElementsRoute = ParentsElementsRouteImport.update({
-  id: '/parents/elements',
-  path: '/parents/elements',
-  getParentRoute: () => rootRouteImport,
+  id: '/elements',
+  path: '/elements',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsDoudousRoute = ParentsDoudousRouteImport.update({
-  id: '/parents/doudous',
-  path: '/parents/doudous',
-  getParentRoute: () => rootRouteImport,
+  id: '/doudous',
+  path: '/doudous',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsCalculRoute = ParentsCalculRouteImport.update({
-  id: '/parents/calcul',
-  path: '/parents/calcul',
-  getParentRoute: () => rootRouteImport,
+  id: '/calcul',
+  path: '/calcul',
+  getParentRoute: () => ParentsRouteRoute,
 } as any)
 const DataSplatRoute = DataSplatRouteImport.update({
   id: '/data/$',
@@ -102,6 +108,7 @@ const BureauAventureIdRoute = BureauAventureIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/parents': typeof ParentsRouteRouteWithChildren
   '/bibliotheque': typeof BureauBibliothequeRoute
   '/data/$': typeof DataSplatRoute
   '/parents/calcul': typeof ParentsCalculRoute
@@ -136,6 +143,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_bureau': typeof BureauRouteRouteWithChildren
+  '/parents': typeof ParentsRouteRouteWithChildren
   '/_bureau/bibliotheque': typeof BureauBibliothequeRoute
   '/data/$': typeof DataSplatRoute
   '/parents/calcul': typeof ParentsCalculRoute
@@ -154,6 +162,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/parents'
     | '/bibliotheque'
     | '/data/$'
     | '/parents/calcul'
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_bureau'
+    | '/parents'
     | '/_bureau/bibliotheque'
     | '/data/$'
     | '/parents/calcul'
@@ -205,19 +215,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BureauRouteRoute: typeof BureauRouteRouteWithChildren
+  ParentsRouteRoute: typeof ParentsRouteRouteWithChildren
   DataSplatRoute: typeof DataSplatRoute
-  ParentsCalculRoute: typeof ParentsCalculRoute
-  ParentsDoudousRoute: typeof ParentsDoudousRoute
-  ParentsElementsRoute: typeof ParentsElementsRoute
-  ParentsHeroesRoute: typeof ParentsHeroesRoute
-  ParentsImageModelRoute: typeof ParentsImageModelRoute
-  ParentsLieuxRoute: typeof ParentsLieuxRoute
-  ParentsReglagesRoute: typeof ParentsReglagesRoute
-  ParentsIndexRoute: typeof ParentsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/parents': {
+      id: '/parents'
+      path: '/parents'
+      fullPath: '/parents'
+      preLoaderRoute: typeof ParentsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_bureau': {
       id: '/_bureau'
       path: ''
@@ -234,59 +244,59 @@ declare module '@tanstack/react-router' {
     }
     '/parents/': {
       id: '/parents/'
-      path: '/parents'
+      path: '/'
       fullPath: '/parents/'
       preLoaderRoute: typeof ParentsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/reglages': {
       id: '/parents/reglages'
-      path: '/parents/reglages'
+      path: '/reglages'
       fullPath: '/parents/reglages'
       preLoaderRoute: typeof ParentsReglagesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/lieux': {
       id: '/parents/lieux'
-      path: '/parents/lieux'
+      path: '/lieux'
       fullPath: '/parents/lieux'
       preLoaderRoute: typeof ParentsLieuxRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/image-model': {
       id: '/parents/image-model'
-      path: '/parents/image-model'
+      path: '/image-model'
       fullPath: '/parents/image-model'
       preLoaderRoute: typeof ParentsImageModelRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/heroes': {
       id: '/parents/heroes'
-      path: '/parents/heroes'
+      path: '/heroes'
       fullPath: '/parents/heroes'
       preLoaderRoute: typeof ParentsHeroesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/elements': {
       id: '/parents/elements'
-      path: '/parents/elements'
+      path: '/elements'
       fullPath: '/parents/elements'
       preLoaderRoute: typeof ParentsElementsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/doudous': {
       id: '/parents/doudous'
-      path: '/parents/doudous'
+      path: '/doudous'
       fullPath: '/parents/doudous'
       preLoaderRoute: typeof ParentsDoudousRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/parents/calcul': {
       id: '/parents/calcul'
-      path: '/parents/calcul'
+      path: '/calcul'
       fullPath: '/parents/calcul'
       preLoaderRoute: typeof ParentsCalculRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ParentsRouteRoute
     }
     '/data/$': {
       id: '/data/$'
@@ -344,10 +354,18 @@ const BureauRouteRouteWithChildren = BureauRouteRoute._addFileChildren(
   BureauRouteRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  BureauRouteRoute: BureauRouteRouteWithChildren,
-  DataSplatRoute: DataSplatRoute,
+interface ParentsRouteRouteChildren {
+  ParentsCalculRoute: typeof ParentsCalculRoute
+  ParentsDoudousRoute: typeof ParentsDoudousRoute
+  ParentsElementsRoute: typeof ParentsElementsRoute
+  ParentsHeroesRoute: typeof ParentsHeroesRoute
+  ParentsImageModelRoute: typeof ParentsImageModelRoute
+  ParentsLieuxRoute: typeof ParentsLieuxRoute
+  ParentsReglagesRoute: typeof ParentsReglagesRoute
+  ParentsIndexRoute: typeof ParentsIndexRoute
+}
+
+const ParentsRouteRouteChildren: ParentsRouteRouteChildren = {
   ParentsCalculRoute: ParentsCalculRoute,
   ParentsDoudousRoute: ParentsDoudousRoute,
   ParentsElementsRoute: ParentsElementsRoute,
@@ -356,6 +374,17 @@ const rootRouteChildren: RootRouteChildren = {
   ParentsLieuxRoute: ParentsLieuxRoute,
   ParentsReglagesRoute: ParentsReglagesRoute,
   ParentsIndexRoute: ParentsIndexRoute,
+}
+
+const ParentsRouteRouteWithChildren = ParentsRouteRoute._addFileChildren(
+  ParentsRouteRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  BureauRouteRoute: BureauRouteRouteWithChildren,
+  ParentsRouteRoute: ParentsRouteRouteWithChildren,
+  DataSplatRoute: DataSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

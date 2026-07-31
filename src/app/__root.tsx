@@ -119,16 +119,13 @@ function EcranCalme({ variante }: { variante: "souci" | "introuvable" }) {
 }
 
 export function RootComponent() {
-  // Shell route-aware (voix extérieure T5) : la couche bureau (portrait,
-  // bureau, fenêtre) a besoin du plein-bleed ; /parents — hors de l'OS —
-  // garde le conteneur d'origine. Fonctionne au SSR (l'état du router est
-  // disponible côté serveur), donc aucun flash de shell.
-  const estParents = useRouterState({
-    select: (s) => s.location.pathname.startsWith("/parents"),
-  });
+  // Le shell rend plein-bleed pour TOUTES les routes : la couche bureau
+  // (portrait, bureau, fenêtre) l'exige, et /parents apporte désormais son
+  // propre cadre via sa route layout (le panneau latéral + la colonne de
+  // lecture) — l'ancien conteneur max-w-5xl route-aware a disparu avec lui.
   const locale = useRootLocale();
   return (
-    <RootDocument conteneur={estParents} locale={locale}>
+    <RootDocument locale={locale}>
       <LocaleProvider locale={locale}>
         <Outlet />
         {/* La palette ⌘K vit ICI, et pas dans la gate session-fermée : c'est
@@ -145,22 +142,15 @@ export function RootComponent() {
 
 export function RootDocument({
   children,
-  conteneur,
   locale,
-}: Readonly<{ children: ReactNode; conteneur: boolean; locale: Locale }>) {
+}: Readonly<{ children: ReactNode; locale: Locale }>) {
   return (
     <html lang={locale}>
       <head>
         <HeadContent />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {conteneur ? (
-          <div className="mx-auto min-h-screen max-w-5xl px-6 py-10">
-            {children}
-          </div>
-        ) : (
-          children
-        )}
+        {children}
         <Toaster />
         <Scripts />
       </body>

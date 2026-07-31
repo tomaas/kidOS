@@ -110,6 +110,9 @@ export const en: Messages = {
     titre: "Navigation menu",
   },
   parents: {
+    barreLaterale: {
+      basculer: "Open or close the panel",
+    },
     calcul: {
       changerPalier: "Changing the level puts the current series away.",
       changerTaille:

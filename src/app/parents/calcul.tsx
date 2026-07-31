@@ -1,5 +1,5 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { Home, Printer } from "lucide-react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Printer } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PrintableOperationsSheet } from "~/components/printable-operations";
 import { Button } from "~/components/ui/button";
@@ -104,21 +104,12 @@ function ParentsCalculPage() {
 function SettingsUnavailable() {
   const m = useMessages();
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <Button
-        className="gap-2 text-lg text-muted-foreground"
-        nativeButton={false}
-        render={<Link to="/parents" />}
-        variant="ghost"
-      >
-        <Home className="size-5" />
-        {m.parents.espaceParent}
-      </Button>
+    <>
       <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
       <p className="text-muted-foreground">
         {m.parents.calcul.reglagesIndisponibles}
       </p>
-    </div>
+    </>
   );
 }
 
@@ -226,19 +217,7 @@ function ParentsCalculForm({
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <div className="no-print">
-        <Button
-          className="gap-2 text-lg text-muted-foreground"
-          nativeButton={false}
-          render={<Link to="/parents" />}
-          variant="ghost"
-        >
-          <Home className="size-5" />
-          {m.parents.espaceParent}
-        </Button>
-      </div>
-
+    <>
       <div className="no-print space-y-2">
         <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
         <p className="text-muted-foreground">{m.parents.calcul.intro}</p>
@@ -371,6 +350,6 @@ function ParentsCalculForm({
           title={m.parents.calcul.titreFiche}
         />
       ) : null}
-    </div>
+    </>
   );
 }
