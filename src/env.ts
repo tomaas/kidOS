@@ -125,25 +125,5 @@ function validateServerEnv(): void {
 
 validateServerEnv();
 
-/**
- * Flags that are safe to send to the client so the UI can hide/show the
- * "Écouter" button and the illustration slot. No secrets here.
- */
-export interface PublicFlags {
-  defaultLang: "fr" | "ru" | "en";
-  imageEnabled: boolean;
-  // The env default image model, mirrored so the /parents picker's "par défaut"
-  // badge + the localStorage hook's default track the deployed env (not a
-  // hard-coded mirror). The id itself is not a secret.
-  imageModel: string;
-  ttsEnabled: boolean;
-}
-
-export function getPublicFlags(): PublicFlags {
-  return {
-    defaultLang: serverEnv.defaultLang,
-    imageEnabled: serverEnv.imageEnabled,
-    imageModel: serverEnv.imageModel,
-    ttsEnabled: serverEnv.ttsEnabled,
-  };
-}
+// Les flags publics (client) dérivent désormais de l'INSTANTANÉ AppConfig —
+// voir publicFlagsFromConfig dans server/app-config.ts (env.ts reste db-free).

@@ -1,4 +1,4 @@
-import { serverEnv } from "~/env";
+import type { ProviderConfig } from "~/server/app-config";
 import type { TtsProvider } from "~/server/providers/types";
 import { edgeTtsProvider } from "./edge";
 import { elevenLabsTtsProvider } from "./elevenlabs";
@@ -9,8 +9,8 @@ import { elevenLabsTtsProvider } from "./elevenlabs";
  * configured TTS adapter. `TTS_PROVIDER=elevenlabs` → ElevenLabs; anything
  * else (incl. unset) → the free edge voices, the default.
  */
-export function getTtsProvider(): TtsProvider {
-  return serverEnv.ttsProvider === "elevenlabs"
-    ? elevenLabsTtsProvider
+export function getTtsProvider(config: ProviderConfig): TtsProvider {
+  return config.ttsProvider === "elevenlabs"
+    ? elevenLabsTtsProvider(config.elevenLabsApiKey)
     : edgeTtsProvider;
 }

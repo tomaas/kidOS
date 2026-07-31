@@ -299,6 +299,33 @@ export function hintFor(secret: string): string {
   return `…${secret.slice(-3)}`;
 }
 
+// ── Flags publics (client) ───────────────────────────────────────────────────
+
+/**
+ * Flags that are safe to send to the client so the UI can hide/show the
+ * "Écouter" button and the illustration slot. No secrets here. Dérivés de
+ * l'INSTANTANÉ de config (jamais de l'env seul) : un toggle posé en base
+ * s'applique à la prochaine requête, sans rebuild.
+ */
+export interface PublicFlags {
+  defaultLang: StoryLang;
+  imageEnabled: boolean;
+  // The default image model, mirrored so the /parents picker's "par défaut"
+  // badge + the localStorage hook's default track the deployed value (not a
+  // hard-coded mirror). The id itself is not a secret.
+  imageModel: string;
+  ttsEnabled: boolean;
+}
+
+export function publicFlagsFromConfig(provider: ProviderConfig): PublicFlags {
+  return {
+    defaultLang: provider.defaultLang,
+    imageEnabled: provider.imageEnabled,
+    imageModel: provider.imageModel,
+    ttsEnabled: provider.ttsEnabled,
+  };
+}
+
 // ── Statut pour l'écran parent (formes SANS secret) ──────────────────────────
 
 /** D'où vient la valeur effective : une ligne posée par le parent ("db") ou
