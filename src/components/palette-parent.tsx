@@ -1,16 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import {
-  Grid3x3,
-  Home,
-  LayoutGrid,
-  type LucideIcon,
-  MapPin,
-  Palette,
-  Rabbit,
-  Sparkles,
-  Users,
-  Wrench,
-} from "lucide-react";
+import { Home, LayoutGrid, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Command,
@@ -28,6 +17,7 @@ import {
   type EntreePaletteId,
   entreesDuGroupe,
 } from "~/lib/palette/entrees";
+import { PICTOGRAMMES_SECTIONS } from "~/lib/parents/pictogrammes";
 
 /**
  * La palette ⌘K — la porte clavier du PARENT vers l'espace parent (et le
@@ -49,19 +39,14 @@ import {
 
 /**
  * Le pictogramme de chaque entrée — de la présentation, gardée hors du registre
- * pur (`lib/palette/entrees.ts`). Les glyphes reprennent les emojis des cartes
- * de /parents, et `Grid3x3` est celui de l'app Calculs du bureau.
+ * pur (`lib/palette/entrees.ts`). Les sections reprennent la table partagée
+ * avec le panneau latéral (`lib/parents/pictogrammes.ts` — une seule
+ * iconographie parent) ; la palette n'ajoute que ses deux entrées propres.
  */
 const PICTOGRAMMES: Record<EntreePaletteId, LucideIcon> = {
+  ...PICTOGRAMMES_SECTIONS,
   accueil: Home,
-  calcul: Grid3x3,
-  doudous: Rabbit,
-  elements: Sparkles,
   espaceParent: LayoutGrid,
-  heroes: Users,
-  imageModel: Palette,
-  lieux: MapPin,
-  reglages: Wrench,
 };
 
 /**

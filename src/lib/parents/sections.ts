@@ -7,7 +7,7 @@
  * une section ne peut pas les désynchroniser.
  */
 
-import type { EntreePaletteId } from "~/lib/palette/entrees";
+import type { CheminPalette, EntreePaletteId } from "~/lib/palette/entrees";
 
 /**
  * L'id d'une section = la clé de son libellé dans le catalogue, ET l'id de
@@ -19,15 +19,12 @@ export type SectionParentsId = Exclude<
   "accueil" | "espaceParent"
 >;
 
-/** Les chemins des sections — le type est vérifié contre l'arbre du router. */
-export type CheminSectionParents =
-  | "/parents/heroes"
-  | "/parents/lieux"
-  | "/parents/elements"
-  | "/parents/doudous"
-  | "/parents/calcul"
-  | "/parents/image-model"
-  | "/parents/reglages";
+/**
+ * Les chemins des sections — dérivés de `CheminPalette` (import de type
+ * seulement, le module reste sans dépendance) : une seule liste de littéraux,
+ * vérifiée contre l'arbre du router côté palette.
+ */
+export type CheminSectionParents = Exclude<CheminPalette, "/" | "/parents">;
 
 export interface SectionParents {
   readonly id: SectionParentsId;

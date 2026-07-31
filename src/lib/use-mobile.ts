@@ -17,8 +17,18 @@ const MOBILE_BREAKPOINT = 768;
 
 const MOBILE_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
 
+// Une seule MediaQueryList partagée : `getSnapshot` est rappelé à CHAQUE
+// rendu sous le SidebarProvider, et `window.matchMedia` construirait un
+// objet neuf à chaque fois (différent de celui qui porte l'écouteur).
+let mediaQuery: MediaQueryList | null = null;
+
+function lireMediaQuery(): MediaQueryList {
+  mediaQuery ??= window.matchMedia(MOBILE_QUERY);
+  return mediaQuery;
+}
+
 function subscribeMobile(onChange: () => void) {
-  const media = window.matchMedia(MOBILE_QUERY);
+  const media = lireMediaQuery();
   media.addEventListener("change", onChange);
   return () => media.removeEventListener("change", onChange);
 }
@@ -26,7 +36,7 @@ function subscribeMobile(onChange: () => void) {
 export function useIsMobile(): boolean {
   return useSyncExternalStore(
     subscribeMobile,
-    () => window.matchMedia(MOBILE_QUERY).matches,
+    () => lireMediaQuery().matches,
     // SSR : pas de lecture de window pendant le rendu (D17-A) — `false`
     // rend la variante desktop, corrigée au premier snapshot client.
     () => false

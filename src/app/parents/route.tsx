@@ -4,17 +4,7 @@ import {
   Outlet,
   useRouterState,
 } from "@tanstack/react-router";
-import {
-  Grid3x3,
-  Home,
-  type LucideIcon,
-  MapPin,
-  Palette,
-  Rabbit,
-  Sparkles,
-  Users,
-  Wrench,
-} from "lucide-react";
+import { Home } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Sidebar,
@@ -32,10 +22,8 @@ import {
   useSidebar,
 } from "~/components/ui/sidebar";
 import { useMessages } from "~/lib/i18n";
-import {
-  SECTIONS_PARENTS,
-  type SectionParentsId,
-} from "~/lib/parents/sections";
+import { PICTOGRAMMES_SECTIONS } from "~/lib/parents/pictogrammes";
+import { SECTIONS_PARENTS } from "~/lib/parents/sections";
 
 /**
  * La route layout de l'espace /parents : le PANNEAU LATÉRAL partagé par les
@@ -58,23 +46,6 @@ import {
 export const Route = createFileRoute("/parents")({
   component: ParentsLayout,
 });
-
-/**
- * Le pictogramme de chaque section — de la présentation, gardée hors du
- * registre pur (`lib/parents/sections.ts`), comme `PICTOGRAMMES` dans
- * palette-parent.tsx (mêmes glyphes : une seule iconographie parent).
- * NB : Biome trie les clés du Record par ordre alphabétique — l'ORDRE de
- * rendu vient du registre (`SECTIONS_PARENTS`), jamais d'ici.
- */
-const PICTOGRAMMES: Record<SectionParentsId, LucideIcon> = {
-  calcul: Grid3x3,
-  doudous: Rabbit,
-  elements: Sparkles,
-  heroes: Users,
-  imageModel: Palette,
-  lieux: MapPin,
-  reglages: Wrench,
-};
 
 function ParentsLayout() {
   const m = useMessages();
@@ -117,7 +88,12 @@ function SidebarParents() {
   }
 
   return (
-    <Sidebar collapsible="offcanvas" variant="sidebar">
+    <Sidebar
+      collapsible="offcanvas"
+      mobileDescription={m.parents.barreLaterale.description}
+      mobileTitle={m.parents.espaceParent}
+      variant="sidebar"
+    >
       <SidebarHeader>
         <p className="px-2 pt-2 font-semibold text-lg">
           {m.parents.espaceParent}
@@ -128,7 +104,7 @@ function SidebarParents() {
           <SidebarGroupContent>
             <SidebarMenu>
               {SECTIONS_PARENTS.map((section) => {
-                const Pictogramme = PICTOGRAMMES[section.id];
+                const Pictogramme = PICTOGRAMMES_SECTIONS[section.id];
                 return (
                   <SidebarMenuItem key={section.id}>
                     <SidebarMenuButton
