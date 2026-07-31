@@ -74,10 +74,13 @@ export const serverEnv = {
 } as const;
 
 /**
- * Validate required env at startup so a misconfiguration fails loudly with a
- * clear message instead of a cryptic libSQL / provider error mid-request.
- * Conditional: image/TTS keys are only required when their flag is on.
- * Skipped when SKIP_ENV_VALIDATION is set (used by the build).
+ * Validate INFRA env at startup so a misconfiguration fails loudly with a
+ * clear message instead of a cryptic libSQL error mid-request. INFRA ONLY :
+ * les clés provider (Anthropic/Gemini/ElevenLabs) et les gates image/TTS ne
+ * sont PLUS bloquantes au boot — elles peuvent vivre uniquement en base
+ * (app_settings, voir server/app-config.ts) et se vérifient au point
+ * d'usage (statut de configuration calme côté /parents, soft-failure côté
+ * enfant). Skipped when SKIP_ENV_VALIDATION is set (used by the build).
  */
 function validateServerEnv(): void {
   if (process.env.SKIP_ENV_VALIDATION) {
@@ -85,10 +88,6 @@ function validateServerEnv(): void {
   }
 
   const errors: string[] = [];
-
-  if (!serverEnv.anthropicApiKey) {
-    errors.push("ANTHROPIC_API_KEY est requis.");
-  }
 
   if (!serverEnv.databaseUrl.startsWith("file:")) {
     errors.push(
@@ -114,20 +113,6 @@ function validateServerEnv(): void {
     // pas encore été rapatriée (dump → fichier local), voir le README.
     console.warn(
       "TURSO_AUTH_TOKEN est défini mais n'est plus utilisé (base SQLite locale). Vérifiez que les données Turso ont été importées — voir README « Migrating from a previous Turso deployment »."
-    );
-  }
-
-  if (serverEnv.imageEnabled && !serverEnv.geminiApiKey) {
-    errors.push("GEMINI_API_KEY est requis quand IMAGE_ENABLED=true.");
-  }
-
-  if (
-    serverEnv.ttsEnabled &&
-    serverEnv.ttsProvider === "elevenlabs" &&
-    !serverEnv.elevenLabsApiKey
-  ) {
-    errors.push(
-      "ELEVENLABS_API_KEY est requis quand TTS_ENABLED=true et TTS_PROVIDER=elevenlabs."
     );
   }
 
