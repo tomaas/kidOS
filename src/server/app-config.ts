@@ -411,23 +411,30 @@ function valueStatus<T>(rows: Rows, key: SettingKey, effective: T) {
   return { source: applied as SettingSource, value: effective };
 }
 
+function imageStatus(provider: ProviderConfig): FeatureConfigStatus {
+  if (!provider.imageEnabled) {
+    return "off";
+  }
+  return provider.geminiApiKey ? "ready" : "missing-key";
+}
+
+function ttsStatus(provider: ProviderConfig): FeatureConfigStatus {
+  if (!provider.ttsEnabled) {
+    return "off";
+  }
+  if (provider.ttsProvider === "elevenlabs" && !provider.elevenLabsApiKey) {
+    return "missing-key";
+  }
+  return "ready";
+}
+
 export function featureStatuses(
   provider: ProviderConfig
 ): AppSettingsStatus["features"] {
-  const image = provider.imageEnabled
-    ? provider.geminiApiKey
-      ? "ready"
-      : "missing-key"
-    : "off";
-  const tts = provider.ttsEnabled
-    ? provider.ttsProvider === "elevenlabs" && !provider.elevenLabsApiKey
-      ? "missing-key"
-      : "ready"
-    : "off";
   return {
-    image,
+    image: imageStatus(provider),
     text: provider.anthropicApiKey ? "ready" : "missing-key",
-    tts,
+    tts: ttsStatus(provider),
   };
 }
 

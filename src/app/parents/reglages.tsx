@@ -174,11 +174,12 @@ function ChampSecret({
   value: string;
 }) {
   const m = useMessages();
-  const etatCle = secret.configured
-    ? secret.hint
+  let etatCle = m.parents.reglages.cleNonConfiguree;
+  if (secret.configured) {
+    etatCle = secret.hint
       ? formatMessage(m.parents.reglages.cleEnPlace, { indice: secret.hint })
-      : m.parents.reglages.cleEnPlaceSansIndice
-    : m.parents.reglages.cleNonConfiguree;
+      : m.parents.reglages.cleEnPlaceSansIndice;
+  }
 
   return (
     <LigneChamp badge={secret.source === "default"} label={label}>
