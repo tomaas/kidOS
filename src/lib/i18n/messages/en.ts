@@ -281,6 +281,8 @@ export const en: Messages = {
       effacer: "Clear the key",
       enregistre: "Saved.",
       enregistrer: "Save",
+      fonctionEnPause:
+        "Without a configured key, this feature stays paused for now.",
       garderCle: "Leave empty to keep the current key.",
       intro:
         "The workshop's keys, models and options. Anything set here applies to the next stories, with no redeploy; when nothing is set, the deployment value applies.",
