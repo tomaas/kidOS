@@ -6,12 +6,18 @@
  * id d'ancienne route ne doit subsister. Vérification TEXTUELLE sur
  * routeTree.gen.ts + les fichiers de src/app : importer le vrai routeTree
  * tirerait l'env serveur et le CSS — hors de portée d'un script bun pur.
+ *
+ * Épingle AUSSI les destinations de la palette ⌘K (lib/palette/entrees.ts) :
+ * chaque entrée vise une URL réellement servie, et aucune ne raccourcit vers
+ * une mini-app du bureau (la palette est une porte parent, pas un raccourci
+ * enfant).
  *   bun run src/lib/bureau/__tests__/routes.golden.ts
  * (wired as `bun run test:routes`). Exits non-zero on any failure.
  */
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { ENTREES_PALETTE } from "~/lib/palette/entrees";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {
@@ -114,6 +120,41 @@ check(
     existsSync("src/app/_bureau/parents") ||
     routeTree.includes("'/_bureau/parents")
   )
+);
+
+/* ------------------ Les destinations de la palette ⌘K --------------------- */
+
+// Chaque entrée de la palette doit viser une URL RÉELLEMENT servie : le
+// registre (lib/palette/entrees.ts) est typé, mais un renommage de route
+// passerait au travers si le type était élargi — l'arbre généré tranche.
+// Tolérance sur la barre finale : le router sert /parents comme `/parents/`.
+for (const entree of ENTREES_PALETTE) {
+  check(
+    `palette → URL servie: ${entree.to}`,
+    routeTree.includes(`fullPath: '${entree.to}'`) ||
+      routeTree.includes(`fullPath: '${entree.to}/'`)
+  );
+}
+
+// Les ids sont uniques (ils servent de `value` cmdk ET de clé de libellé).
+const idsPalette = ENTREES_PALETTE.map((e) => e.id);
+check(
+  "palette : ids uniques",
+  new Set(idsPalette).size === idsPalette.length,
+  idsPalette.join(", ")
+);
+
+// La palette est une porte PARENT : elle ne raccourcit JAMAIS vers une
+// mini-app du bureau (l'enfant les ouvre par leur icône, jamais au clavier).
+const versMiniApp = ENTREES_PALETTE.filter((e) =>
+  ["/aventure", "/calcul", "/bibliotheque"].some(
+    (prefixe) => e.to === prefixe || e.to.startsWith(`${prefixe}/`)
+  )
+);
+check(
+  "palette : aucun raccourci vers une mini-app du bureau",
+  versMiniApp.length === 0,
+  versMiniApp.map((e) => e.to).join(", ")
 );
 
 /* --------------- Contrats prose → épinglés (D17-A + T2-A) ----------------- */

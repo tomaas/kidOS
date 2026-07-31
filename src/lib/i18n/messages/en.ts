@@ -100,6 +100,15 @@ export const en: Messages = {
     soucisTexte: "Let's tidy everything up and start again in a moment.",
     soucisTitre: "Oops, a little hiccup",
   },
+  palette: {
+    aucuneEntree: "Nothing on this side.",
+    description: "Go to a page of the parent space.",
+    groupeAtelier: "The workshop",
+    groupeParent: "Parent space",
+    indice: "Tip: ⌘K (or Ctrl+K) opens the navigation menu.",
+    placeholder: "Search for a page…",
+    titre: "Navigation menu",
+  },
   parents: {
     calcul: {
       changerPalier: "Changing the level puts the current series away.",

@@ -6,6 +6,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { PaletteParent } from "~/components/palette-parent";
 import { Toaster } from "~/components/ui/sonner";
 import {
   buildBranding,
@@ -130,6 +131,13 @@ export function RootComponent() {
     <RootDocument conteneur={estParents} locale={locale}>
       <LocaleProvider locale={locale}>
         <Outlet />
+        {/* La palette ⌘K vit ICI, et pas dans la gate session-fermée : c'est
+            une porte PARENT (comme /parents), pas un élément du bureau — elle
+            n'a donc rien à voir avec le rituel d'ouverture. Dans le
+            LocaleProvider, parce qu'elle lit le catalogue ; hors du
+            LocaleProvider (écrans erreur/404, qui remplacent le composant
+            racine) elle ne rend simplement pas. */}
+        <PaletteParent />
       </LocaleProvider>
     </RootDocument>
   );

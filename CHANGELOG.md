@@ -4,6 +4,33 @@ All notable changes to the app, one version per release.
 Format: [Keep a Changelog](https://keepachangelog.com/) adapted, 4-digit
 versions `MAJOR.MINOR.PATCH.MICRO` (`VERSION` file).
 
+## [0.6.1.0] - 2026-07-31
+
+### Added
+
+- **A ⌘K menu to reach the parent space**: press ⌘K (or Ctrl+K) on any page
+  — including over the desktop and the portrait screen — and a search menu
+  opens on the parent pages (parent space, settings, heroes, places,
+  elements, cuddly toys, sums, image model) plus the way back to the
+  desktop. Typing filters by name and by URL segment, so "settings" finds
+  Les réglages under a French interface and "reglages" finds Settings under
+  an English one. The menu is bilingual like the rest of the shell.
+- The menu is **navigation only** — never an action that saves something: a
+  setting is still changed on its own page, with its own context. It has no
+  visible trigger in the child's layer either: it extends the /parents rule
+  (reachable by URL, never drawn in the child's grammar), and the shortcut
+  is recalled on the parent home page only. A printed booklet is unaffected
+  even with the menu open.
+- New golden assertions: every menu destination is a URL the app really
+  serves and never a shortcut into a mini-app (`test:routes`), and every
+  entry resolves to a label in BOTH catalogs (`test:i18n`).
+
+### Changed
+
+- Floating surfaces (the menu and its dialogue) join the calm palette:
+  `--popover` was still the pure white inherited from the base theme, the
+  only cold surface in the workshop.
+
 ## [0.6.0.0] - 2026-07-31
 
 ### Added

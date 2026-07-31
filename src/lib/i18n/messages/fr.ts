@@ -110,6 +110,19 @@ export const fr = {
     soucisTexte: "On range tout et on recommence dans un instant.",
     soucisTitre: "Oups, un petit souci",
   },
+  // La palette ⌘K (components/palette-parent.tsx) — de la NAVIGATION parent,
+  // pas des actions. Les libellés des destinations viennent des mêmes clés que
+  // les cartes de /parents ; il n'y a ici que le cadre de la palette.
+  palette: {
+    aucuneEntree: "Rien de ce côté.",
+    description: "Rejoins une page de l'espace parent.",
+    groupeAtelier: "L'atelier",
+    groupeParent: "Espace parent",
+    // Le rappel du raccourci, sur /parents seulement — jamais côté enfant.
+    indice: "Astuce : ⌘K (ou Ctrl+K) ouvre le menu de navigation.",
+    placeholder: "Chercher une page…",
+    titre: "Menu de navigation",
+  },
   parents: {
     calcul: {
       changerPalier: "Changer le palier range la série en cours.",

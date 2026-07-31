@@ -29,6 +29,7 @@ import { normalizeLocale } from "~/lib/i18n/locale";
 import { en } from "~/lib/i18n/messages/en";
 import { fr } from "~/lib/i18n/messages/fr";
 import { FAMILLE_NOMS, FAMILLES, PALIERS } from "~/lib/operations";
+import { ENTREES_PALETTE, type EntreePaletteId } from "~/lib/palette/entrees";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {
@@ -194,6 +195,37 @@ for (const [chemin, attendu] of PINS_FR) {
     feuillesFr.get(chemin) === attendu,
     `attendu « ${attendu} », lu « ${feuillesFr.get(chemin)} »`
   );
+}
+
+// ── Libellés de la palette ⌘K ────────────────────────────────────────────────
+// Chaque entrée du registre pur (lib/palette/entrees.ts) lit son libellé dans
+// le catalogue, à la MÊME clé que la carte correspondante de /parents —
+// renommer une clé de section ne doit pas laisser une entrée sans nom (le
+// compilateur le voit dans le composant ; ici on l'épingle aussi côté données,
+// dans les DEUX langues).
+const CHEMIN_LIBELLE: Record<EntreePaletteId, string> = {
+  accueil: "commun.accueil",
+  calcul: "parents.index.sections.calcul.titre",
+  doudous: "parents.index.sections.doudous.titre",
+  elements: "parents.index.sections.elements.titre",
+  espaceParent: "parents.espaceParent",
+  heroes: "parents.index.sections.heroes.titre",
+  imageModel: "parents.index.sections.imageModel.titre",
+  lieux: "parents.index.sections.lieux.titre",
+  reglages: "parents.index.sections.reglages.titre",
+};
+
+for (const entree of ENTREES_PALETTE) {
+  const chemin = CHEMIN_LIBELLE[entree.id];
+  for (const [nom, catalogue] of [
+    ["fr", feuillesFr],
+    ["en", feuillesEn],
+  ] as const) {
+    check(
+      `palette ${nom} : ${entree.id} → ${chemin}`,
+      (catalogue.get(chemin) ?? "").trim().length > 0
+    );
+  }
 }
 
 // ── Branding par locale (cœur pur) ───────────────────────────────────────────
