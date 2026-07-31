@@ -2,16 +2,21 @@ import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { resolveImageModel } from "~/config/image-models";
-import { getPublicFlags, serverEnv } from "~/env";
+import { getAppConfig, publicFlagsFromConfig } from "~/server/app-config";
 import { db } from "~/server/db";
 import { stories } from "~/server/db/schema";
 import { generateImage } from "~/server/providers/image/nanobanana";
 import { getTtsProvider } from "~/server/providers/tts";
 import type { ImageStatus } from "~/server/providers/types";
 
-/** Flags the client may read (no secrets). */
-export const getFlagsFn = createServerFn({ method: "GET" }).handler(() =>
-  getPublicFlags()
+/** Flags the client may read (no secrets) — dérivés de l'instantané de
+ * config : un toggle posé en base s'applique au prochain chargement, sans
+ * rebuild. */
+export const getFlagsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const config = await getAppConfig();
+    return publicFlagsFromConfig(config.provider);
+  }
 );
 
 /**
@@ -44,12 +49,23 @@ export const generateTestImageFn = createServerFn({ method: "POST" })
     })
   )
   .handler(async ({ data }): Promise<TestImageResult> => {
+    // UN instantané de config pour toute l'opération (gate + clé + modèle +
+    // résolution du même monde — jamais deux générations mélangées).
+    const { provider } = await getAppConfig();
     // Resolve the picked model against the allowlist (loud fallback log on an
     // unknown id) so a stale/tampered value can never reach the provider.
-    const model = resolveImageModel(data.imageModel, serverEnv.imageModel);
-    if (!serverEnv.imageEnabled) {
+    const model = resolveImageModel(data.imageModel, provider.imageModel);
+    if (!provider.imageEnabled) {
       console.warn(
-        "[stories] test image gen SKIPPED — IMAGE_ENABLED is false (set IMAGE_ENABLED=true to enable)"
+        "[stories] test image gen SKIPPED — images désactivées (réglage image:enabled / IMAGE_ENABLED)"
+      );
+      return { imagePath: null, imageStatus: "skipped", model, ms: 0 };
+    }
+    if (!provider.geminiApiKey) {
+      // Point d'usage : clé absente → aucun appel réseau, état calme. Le
+      // statut « clé non configurée » vient de app-config (features.image).
+      console.warn(
+        "[stories] test image gen SKIPPED — clé Gemini non configurée (réglage image:gemini-api-key / GEMINI_API_KEY)"
       );
       return { imagePath: null, imageStatus: "skipped", model, ms: 0 };
     }
@@ -58,13 +74,13 @@ export const generateTestImageFn = createServerFn({ method: "POST" })
     console.log("[stories] test image gen START", {
       model,
       promptLen: data.prompt.length,
-      resolution: serverEnv.imageResolution,
+      resolution: provider.imageResolution,
     });
 
     try {
       // Send the prompt AS-IS — the parent has full control (no style suffix
       // auto-append; the playground prefill already carries it).
-      const imagePath = await generateImage(data.prompt, model);
+      const imagePath = await generateImage(data.prompt, provider, model);
       const ms = Date.now() - startedAt;
       console.log("[stories] test image gen DONE", { imagePath, model, ms });
       return { imagePath, imageStatus: "ready", model, ms };
@@ -87,7 +103,9 @@ export const generateTestImageFn = createServerFn({ method: "POST" })
 export const synthesizeFn = createServerFn({ method: "POST" })
   .validator(z.object({ id: z.string() }))
   .handler(async ({ data }): Promise<{ audioPath: string | null }> => {
-    if (!serverEnv.ttsEnabled) {
+    // UN instantané pour l'opération : gate + provider + clé du même monde.
+    const { provider } = await getAppConfig();
+    if (!provider.ttsEnabled) {
       return { audioPath: null };
     }
 
@@ -102,12 +120,12 @@ export const synthesizeFn = createServerFn({ method: "POST" })
       return { audioPath: story.audioPath };
     }
 
-    const provider = getTtsProvider();
+    const tts = getTtsProvider(provider);
 
     const fullText = [story.title, ...story.paragraphs].join(". ");
 
     try {
-      const audioPath = await provider.synthesize(
+      const audioPath = await tts.synthesize(
         fullText,
         story.lang === "ru" || story.lang === "en" ? story.lang : "fr"
       );

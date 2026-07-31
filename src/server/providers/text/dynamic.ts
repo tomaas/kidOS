@@ -1,7 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { serverEnv } from "~/env";
+import type { ProviderConfig } from "~/server/app-config";
 import type {
   DynamicBeat,
   GenerateArcInput,
@@ -66,10 +66,12 @@ function logTextGen(
   kind: "beat" | "arc",
   attempt: number,
   ms: number,
+  // Le modèle vient de l'INSTANTANÉ de config de l'opération (jamais relu
+  // ici) — logTextGen reste synchrone.
+  model: string,
   usage?: { inputTokens?: number; outputTokens?: number }
 ): void {
   try {
-    const model = serverEnv.storyModel;
     const inTok = usage?.inputTokens;
     const outTok = usage?.outputTokens;
     const price = TEXT_USD_PER_MTOK.find((p) => model.includes(p.match));
@@ -514,10 +516,11 @@ export function buildPrompt(
 async function generateOnce(
   input: GenerateBeatInput,
   attempt: number,
+  config: ProviderConfig,
   corrections?: string[],
   dropCustomPrompt = false
 ): Promise<DynamicBeat> {
-  const anthropic = createAnthropic({ apiKey: serverEnv.anthropicApiKey });
+  const anthropic = createAnthropic({ apiKey: config.anthropicApiKey });
   const startedAt = Date.now();
   // Les descriptions du schéma sont visibles du modèle → schéma dans la
   // langue de l'histoire (même forme, même ordre de clés — épinglé).
@@ -525,12 +528,12 @@ async function generateOnce(
     input.lang === "en" ? LANDING_BEAT_SCHEMA_EN : LANDING_BEAT_SCHEMA;
   const beatSchema = input.lang === "en" ? BEAT_SCHEMA_EN : BEAT_SCHEMA;
   const { object, usage } = await generateObject({
-    model: anthropic(serverEnv.storyModel),
+    model: anthropic(config.storyModel),
     prompt: buildPrompt(input, corrections, dropCustomPrompt),
     schema: isLanding(input) ? landingSchema : beatSchema,
     system: buildSystem(input.lang),
   });
-  logTextGen("beat", attempt, Date.now() - startedAt, usage);
+  logTextGen("beat", attempt, Date.now() - startedAt, config.storyModel, usage);
 
   // Normalize the Zod array into the typed tuple shape.
   return {
@@ -680,12 +683,15 @@ export function safeOutfitOrNull(
  * opening beat.
  */
 export async function generateStoryArc(
-  input: GenerateArcInput
+  input: GenerateArcInput,
+  config: ProviderConfig
 ): Promise<StoryArcResult | null> {
-  if (!serverEnv.anthropicApiKey) {
+  if (!config.anthropicApiKey) {
+    // Clé absente (ni ligne DB ni env) : AUCUN appel réseau — l'histoire
+    // démarre sans fil rouge, comme tout autre soft-fail de l'arc.
     return null;
   }
-  const anthropic = createAnthropic({ apiKey: serverEnv.anthropicApiKey });
+  const anthropic = createAnthropic({ apiKey: config.anthropicApiKey });
 
   // The arc must be in the STORY's language: it is quoted verbatim inside every
   // beat prompt, and a French arc would steer a Russian story's wording.
@@ -760,12 +766,18 @@ export async function generateStoryArc(
         // hold the waiting screen. Per-attempt cap → worst case ~30s, then the
         // story simply starts arc-less (best-effort contract above).
         abortSignal: AbortSignal.timeout(15_000),
-        model: anthropic(serverEnv.storyModel),
+        model: anthropic(config.storyModel),
         prompt: lines.join("\n"),
         schema: input.lang === "en" ? ARC_SCHEMA_EN : arcSchema,
         system,
       });
-      logTextGen("arc", attempt + 1, Date.now() - startedAt, usage);
+      logTextGen(
+        "arc",
+        attempt + 1,
+        Date.now() - startedAt,
+        config.storyModel,
+        usage
+      );
       const arc = object.arc.trim();
       const visualWorld = object.visualWorld.trim();
       const outfit = object.outfit.trim();
@@ -805,10 +817,14 @@ export async function generateStoryArc(
  * corrective attempts, then coerces or throws.
  */
 export async function generateBeat(
-  input: GenerateBeatInput
+  input: GenerateBeatInput,
+  config: ProviderConfig
 ): Promise<DynamicBeat> {
-  if (!serverEnv.anthropicApiKey) {
-    throw new Error("ANTHROPIC_API_KEY manquante.");
+  if (!config.anthropicApiKey) {
+    // Clé absente (ni ligne DB ni env) : AUCUN appel réseau. L'appelant
+    // transforme ce throw en soft-failure calme (« On réessaie ? ») ;
+    // le statut « clé non configurée » vit côté /parents (app-config).
+    throw new Error("Clé Anthropic non configurée.");
   }
 
   // Named-hero safety contract applies to the PRIMARY hero only (codex #2/#5).
@@ -840,6 +856,7 @@ export async function generateBeat(
       beat = await generateOnce(
         input,
         attempt + 1,
+        config,
         attempt === 0 ? undefined : lastProblems,
         lastSafetyFailed
       );

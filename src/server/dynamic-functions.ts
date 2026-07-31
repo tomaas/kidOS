@@ -3,7 +3,7 @@ import { and, asc, eq, isNotNull, isNull, lt, ne } from "drizzle-orm";
 import { z } from "zod";
 import { appConfig } from "~/config/app";
 import { resolveImageModel } from "~/config/image-models";
-import { serverEnv } from "~/env";
+import { getAppConfig, type ProviderConfig } from "~/server/app-config";
 import { db } from "~/server/db";
 import {
   type SegmentChoice,
@@ -108,7 +108,19 @@ function beatToSegmentValues(beat: DynamicBeat) {
 export const startDynamicStoryFn = createServerFn({ method: "POST" })
   .validator(startSchema)
   .handler(async ({ data }): Promise<DynamicStartResult> => {
-    const lang = data.lang ?? serverEnv.defaultLang;
+    // UN instantané de config pour TOUTE l'opération (arc + beat + défauts) —
+    // jamais deux générations de réglages dans une même histoire qui démarre.
+    const { provider } = await getAppConfig();
+    if (!provider.anthropicApiKey) {
+      // Point d'usage : clé absente (ni ligne DB ni env) → AUCUN appel
+      // provider ; l'enfant garde le soft-fail calme existant, le statut
+      // « clé non configurée » vit côté /parents (app-config features.text).
+      console.warn(
+        "[stories] story start SKIPPED — clé Anthropic non configurée (réglage text:anthropic-api-key / ANTHROPIC_API_KEY)"
+      );
+      return { error: "On réessaie ?", success: false };
+    }
+    const lang = data.lang ?? provider.defaultLang;
     // Heroes + elements DB-backed + editable + multi-select: resolve all chosen.
     const [heroes, elements, place, doudous] = await Promise.all([
       resolveHeroesForCreation(data.heroIds),
@@ -133,14 +145,17 @@ export const startDynamicStoryFn = createServerFn({ method: "POST" })
       heroes: heroes.length,
       lang,
     });
-    const arcResult = await generateStoryArc({
-      customPrompt: customPrompt ?? undefined,
-      doudous,
-      elements,
-      heroes,
-      lang,
-      place: { label: place.label, promptHint: place.promptHint },
-    });
+    const arcResult = await generateStoryArc(
+      {
+        customPrompt: customPrompt ?? undefined,
+        doudous,
+        elements,
+        heroes,
+        lang,
+        place: { label: place.label, promptHint: place.promptHint },
+      },
+      provider
+    );
     const storyArc = arcResult?.arc ?? null;
     console.log("[stories] arc gen DONE", {
       hasArc: storyArc !== null,
@@ -158,22 +173,25 @@ export const startDynamicStoryFn = createServerFn({ method: "POST" })
     });
     let beat: DynamicBeat;
     try {
-      beat = await generateBeat({
-        customPrompt: customPrompt ?? undefined,
-        doudous,
-        elements,
-        heroes,
-        history: [],
-        lang,
-        mustEnd: false,
-        place: {
-          emoji: "",
-          id: data.placeId,
-          label: place.label,
-          promptHint: place.promptHint,
+      beat = await generateBeat(
+        {
+          customPrompt: customPrompt ?? undefined,
+          doudous,
+          elements,
+          heroes,
+          history: [],
+          lang,
+          mustEnd: false,
+          place: {
+            emoji: "",
+            id: data.placeId,
+            label: place.label,
+            promptHint: place.promptHint,
+          },
+          storyArc: storyArc ?? undefined,
         },
-        storyArc: storyArc ?? undefined,
-      });
+        provider
+      );
     } catch {
       // The provider already logged the per-attempt problems.
       console.error("[stories] beat gen FAILED", {
@@ -262,6 +280,8 @@ export const startDynamicStoryFn = createServerFn({ method: "POST" })
 export const continueDynamicStoryFn = createServerFn({ method: "POST" })
   .validator(z.object({ choiceId: z.string(), storyId: z.string() }))
   .handler(async ({ data }): Promise<DynamicContinueResult> => {
+    // UN instantané de config pour toute la continuation.
+    const { provider } = await getAppConfig();
     const segments = await db
       .select()
       .from(storySegments)
@@ -398,31 +418,36 @@ export const continueDynamicStoryFn = createServerFn({ method: "POST" })
     });
     let beat: DynamicBeat;
     try {
-      beat = await generateBeat({
-        // Frozen saveur, re-applied on every beat (continuation can't see the
-        // original parcours state — it must come from the persisted column).
-        customPrompt: sanitizeCustomPrompt(story.customPrompt) ?? undefined,
-        // Frozen doudous, re-applied on every beat (continuation can't see the
-        // original parcours choice — they come from the story's snapshot).
-        doudous,
-        elements,
-        heroes,
-        history: toHistory(claimedSegments),
-        lang: langSchema.catch("fr").parse(story.lang),
-        mustEnd,
-        place: {
-          emoji: "",
-          id: story.placeId,
-          label: place.label,
-          promptHint: place.promptHint,
+      beat = await generateBeat(
+        {
+          // Frozen saveur, re-applied on every beat (continuation can't see
+          // the original parcours state — it must come from the persisted
+          // column).
+          customPrompt: sanitizeCustomPrompt(story.customPrompt) ?? undefined,
+          // Frozen doudous, re-applied on every beat (continuation can't see
+          // the original parcours choice — they come from the story's
+          // snapshot).
+          doudous,
+          elements,
+          heroes,
+          history: toHistory(claimedSegments),
+          lang: langSchema.catch("fr").parse(story.lang),
+          mustEnd,
+          place: {
+            emoji: "",
+            id: story.placeId,
+            label: place.label,
+            promptHint: place.promptHint,
+          },
+          // Choices the child still has to make, COUNTING the one this new
+          // beat offers (1 = this beat carries the last choice) — lets the
+          // prompt prepare the landing instead of hitting the mustEnd wall.
+          remainingChoices: Math.max(0, MAX_CHOICES - chosenCount),
+          // Frozen fil rouge (null on older stories → arc-less, as before).
+          storyArc: story.storyArc ?? undefined,
         },
-        // Choices the child still has to make, COUNTING the one this new beat
-        // offers (1 = this beat carries the last choice) — lets the prompt
-        // prepare the landing instead of hitting the mustEnd wall.
-        remainingChoices: Math.max(0, MAX_CHOICES - chosenCount),
-        // Frozen fil rouge (null on older stories → arc-less, as before).
-        storyArc: story.storyArc ?? undefined,
-      });
+        provider
+      );
     } catch (err) {
       // The provider already logged the per-attempt problems.
       console.error("[stories] beat gen FAILED", {
@@ -505,18 +530,21 @@ export const generateSegmentImageFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<ImageResult> => {
     const startedAt = Date.now();
+    // UN instantané de config pour toute l'opération (gate + clé + modèle +
+    // résolution du même monde).
+    const { provider } = await getAppConfig();
     // Resolve the parent-picked model against the allowlist (loud fallback log
     // on an unknown id); the START log prints the RESOLVED model.
-    const model = resolveImageModel(data.imageModel, serverEnv.imageModel);
+    const model = resolveImageModel(data.imageModel, provider.imageModel);
     console.log("[stories] image gen START", {
       idx: data.idx,
       model,
-      resolution: serverEnv.imageResolution,
+      resolution: provider.imageResolution,
       storyId: data.storyId,
     });
-    if (!serverEnv.imageEnabled) {
+    if (!provider.imageEnabled) {
       console.warn(
-        "[stories] image gen SKIPPED — IMAGE_ENABLED is false (set IMAGE_ENABLED=true to enable)"
+        "[stories] image gen SKIPPED — images désactivées (réglage image:enabled / IMAGE_ENABLED)"
       );
       return { imagePath: null, imageStatus: "skipped" };
     }
@@ -532,7 +560,13 @@ export const generateSegmentImageFn = createServerFn({ method: "POST" })
       });
       return existing;
     }
-    const run = generateSegmentImage(data.storyId, data.idx, startedAt, model);
+    const run = generateSegmentImage(
+      data.storyId,
+      data.idx,
+      startedAt,
+      model,
+      provider
+    );
     inFlightSegmentImages.set(key, run);
     return await run.finally(() => inFlightSegmentImages.delete(key));
   });
@@ -557,16 +591,18 @@ export const retrySegmentImageFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<ImageResult> => {
     const startedAt = Date.now();
-    const model = resolveImageModel(data.imageModel, serverEnv.imageModel);
+    // UN instantané de config pour toute l'opération.
+    const { provider } = await getAppConfig();
+    const model = resolveImageModel(data.imageModel, provider.imageModel);
     console.log("[stories] image RETRY START", {
       idx: data.idx,
       model,
-      resolution: serverEnv.imageResolution,
+      resolution: provider.imageResolution,
       storyId: data.storyId,
     });
-    if (!serverEnv.imageEnabled) {
+    if (!provider.imageEnabled) {
       console.warn(
-        "[stories] image retry SKIPPED — IMAGE_ENABLED is false (set IMAGE_ENABLED=true to enable)"
+        "[stories] image retry SKIPPED — images désactivées (réglage image:enabled / IMAGE_ENABLED)"
       );
       return { imagePath: null, imageStatus: "skipped" };
     }
@@ -590,6 +626,7 @@ export const retrySegmentImageFn = createServerFn({ method: "POST" })
       data.idx,
       startedAt,
       model,
+      provider,
       true
     );
     inFlightSegmentImages.set(key, run);
@@ -665,6 +702,7 @@ async function generateSegmentImage(
   idx: number,
   startedAt: number,
   model: string,
+  provider: ProviderConfig,
   force = false
 ): Promise<ImageResult> {
   const [segment] = await db
@@ -716,7 +754,12 @@ async function generateSegmentImage(
   );
 
   try {
-    const imagePath = await generateImage(prompt, model, referenceImage);
+    const imagePath = await generateImage(
+      prompt,
+      provider,
+      model,
+      referenceImage
+    );
     await db
       .update(storySegments)
       .set({ imagePath })
