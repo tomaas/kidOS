@@ -26,6 +26,7 @@ const SECTIONS = [
   { emoji: "🧸", key: "doudous", to: "/parents/doudous" },
   { emoji: "🔢", key: "calcul", to: "/parents/calcul" },
   { emoji: "🎨", key: "imageModel", to: "/parents/image-model" },
+  { emoji: "🔧", key: "reglages", to: "/parents/reglages" },
 ] as const;
 
 /**

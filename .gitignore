@@ -39,3 +39,6 @@
 # typescript
 *.tsbuildinfo
 .gstack/
+
+# Scratch DATA_DIR des worktrees agents (dev sur port alternatif)
+data-dev/
