@@ -1,5 +1,18 @@
 # TODOS
 
+## Réglages (env → DB)
+
+### Retirer le fallback legacy VITE_* (une release après 0.6.0.0)
+**Priority:** P3
+**Contexte :** Depuis 0.6.0.0 la marque vit en base (`branding:*`,
+/parents/reglages) ; les `ARG/ENV VITE_*` du Dockerfile, la ligne
+`VITE_CHILD_NAME` de compose.yml et la lecture `envFallbackConfig`
+(process.env + import.meta.env) ne servent plus que de secours aux
+déploiements existants. Quand ce déploiement a posé sa marque dans l'app,
+supprimer le fallback (Dockerfile, compose.yml, .env.example, section
+branding d'envFallbackConfig) et documenter la migration dans le CHANGELOG.
+**Depends on:** une release 0.6.x en production avec la marque posée en base.
+
 ## Calcul (mini-app opérations)
 
 ### Demander à l'éducatrice où en est Arsène + l'observer manipuler
