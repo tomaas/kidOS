@@ -130,6 +130,7 @@ export const fr = {
     // navigation portent leur libellé visible (parents.index.sections).
     barreLaterale: {
       basculer: "Ouvrir ou fermer le panneau",
+      description: "La navigation de l'espace parent.",
     },
     calcul: {
       changerPalier: "Changer le palier range la série en cours.",

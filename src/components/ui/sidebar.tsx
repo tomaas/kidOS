@@ -14,6 +14,10 @@
  *  - ternaire au lieu de `&&` dans SidebarMenuSkeleton (noLeakedRender) et
  *    `type` → `interface` (useConsistentTypeDefinitions), mêmes conventions
  *    que le reste du projet ;
+ *  - `mobileTitle`/`mobileDescription` ajoutés sur `Sidebar` : le registre
+ *    code en dur « Sidebar » / « Displays the mobile sidebar. » (sr-only du
+ *    Sheet mobile) — l'UI est bilingue, la layout parent passe les libellés
+ *    du catalogue (les chaînes du registre restent les valeurs par défaut) ;
  *  - audit des variantes `data-*` (le bug `data-selected:` de command.tsx) :
  *    vérifié au vrai rendu — `useRender` OMET l'attribut quand l'état
  *    booléen est false (`data-active` absent, jamais `="false"`),
@@ -180,11 +184,15 @@ function Sidebar({
   className,
   children,
   dir,
+  mobileDescription = "Displays the mobile sidebar.",
+  mobileTitle = "Sidebar",
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
+  mobileDescription?: string;
+  mobileTitle?: string;
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
@@ -220,8 +228,8 @@ function Sidebar({
           }
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>{mobileTitle}</SheetTitle>
+            <SheetDescription>{mobileDescription}</SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>

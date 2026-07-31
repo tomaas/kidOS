@@ -166,6 +166,14 @@ check(
 
 /* ---------------- La coquille /parents (panneau latéral) ------------------ */
 
+// Retrait des commentaires avant un scan de source : un fragment commenté
+// (un `redirect(...)` désactivé, un `ssr:` cité en prose) ne compte pas.
+const BLOCS_COMMENTAIRES = /\/\*[\s\S]*?\*\//g;
+const LIGNES_COMMENTAIRES = /\/\/[^\n]*/g;
+function sansCommentaires(code: string): string {
+  return code.replace(BLOCS_COMMENTAIRES, "").replace(LIGNES_COMMENTAIRES, "");
+}
+
 // Le registre pur des sections (lib/parents/sections.ts) nourrit la sidebar :
 // chaque section vise une URL RÉELLEMENT servie — même technique que la
 // palette, l'arbre généré tranche.
@@ -182,6 +190,17 @@ const idsSections = SECTIONS_PARENTS.map((s) => s.id);
 check(
   "sections parents : ids uniques",
   new Set(idsSections).size === idsSections.length,
+  idsSections.join(", ")
+);
+
+// L'ensemble canonique des SEPT sections — sans cette pin, un registre vidé
+// ou amputé rendrait la boucle d'URLs ci-dessus vacante (zéro itération,
+// zéro échec) et l'unicité trivialement vraie.
+const IDS_SECTIONS_ATTENDUS =
+  "calcul, doudous, elements, heroes, imageModel, lieux, reglages";
+check(
+  "sections parents : l'ensemble canonique des 7 ids",
+  [...idsSections].sort().join(", ") === IDS_SECTIONS_ATTENDUS,
   idsSections.join(", ")
 );
 
@@ -204,7 +223,10 @@ check(
 const indexParents = readFileSync("src/app/parents/index.tsx", "utf8");
 check(
   "/parents/ redirige vers /parents/reglages",
-  indexParents.includes('redirect({ to: "/parents/reglages" })')
+  // Commentaires retirés d'abord : un `redirect(...)` commenté ne compte pas.
+  sansCommentaires(indexParents).includes(
+    'redirect({ to: "/parents/reglages" })'
+  )
 );
 check(
   "la cible de la redirection est une URL servie",
@@ -219,12 +241,7 @@ check(
 // route enfant) rendrait silencieusement les mini-apps client-only. Le scan
 // retire d'abord les commentaires : le contrat vit AUSSI en prose dans
 // route.tsx, qui cite « ssr: false » précisément pour l'interdire.
-const BLOCS_COMMENTAIRES = /\/\*[\s\S]*?\*\//g;
-const LIGNES_COMMENTAIRES = /\/\/[^\n]*/g;
 const OPTION_SSR = /\bssr\s*:/;
-function sansCommentaires(code: string): string {
-  return code.replace(BLOCS_COMMENTAIRES, "").replace(LIGNES_COMMENTAIRES, "");
-}
 const sousBureau = sources.filter((s) => s.path.startsWith("src/app/_bureau/"));
 const avecOptionSsr = sousBureau.filter((s) =>
   OPTION_SSR.test(sansCommentaires(s.contenu))

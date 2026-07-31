@@ -112,6 +112,7 @@ export const en: Messages = {
   parents: {
     barreLaterale: {
       basculer: "Open or close the panel",
+      description: "The parent space navigation.",
     },
     calcul: {
       changerPalier: "Changing the level puts the current series away.",

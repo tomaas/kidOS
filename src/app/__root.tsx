@@ -19,10 +19,10 @@ import { getShellContextFn } from "~/server/settings-functions";
 import appCss from "./globals.css?url";
 
 /**
- * Écrans d'erreur/404 AUTO-CONTENUS (eng-review D24-A) : le shell est
- * route-aware (plein-bleed pour la couche bureau) — ces écrans apportent donc
- * leur propre conteneur centré, pour rendre cohérents dans les deux modes
- * (jamais un plein-bleed cassé après un crash dans la fenêtre).
+ * Écrans d'erreur/404 AUTO-CONTENUS (eng-review D24-A) : le shell rend
+ * plein-bleed partout (chaque couche — bureau, espace parent — possède son
+ * propre cadre) — ces écrans apportent donc leur propre conteneur centré,
+ * pour rester cohérents quel que soit l'endroit du crash.
  */
 const CALM_SCREEN_CLASS =
   "mx-auto flex min-h-[80vh] w-full max-w-5xl flex-col items-center justify-center gap-6 px-6 py-10 text-center";
