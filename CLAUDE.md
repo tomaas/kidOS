@@ -59,8 +59,15 @@ yes → don't.
   URL changed, no stale route id, /parents never under the layout) plus two
   prose contracts: no `ssr:` option under `src/app/_bureau/**` and the
   closed-session gate CALLED in exactly two files, never `__root`;
+  `test:settings` pins the app-config settings service (precedence
+  db>env>default, the FOUR secret operations, invalid-means-fallback
+  bool/enum parsing, `hintFor` masking, the boundary secret-scan on the
+  serialized status shape, the subprocess import-graph proof — importing
+  app-config.ts or text/dynamic.ts creates NO db file — and the
+  transactional field-level patch);
   `test:db` pins the local-SQLite bootstrap (`file:` URL derivation +
-  env validations, real boot on a blank dir with all migrations applied,
+  INFRA-ONLY env validations — provider keys are never boot-fatal — real
+  boot on a blank dir with all migrations applied,
   idempotent restart, no spurious `.pre-migrate` snapshot, and the
   Dockerfile contract — `drizzle/` shipped next to the server bundle).
 - Migrations AUTO-APPLY at app startup (`db/index.ts`, idempotent) — no
@@ -107,7 +114,9 @@ yes → don't.
   bun only installs deps and runs scripts; vite/rolldown MUST run under real
   node, because under bun `ws` resolves as a builtin and the bundle ships a
   bare `import "ws"` that crashes the node runtime — `SKIP_ENV_VALIDATION=1`
-  + `VITE_*` build args → `node:22-slim` runtime, port 3009) + `compose.yml` (loopback-bound port,
+  + `VITE_*` build args, legacy-optional since the env→DB settings move —
+  also re-exported as runtime ENV for the fallback → `node:22-slim`
+  runtime, port 3009) + `compose.yml` (loopback-bound port,
   `app-data` volume on `/app/data`, secrets via `env_file: .env.production`).
   Machine-specific compose changes go in a gitignored `compose.override.yml`,
   never in `compose.yml`.
@@ -123,6 +132,9 @@ yes → don't.
   ACTIVATED operation family (`calcul-pose:<famille>`, presence = activated),
   each carrying that family's parent-chosen palier + the global série size
   (copied on every row, read in canonical family order — settingsFromRows).
+  `app_settings` (key/value) additionally carries `ui-language`, the
+  `branding:*` keys and the provider settings (`text:*`, `image:*`,
+  `tts:*`) — see the Settings bullet.
   The `src/config/*.ts` files seed/back those
   entity tables (editable via in-app CRUD at /parents). Coherence columns
   (nullable, older rows fall back to prior behavior): `stories.story_arc`
@@ -133,7 +145,8 @@ yes → don't.
 - **UI language (multilang phase 1)**: the desktop SHELL is bilingual fr/en —
   a PARENT setting (🌍 card on /parents), persisted in the `app_settings`
   table (key `ui-language`), read ONLY by the `__root` loader
-  (`getUiLocaleFn`, never throws — DB down → "fr") and propagated via
+  (`getShellContextFn` — locale + branding in one read, never throws — DB
+  down → "fr" + deploy branding) and propagated via
   `LocaleProvider`/`useMessages()` (`src/lib/i18n/`: typed catalogs
   `messages/{fr,en}.ts`, pure `buildBranding`, `normalizeLocale`;
   golden-tested via `test:i18n`). `<html lang>` and the tab title/description
@@ -170,14 +183,47 @@ yes → don't.
   app labels live in the catalog keyed by the registry id
   (`m.bureau.apps[app.id]` — icon and title bar read the same key). URLs
   never localize (test:routes).
-- **Branding**: `src/config/app.ts` (display name, booklet footer/fallback
-  title) — set `VITE_CHILD_NAME` (build-time Vite var) to derive both, in
-  the UI language ("L'atelier de Léa" / "Une histoire de Léa", with French
-  d'-elision; "Léa's workshop" / "A story by Léa" in English via
-  `brandingFor(locale)`); `VITE_APP_NAME`, `VITE_APP_DESCRIPTION`,
-  `VITE_STORY_LABEL` override the full strings in both languages.
-  `appConfig` stays the frozen FRENCH branding for not-yet-localized
-  consumers (print colophon, server fallback story title). Sample
+- **Settings service (env → DB)**: `src/server/app-config.ts` is the SINGLE
+  choke-point (media-store philosophy) between `app_settings`, env and code
+  defaults. Parent-editable settings (Anthropic/Gemini/ElevenLabs keys,
+  story/image models, image/TTS toggles, resolution, TTS provider,
+  default story lang, the 4 branding values) live in DB rows (canonical
+  kebab-case keys, `SETTING_KEYS`), managed at /parents/reglages.
+  Precedence: DB row present wins → env value → code default; DB rows parse
+  invalid-means-FALLBACK (a garbage bool/enum row falls through, never
+  silently disables). NO cache: every server-function handler takes ONE
+  immutable `getAppConfig()` snapshot at its boundary and threads it down
+  (providers take a `ProviderConfig` param) — never two config generations
+  in one operation; a save applies to the very next operation, reload is
+  the client consistency boundary (root loader keeps `staleTime: Infinity`
+  + `router.invalidate()` in the saving tab). Boot validation is
+  INFRA-ONLY (`DATABASE_URL` stays fatal; provider keys are checked at
+  point of use — no network call when unconfigured, child keeps the soft
+  "On réessaie ?", /parents shows a calm config-status CODE). SECRETS:
+  never serialized to the client ({configured, hint, source} only — hint =
+  last 3 chars); four operations per secret: keep (no write) / set /
+  explicit empty override (`""` row masks the env key — the honest
+  "Effacer") / reset-to-deploy-default (delete row, env resumes). ALL
+  writers go through `setSetting`/`applySettingsPatch` (field-level patch,
+  ONE `db.batch` transaction — disjoint two-tab saves never clobber), incl.
+  `saveUiLocaleFn`. HARD RULE: app-config.ts never imports `~/server/db` at
+  top level (lazy import inside read/write fns) — the coherence goldens'
+  import graph stays db-free (pinned by test:settings). `app.db` backups
+  now contain keys — same care as `.env`.
+- **Branding (runtime, DB-backed)**: the branding SOURCE (child name + the
+  3 full-string overrides) is a runtime setting (`branding:*` rows, section
+  "Le prénom & l'atelier" on /parents/reglages with a live preview) — the
+  legacy `VITE_*` vars stay honored as deployment defaults
+  (`envFallbackConfig`: process.env at runtime, then the build-baked
+  value). `src/config/app.ts` keeps only the PURE `composeBranding(lang,
+  source)` (per-locale derivation via `buildBranding` — French d'-elision,
+  English possessive — + full-string overrides). The root loader
+  (`getShellContextFn`) returns `{locale, branding, brandingSource}`: head
+  tags and the portrait read it (rename the child → next reload, NO Docker
+  rebuild). STORY-LANG rule: the print colophon (`Colophon lang=` prop) and
+  the server fallback story title derive via `composeBranding(story.lang)`
+  — an English story printed under a French UI keeps English branding; the
+  operations sheet uses the workshop locale. Sample
   heroes in `src/config/characters.ts` — meant to be replaced by each family
   (they only seed empty tables; an already-populated db wins).
 - **LLM**: Vercel AI SDK (`ai` + `@ai-sdk/anthropic`), `generateObject` + the
@@ -234,9 +280,11 @@ yes → don't.
     text-to-image — never fails the beat's image. Gemini call aborts at 90s.
   - tts: `edge` (msedge-tts, default) / `elevenlabs`, behind `TTS_ENABLED`,
     selected via `getTtsProvider()`.
-- **Secrets**: read only in `src/env.ts` (server). Vite exposes only `VITE_*`;
+- **Secrets**: DB rows (`app_settings`, via app-config.ts) with env read
+  only in `src/env.ts` (server) as fallback. Vite exposes only `VITE_*`;
   all keys/LLM calls live in server functions (`src/server/*-functions.ts`,
-  story generation in `dynamic-functions.ts`).
+  story generation in `dynamic-functions.ts`); no secret ever crosses the
+  server-fn boundary (masked {configured, hint} shape, golden-pinned).
 - **Generated media** (`src/server/providers/media-store.ts`, single
   choke-point): dual backend gated on env. Local (default, Docker volume) when
   `BLOB_READ_WRITE_TOKEN` is absent → writes `DATA_DIR/media/` (gitignored),

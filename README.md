@@ -62,13 +62,15 @@ moment.
 
 Two files to personalize (plus in-app management at `/parents`):
 
-- `src/config/app.ts` — the app's display name and booklet footer. Prefer
-  setting `VITE_CHILD_NAME=Léa` (see `.env.example`) to derive both without
-  touching the code; `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` /
-  `VITE_STORY_LABEL` override the full strings. `VITE_CHILD_NAME` also names
-  the desktop's user: the session-screen portrait is the hero whose name
-  matches it (case-, accent- and d'-elision-tolerant) — no match, or no
-  configured name, falls back to a soft star and the app name.
+- **The child's name and workshop texts** — set them in the app at
+  `/parents/reglages` ("Le prénom & l'atelier"): the browser tab, the
+  session-screen portrait and the printed booklet footer follow on the next
+  reload, no rebuild. The name also names the desktop's user: the portrait
+  is the hero whose name matches it (case-, accent- and
+  d'-elision-tolerant) — no match, or no configured name, falls back to a
+  soft star and the workshop name. The legacy `VITE_CHILD_NAME` /
+  `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` / `VITE_STORY_LABEL` env vars
+  remain honored as deployment defaults when nothing is set in the UI.
 - `src/config/characters.ts` — the heroes: replace the sample kids with your
   child, siblings, friends. The default hero is pre-selected in the wizard.
   Places, surprise elements and doudous have the same kind of config files
@@ -80,16 +82,18 @@ Requirements: [Bun](https://bun.sh) and an [Anthropic API
 key](https://console.anthropic.com/). The database is a local SQLite file
 (created automatically under `data/` on first start — nothing to set up).
 
-### 1. Fill `.env.local`
+### 1. Get your Anthropic key ready
 
-Copy `.env.example` to `.env.local` and paste the value:
+The app boots with **zero configuration**. After the first start, open
+**http://localhost:3009/parents/reglages** and paste your Anthropic key in
+the "Les histoires" card — it applies to the next story immediately.
 
-```
-ANTHROPIC_API_KEY=your-anthropic-key
-```
+(Alternative: copy `.env.example` to `.env.local` and set
+`ANTHROPIC_API_KEY=` there as a deployment default — anything set in the UI
+wins over it.)
 
 Images and voice are **disabled** by default — the app works great text-only
-(only the value above is required).
+(only the Anthropic key is needed).
 
 ### 2. Install
 
@@ -112,13 +116,21 @@ bun run build
 bun run start
 ```
 
-## Settings (`.env.local`)
+## Settings
 
-| Setting | What it does |
+**Keys, models, images, voice and branding are managed in the app** at
+`/parents/reglages`. Settings live in the database (`app_settings`), apply
+to the next operation (no restart, no rebuild), and each field shows a
+"réglage du déploiement" badge while the env default applies. Secret keys
+never travel back to the browser — the page only shows a masked hint.
+
+Environment variables act as **deployment defaults** (a UI value always
+wins; "Revenir au réglage du déploiement" deletes the UI value and the env
+default resumes):
+
+| Env default | What it does |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | **Required.** The key that writes the stories. |
-| `DATABASE_URL` | Optional. Moves the SQLite file (`file:` URL only; defaults to `file:<DATA_DIR>/app.db`). |
-| `DATA_DIR` | Optional. Where the SQLite db and generated media live (default `./data`; in Docker, the `app-data` volume). |
+| `ANTHROPIC_API_KEY` | The key that writes the stories (or paste it in the UI). |
 | `STORY_MODEL` | The model used (fine as-is). |
 | `IMAGE_ENABLED` | `true` to add illustrations (otherwise a soft color block). |
 | `GEMINI_API_KEY` | The Google key, needed IF images are enabled. |
@@ -126,21 +138,29 @@ bun run start
 | `TTS_PROVIDER` | `edge` (free, French voices) or `elevenlabs` (premium). |
 | `ELEVENLABS_API_KEY` | The key, needed IF you pick `elevenlabs`. |
 
-Restart `bun run dev` after changing a setting.
+True infra stays env-only (restart to change):
+
+| Setting | What it does |
+| --- | --- |
+| `DATABASE_URL` | Optional. Moves the SQLite file (`file:` URL only; defaults to `file:<DATA_DIR>/app.db`). |
+| `DATA_DIR` | Optional. Where the SQLite db and generated media live (default `./data`; in Docker, the `app-data` volume). |
+
+**Backup note:** since keys can live in the database, `app.db` (and the
+`app-data` volume) now deserves the same care as `.env` files.
 
 ## Deploying (Docker)
 
 The repo ships a `Dockerfile` (multi-stage: Bun build → `node:22-slim`
 runtime) and a `compose.yml`. On the deploy machine:
 
-1. Create `.env.production` at the repo root with the runtime settings
-   (same names as the table above: `ANTHROPIC_API_KEY`, plus any optional
-   image/TTS settings).
-2. The `VITE_*` branding vars are baked in at **build time**. `compose.yml`
-   forwards `VITE_CHILD_NAME` from a root `.env` file (Docker Compose reads
-   it for `${...}` substitution); the three full-string overrides
-   (`VITE_APP_NAME`, `VITE_APP_DESCRIPTION`, `VITE_STORY_LABEL`) currently
-   need a `compose.override.yml` or explicit build args.
+1. Create `.env.production` at the repo root — it can be minimal (even
+   empty): keys and options are set in the UI at `/parents/reglages` after
+   the first boot. Any value you do set there acts as the deployment
+   default (same names as the tables above).
+2. (Legacy, optional) The `VITE_*` branding vars remain honored as
+   deployment defaults — prefer the "Le prénom & l'atelier" card in the UI.
+   `compose.yml` still forwards `VITE_CHILD_NAME` from a root `.env` file
+   for existing deployments.
 3. Then:
 
 ```

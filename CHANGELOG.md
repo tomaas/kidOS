@@ -4,6 +4,50 @@ Toutes les évolutions notables de l'app, une version par livraison.
 Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
 4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
 
+## [0.6.0.0] - 2026-07-31
+
+### Added
+
+- **Les réglages se font dans l'app** : nouvelle page `/parents/reglages`
+  (carte 🔧 de l'espace parent) — clés Anthropic/Gemini/ElevenLabs, modèle
+  d'écriture, images (activation, modèle par défaut, résolution), voix
+  (activation, fournisseur) et la marque de l'atelier (prénom de l'enfant,
+  nom, description, signature du livret, avec aperçu en direct). Tout est
+  enregistré dans la base locale (`app_settings`) et s'applique aux
+  prochaines histoires — plus besoin de toucher `.env` ni de redéployer.
+- Les variables d'environnement deviennent les **réglages du déploiement**
+  (elles s'appliquent quand rien n'est posé dans l'app — badge « réglage du
+  déploiement ») ; chaque champ propose « Revenir au réglage du
+  déploiement », et chaque clé un « Effacer » honnête (la clé du
+  déploiement ne s'applique plus tant qu'une nouvelle n'est pas posée).
+- Renommer l'enfant se fait dans l'app : le titre de l'onglet, le portrait
+  du bureau et le livret imprimé suivent au prochain rechargement, **sans
+  rebuild Docker**. Les `VITE_*` restent honorées en secours pour les
+  déploiements existants.
+- Le colophon d'un livret suit la **langue de l'histoire** (une histoire
+  anglaise imprimée sous une interface française garde sa marque anglaise) ;
+  la fiche d'opérations suit la langue de l'atelier.
+- Nouveau golden `test:settings` : précédence base>env>défaut, les quatre
+  opérations par clé secrète, le parsing tolérant des lignes bricolées,
+  le masquage (aucun secret ne redescend jamais au navigateur — vérifié
+  sur la réponse sérialisée), le graphe d'imports sans base et le patch
+  transactionnel au niveau champ.
+
+### Changed
+
+- **Le démarrage ne réclame plus aucune clé** : la validation au boot ne
+  couvre plus que l'infra (`DATABASE_URL`). Une clé absente se voit au
+  point d'usage — statut calme « aucune clé n'est configurée » côté
+  parent, « On réessaie ? » côté enfant, et aucun appel réseau n'est
+  tenté. Premier démarrage : `docker compose up` (même sans
+  `.env.production`), puis coller la clé dans l'app.
+- Chaque opération serveur lit UN instantané de configuration à sa
+  frontière (jamais deux générations de réglages dans une même histoire) ;
+  un enregistrement s'applique à l'opération suivante, un autre onglet
+  converge à son prochain rechargement.
+- **Sauvegardes** : la base `app.db` (volume `app-data`) peut désormais
+  contenir des clés — le même soin que pour un fichier `.env` s'impose.
+
 ## [0.5.2.2] - 2026-07-31
 
 ### Changed
