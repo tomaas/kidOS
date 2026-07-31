@@ -1,493 +1,485 @@
 # Changelog
 
-Toutes les évolutions notables de l'app, une version par livraison.
-Format : [Keep a Changelog](https://keepachangelog.com/fr/) adapté, versions
-4 chiffres `MAJOR.MINOR.PATCH.MICRO` (fichier `VERSION`).
+All notable changes to the app, one version per release.
+Format: [Keep a Changelog](https://keepachangelog.com/) adapted, 4-digit
+versions `MAJOR.MINOR.PATCH.MICRO` (`VERSION` file).
 
 ## [0.6.0.0] - 2026-07-31
 
 ### Added
 
-- **Les réglages se font dans l'app** : nouvelle page `/parents/reglages`
-  (carte 🔧 de l'espace parent) — clés Anthropic/Gemini/ElevenLabs, modèle
-  d'écriture, images (activation, modèle par défaut, résolution), voix
-  (activation, fournisseur) et la marque de l'atelier (prénom de l'enfant,
-  nom, description, signature du livret, avec aperçu en direct). Tout est
-  enregistré dans la base locale (`app_settings`) et s'applique aux
-  prochaines histoires — plus besoin de toucher `.env` ni de redéployer.
-- Les variables d'environnement deviennent les **réglages du déploiement**
-  (elles s'appliquent quand rien n'est posé dans l'app — badge « réglage du
-  déploiement ») ; chaque champ propose « Revenir au réglage du
-  déploiement », et chaque clé un « Effacer » honnête (la clé du
-  déploiement ne s'applique plus tant qu'une nouvelle n'est pas posée).
-- Renommer l'enfant se fait dans l'app : le titre de l'onglet, le portrait
-  du bureau et le livret imprimé suivent au prochain rechargement, **sans
-  rebuild Docker**. Les `VITE_*` restent honorées en secours pour les
-  déploiements existants.
-- Le colophon d'un livret suit la **langue de l'histoire** (une histoire
-  anglaise imprimée sous une interface française garde sa marque anglaise) ;
-  la fiche d'opérations suit la langue de l'atelier.
-- Nouveau golden `test:settings` : précédence base>env>défaut, les quatre
-  opérations par clé secrète, le parsing tolérant des lignes bricolées,
-  le masquage (aucun secret ne redescend jamais au navigateur — vérifié
-  sur la réponse sérialisée), le graphe d'imports sans base et le patch
-  transactionnel au niveau champ.
+- **Settings are configured in the app**: new `/parents/reglages` page
+  (🔧 card in the parent space) — Anthropic/Gemini/ElevenLabs keys, writing
+  model, images (activation, default model, resolution), voices
+  (activation, provider) and the workshop branding (child's first name,
+  name, description, booklet signature, with a live preview). Everything is
+  stored in the local database (`app_settings`) and applies to the next
+  stories — no more editing `.env` or redeploying.
+- Environment variables become the **deployment settings** (they apply when
+  nothing is set in the app — "deployment setting" badge); each field
+  offers "Revert to the deployment setting", and each key an honest
+  "Clear" (the deployment key no longer applies until a new one is set).
+- Renaming the child happens in the app: the tab title, the desktop
+  portrait and the printed booklet follow on the next reload, **without a
+  Docker rebuild**. `VITE_*` variables remain honored as a fallback for
+  existing deployments.
+- A booklet's colophon follows the **story's language** (an English story
+  printed under a French interface keeps its English branding); the
+  operations sheet follows the workshop language.
+- New `test:settings` golden: db>env>default precedence, the four
+  secret-key operations, tolerant parsing of hand-edited rows, masking (no
+  secret ever travels back to the browser — verified on the serialized
+  response), the db-free import graph and the field-level transactional
+  patch.
 
 ### Changed
 
-- **Le démarrage ne réclame plus aucune clé** : la validation au boot ne
-  couvre plus que l'infra (`DATABASE_URL`). Une clé absente se voit au
-  point d'usage — statut calme « aucune clé n'est configurée » côté
-  parent, « On réessaie ? » côté enfant, et aucun appel réseau n'est
-  tenté. Premier démarrage : `docker compose up` (même sans
-  `.env.production`), puis coller la clé dans l'app.
-- Chaque opération serveur lit UN instantané de configuration à sa
-  frontière (jamais deux générations de réglages dans une même histoire) ;
-  un enregistrement s'applique à l'opération suivante, un autre onglet
-  converge à son prochain rechargement.
-- **Sauvegardes** : la base `app.db` (volume `app-data`) peut désormais
-  contenir des clés — le même soin que pour un fichier `.env` s'impose.
+- **Startup no longer requires any key**: boot validation only covers
+  infra (`DATABASE_URL`). A missing key shows at the point of use — a calm
+  "no key is configured" status on the parent side, "On réessaie ?" on the
+  child side, and no network call is attempted. First boot:
+  `docker compose up` (even without `.env.production`), then paste the key
+  in the app.
+- Each server operation reads ONE configuration snapshot at its boundary
+  (never two generations of settings within the same story); a save
+  applies to the next operation, another tab converges on its next reload.
+- **Backups**: the `app.db` database (`app-data` volume) may now contain
+  keys — it deserves the same care as a `.env` file.
 
 ## [0.5.2.2] - 2026-07-31
 
 ### Changed
 
-- **Le nom du projet se corrige en `kidOS`** (et non `kidsOS`) : dépôt,
-  paquet, image et conteneur Docker. Rien ne change pour l'enfant ni pour le
-  parent — l'app garde son nom de famille dérivé de `VITE_CHILD_NAME`
-  (« L'atelier de Léa »), ses URLs et ses données.
-- Côté machine, le nom de projet Compose passe de `kidsos` à `kidos` : les
-  volumes nommés deviennent `kidos_app-data` (base SQLite + médias générés).
-  Les anciens volumes `kidsos_*` sont **conservés intacts** comme sauvegarde
-  après recopie du contenu — à supprimer à la main quand la nouvelle version
-  a tourné quelques jours (`docker volume rm kidsos_app-data`).
+- **The project name is corrected to `kidOS`** (not `kidsOS`): repository,
+  package, Docker image and container. Nothing changes for the child or
+  the parent — the app keeps its family name derived from
+  `VITE_CHILD_NAME` ("L'atelier de Léa"), its URLs and its data.
+- On the machine side, the Compose project name goes from `kidsos` to
+  `kidos`: the named volumes become `kidos_app-data` (SQLite database +
+  generated media). The old `kidsos_*` volumes are **kept intact** as a
+  backup after copying the content over — delete them by hand once the new
+  version has run for a few days (`docker volume rm kidsos_app-data`).
 
 ## [0.5.2.1] - 2026-07-30
 
 ### Changed
 
-- **Le projet s'appelle maintenant `kidsOS`** (dépôt, paquet, image et
-  conteneur Docker) — rien ne change pour l'enfant ni pour le parent :
-  l'app garde son nom de famille dérivé de `VITE_CHILD_NAME` (« L'atelier
-  de Léa »), ses URLs et ses données.
-- Côté machine, le nom de projet Compose est désormais **figé à `kidsos`**
-  dans `compose.yml` : les volumes nommés ne dépendent plus du nom du
-  dossier de la copie locale, donc renommer le dossier ne peut plus
-  détacher le volume `app-data` (la base SQLite et les médias générés).
-  Après mise à jour, les données vivent dans `kidsos_app-data`.
+- **The project is now called `kidsOS`** (repository, package, Docker
+  image and container) — nothing changes for the child or the parent: the
+  app keeps its family name derived from `VITE_CHILD_NAME` ("L'atelier de
+  Léa"), its URLs and its data.
+- On the machine side, the Compose project name is now **pinned to
+  `kidsos`** in `compose.yml`: named volumes no longer depend on the name
+  of the local checkout's folder, so renaming the folder can no longer
+  detach the `app-data` volume (the SQLite database and generated media).
+  After updating, the data lives in `kidsos_app-data`.
 
 ## [0.5.2.0] - 2026-07-30
 
 ### Changed
 
-- **La base de données vit maintenant à la maison** : plus de compte Turso ni
-  de réseau requis pour la base — les histoires, héros et réglages sont
-  rangés dans un simple fichier SQLite à côté des images et des voix (le volume `app-data`
-  en Docker, `data/app.db` en local). Installer l'app ne demande plus qu'une
-  clé Anthropic.
-- **Les migrations s'appliquent toutes seules au démarrage** : plus d'étape
-  `db:migrate` à ne pas oublier — une nouvelle version apporte son schéma
-  avec elle, dans le bon ordre (le code et sa migration arrivent ensemble).
-- **Le fichier est protégé** : avant d'appliquer une nouvelle migration,
-  l'app garde un instantané `app.db.pre-migrate` à côté de la base ; le mode
-  WAL évite qu'une génération d'histoire bloque une lecture ; une URL de base
-  malformée (`file://hôte`, query string) ou un reste de configuration Turso
-  est refusé ou signalé clairement au démarrage.
-- Le README documente la migration depuis un déploiement Turso existant
-  (dump → import `-bail` dans le volume Docker, vérifications, sauvegarde et
-  retour arrière).
+- **The database now lives at home**: no more Turso account or network
+  needed for the database — stories, heroes and settings are stored in a
+  plain SQLite file next to the images and voices (the `app-data` volume
+  in Docker, `data/app.db` locally). Installing the app now only asks for
+  an Anthropic key.
+- **Migrations apply themselves at startup**: no more `db:migrate` step to
+  remember — a new version brings its schema with it, in the right order
+  (the code and its migration arrive together).
+- **The file is protected**: before applying a new migration, the app
+  keeps an `app.db.pre-migrate` snapshot next to the database; WAL mode
+  keeps a story generation from blocking a read; a malformed database URL
+  (`file://host`, query string) or a leftover Turso configuration is
+  refused or clearly reported at startup.
+- The README documents the migration from an existing Turso deployment
+  (dump → `-bail` import into the Docker volume, checks, backup and
+  rollback).
 
 ### Added
 
-- Une suite d'assertions `test:db` épingle le nouveau socle : dérivation de
-  l'URL `file:`, validations, démarrage réel sur dossier vierge (12
-  migrations appliquées), redémarrage idempotent, absence d'instantané
-  intempestif, et le contrat Dockerfile (`drizzle/` embarqué dans l'image).
+- A `test:db` assertion suite pins the new foundation: `file:` URL
+  derivation, validations, a real boot on a blank directory (12 migrations
+  applied), idempotent restart, no spurious snapshot, and the Dockerfile
+  contract (`drizzle/` shipped in the image).
 
 ## [0.5.1.1] - 2026-07-30
 
 ### Changed
 
-- **Les retenues posées se voient enfin** : dans l'opération posée, le chiffre
-  écrit dans la petite case de retenue s'encre en trait plein sur un fond
-  doucement surligné (le même ton que la sélection), au lieu de rester gris
-  comme une case vide — l'enfant garde sa retenue sous les yeux en
-  descendant la colonne. La case grandit un peu ; la case vide reste un
-  brouillon discret et rien ne juge jamais le chiffre.
+- **Written carries finally show**: in the posed operation, the digit
+  written in the small carry cell is inked with a solid stroke on a softly
+  highlighted background (the same tone as the selection), instead of
+  staying grey like an empty cell — the child keeps the carry in sight
+  while going down the column. The cell grows a little; the empty cell
+  remains a discreet draft and nothing ever judges the digit.
 
 ## [0.5.1.0] - 2026-07-30
 
 ### Added
 
-- **Toute l'interface parle les deux langues (phase 4, dernière du plan
-  multilangue)** : le parcours de création d'histoire (étapes, boutons
-  « au hasard / suite / passer / sans doudou », la question saveur, les
-  attentes calmes, l'écran « On réessaie ? »), le lecteur d'histoire
-  (Imprimer, Une autre histoire, les boutons de lecture), la bibliothèque,
-  et tout l'espace parent (les pages héros/lieux/éléments/doudous et leurs
-  formulaires, le modèle d'image, le banc d'essai) suivent le réglage de
-  langue. Les libellés d'accessibilité paramétrés (« Modifier {label} »)
-  passent par le même gabarit que le plateau de calcul.
-- Restent volontairement dans la langue de la famille (décision D5 du plan) :
-  les DONNÉES d'entités (noms et descriptions des héros, lieux, éléments,
-  doudous — éditables à /parents) et les notes des modèles d'image.
+- **The whole interface speaks both languages (phase 4, last of the
+  multilanguage plan)**: the story-creation flow (steps, the "random /
+  next / skip / no doudou" buttons, the flavour question, the calm waiting
+  screens, the "On réessaie ?" screen), the story player (Print, Another
+  story, the playback buttons), the library, and the entire parent space
+  (the hero/place/element/doudou pages and their forms, the image model,
+  the playground) follow the language setting. Templated accessibility
+  labels ("Modifier {label}") go through the same template as the
+  arithmetic tray.
+- Deliberately kept in the family's language (decision D5 of the plan):
+  entity DATA (names and descriptions of heroes, places, elements,
+  doudous — editable at /parents) and the image-model notes.
 
 ## [0.5.0.0] - 2026-07-29
 
 ### Added
 
-- **Les histoires parlent les deux langues (phase 3 du plan multilangue)** :
-  une histoire créée quand l'atelier est en anglais est écrite, illustrée et
-  (si activée) lue à voix haute en anglais. La langue est figée à la création
-  (`stories.lang`) : la bibliothèque peut mélanger les deux, chaque histoire
-  garde la sienne pour toujours.
-- Un corpus anglais COMPLET, rédigé (pas traduit mot à mot) pour un lecteur
-  débutant anglophone : prompts système et d'écriture, fil rouge secret,
-  décrescendo d'atterrissage, niveau de lecture early-reader, listes de mots
-  interdits et d'enjeu, anti-tic « soft/softly/gentle/gently » (le pendant du
-  « doux/doucement »), messages correctifs en anglais, prompt d'illustration
-  et voix anglaise (Ana) pour la lecture à voix haute.
-- Garde-fou spécifique à l'anglais : le scan de sécurité anglais travaille au
-  MOT ENTIER (jamais par sous-chaîne comme le français) — sinon « warm », mot
-  cœur d'une histoire câline, serait bloqué parce qu'il contient « war ».
-  Vérifié en conditions réelles : un fil + un premier bout générés en anglais
-  au premier essai, calmes et courts.
-- Les aides à la lecture (lettres muettes, liaisons) sont de la phonétique
-  FRANÇAISE : elles n'apparaissent plus que sur les histoires françaises
-  (annotations et boutons) — la police cursive reste disponible partout.
-- Nouveau golden dans `test:coherence` : la branche anglaise entière
-  (prompts, scan au mot entier, ordre des clés des schémas identique au
-  français, prompt d'illustration épinglé octet pour octet) — et tous les
-  goldens français passent INTOUCHÉS : le chemin historique n'a pas bougé
-  d'un octet.
+- **Stories speak both languages (phase 3 of the multilanguage plan)**: a
+  story created while the workshop is in English is written, illustrated
+  and (if enabled) read aloud in English. The language is frozen at
+  creation (`stories.lang`): the library may mix both, each story keeps
+  its own forever.
+- A COMPLETE English corpus, written (not translated word for word) for a
+  beginning anglophone reader: system and writing prompts, hidden story
+  arc, landing decrescendo, early-reader reading level, forbidden-word and
+  stakes lists, the "soft/softly/gentle/gently" anti-tic (the counterpart
+  of "doux/doucement"), English corrective messages, illustration prompt
+  and an English voice (Ana) for read-aloud.
+- English-specific guard-rail: the English safety scan works on WHOLE
+  WORDS (never by substring like the French one) — otherwise "warm", a
+  core word of a cozy story, would be blocked because it contains "war".
+  Verified in real conditions: an arc + a first beat generated in English
+  on the first try, calm and short.
+- Reading aids (silent letters, liaisons) are FRENCH phonics: they now
+  only appear on French stories (annotations and toggles) — the cursive
+  font remains available everywhere.
+- New golden in `test:coherence`: the whole English branch (prompts,
+  whole-word scan, schema key order identical to the French one,
+  illustration prompt pinned byte for byte) — and all the French goldens
+  pass UNTOUCHED: the historical path has not moved by a single byte.
 
 ## [0.4.4.0] - 2026-07-29
 
 ### Added
 
-- **La mini-app Calculs parle les deux langues (phase 2 du plan
-  multilangue)** : l'étagère (phrases des plateaux, lecteur d'écran), la
-  série (« Plateau suivant », « J'ai fini, je compare », le moment 🌿), le
-  pavé doux, et la page parent (cartes de familles, libellés des paliers,
-  fiche A5 — imprimée dans la langue de l'atelier au moment de
-  l'impression) suivent le réglage de langue.
-- Les énoncés déterministes existent en anglais : pools alignés index par
-  index sur les pools français (même graine → la traduction du même
-  énoncé) ; une série en cours n'est jamais invalidée par la bascule de
-  langue — seule la phrase au-dessus de l'opération change, les chiffres
-  restent.
-- Goldens étendus : pins byte-exact des énoncés anglais (traduction du même
-  tirage que les pins français), preuve d'alignement des pools sur 3
-  familles × 100 graines × 2 branches, scan calme anglais (jamais well
-  done/won/hurry/wrong…), sobriété (1 phrase, < 90 caractères) ; et côté
-  catalogue, l'identité byte-exacte du fr avec FAMILLE_NOMS et les labels
-  de paliers du module pur.
+- **The Arithmetic mini-app speaks both languages (phase 2 of the
+  multilanguage plan)**: the shelf (tray phrases, screen reader), the
+  série ("Next tray", "I'm done, I compare", the 🌿 moment), the soft
+  numpad, and the parent page (family cards, palier labels, A5 sheet —
+  printed in the workshop language at print time) follow the language
+  setting.
+- The deterministic word problems exist in English: pools aligned index by
+  index with the French pools (same seed → the translation of the same
+  problem); an in-progress série is never invalidated by a language switch
+  — only the sentence above the operation changes, the digits stay.
+- Extended goldens: byte-exact pins of the English problems (translation
+  of the same draw as the French pins), pool-alignment proof over 3
+  families × 100 seeds × 2 branches, English calm-wording scan (never well
+  done/won/hurry/wrong…), sobriety (1 sentence, < 90 characters); and on
+  the catalog side, the byte-exact identity of the French with
+  FAMILLE_NOMS and the pure module's palier labels.
 
 ### Changed
 
-- L'enregistrement des réglages calcul renvoie un code stable au lieu d'une
-  phrase française — le libellé vient du catalogue, dans la langue du
-  parent (décision D7 du plan).
+- Saving the arithmetic settings returns a stable code instead of a French
+  sentence — the label comes from the catalog, in the parent's language
+  (decision D7 of the plan).
 
 ## [0.4.3.0] - 2026-07-29
 
 ### Added
 
-- **L'atelier parle deux langues (phase 1 du plan multilangue)** : un réglage
-  « La langue » dans l'espace parent (🌍, français ou anglais) bascule toute
-  la coquille du bureau — icônes et barres de titre, écran d'entrée, rituel
-  « Ranger le bureau », écrans calmes (souci / page introuvable), titre
-  d'onglet et description — sans rechargement. Le branding dérivé du prénom
-  suit la langue (« L'atelier d'Arsène » / « Arsène's workshop ») ; les
-  overrides `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` / `VITE_STORY_LABEL`
-  gardent la priorité dans les deux langues. Les histoires, les mini-apps et
-  l'espace parent restent en français pour l'instant (phases suivantes).
-- Nouvelle table `app_settings` (migration 0011, clé `ui-language`) — lue par
-  le loader racine, repli silencieux sur le français si la base est
-  injoignable : l'enfant ne voit jamais d'erreur de langue.
-- Nouveau golden `test:i18n` : parité des clés entre les deux catalogues,
-  scan « calme » des deux langues (jamais bravo/gagné/perdu… ni well
-  done/won/lost…), identité byte-exacte des libellés français déplacés, et le
-  branding par locale (élision française, possessif anglais).
+- **The workshop speaks two languages (phase 1 of the multilanguage
+  plan)**: a "Language" setting in the parent space (🌍, French or
+  English) switches the whole desktop shell — icons and title bars, entry
+  screen, "Ranger le bureau" ritual, calm screens (trouble / page not
+  found), tab title and description — without a reload. The branding
+  derived from the first name follows the language ("L'atelier d'Arsène" /
+  "Arsène's workshop"); the `VITE_APP_NAME` / `VITE_APP_DESCRIPTION` /
+  `VITE_STORY_LABEL` overrides keep priority in both languages. Stories,
+  the mini-apps and the parent space stay in French for now (next phases).
+- New `app_settings` table (migration 0011, `ui-language` key) — read by
+  the root loader, silent fallback to French if the database is
+  unreachable: the child never sees a language error.
+- New `test:i18n` golden: key parity between the two catalogs, the calm
+  scan on both languages (never bravo/gagné/perdu… nor well
+  done/won/lost…), byte-exact identity of the relocated French labels, and
+  per-locale branding (French elision, English possessive).
 
 ### Changed
 
-- Le registre des apps du bureau (`apps.tsx`) porte désormais l'id du
-  libellé (clé de catalogue) au lieu du libellé lui-même — l'icône et sa
-  barre de titre lisent la même clé, dans les deux langues.
+- The desktop app registry (`apps.tsx`) now carries the label id (catalog
+  key) instead of the label itself — the icon and its title bar read the
+  same key, in both languages.
 
 ## [0.4.2.0] - 2026-07-23
 
 ### Changed
 
-- **Grand rangement d'architecture, sans changement de comportement visible**
-  pour l'enfant comme pour le parent (les suites golden le garantissent, et
-  une revue extérieure indépendante a conclu « safe to ship ») :
-  - la vie d'une série de calcul (reprise exacte, migration des séries
-    d'avant l'étagère, grand ménage des clés locales, cache des réglages)
-    vit maintenant dans un module pur et testé
-    (`src/lib/operations/serie-session.ts`) derrière un petit port de
-    stockage — la page /calcul ne garde que l'affichage et les gestes ;
-  - toutes les lectures et écritures de médias générés passent par l'unique
-    point de passage `media-store` — plus aucun chemin de fichier fabriqué à
-    la main ailleurs ;
-  - le texte du prompt d'illustration est assemblé par un module dédié,
-    verrouillé octet pour octet par un test golden ;
-  - les interfaces hypothétiques des fournisseurs texte et image (une seule
-    implémentation chacune) sont supprimées ; seule la synthèse vocale, qui a
-    réellement deux voix, garde sa couture (`getTtsProvider()`) ;
-  - le re-bornage d'une fenêtre du bureau après un redimensionnement est
-    concentré dans un helper pur (`reclampCommitted`), à la place de quatre
-    blocs répétés ;
-  - deux contrats jusque-là en prose sont épinglés par des tests : aucune
-    option `ssr` sous le bureau, et la gate de session appelée à exactement
-    deux endroits (jamais la racine).
+- **A big architecture tidy-up, with no visible behavior change** for the
+  child or the parent (the golden suites guarantee it, and an independent
+  external review concluded "safe to ship"):
+  - the life of an arithmetic série (exact resume, migration of pre-shelf
+    séries, big cleanup of local keys, settings cache) now lives in a
+    pure, tested module (`src/lib/operations/serie-session.ts`) behind a
+    small storage port — the /calcul page keeps only rendering and
+    gestures;
+  - every read and write of generated media goes through the single
+    `media-store` choke-point — no more hand-built file path anywhere
+    else;
+  - the illustration prompt text is assembled by a dedicated module,
+    locked byte for byte by a golden test;
+  - the hypothetical text and image provider interfaces (a single
+    implementation each) are removed; only text-to-speech, which really
+    has two voices, keeps its seam (`getTtsProvider()`);
+  - the re-clamping of a desktop window after a resize is concentrated in
+    a pure helper (`reclampCommitted`), instead of four repeated blocks;
+  - two contracts until now in prose are pinned by tests: no `ssr` option
+    under the desktop, and the session gate called at exactly two places
+    (never the root).
 
 ### Fixed
 
-- La lecture à voix haute fonctionne désormais aussi quand les médias sont
-  stockés sur Vercel Blob : la voix par défaut (edge) écrivait son audio
-  directement sur le disque local en fabriquant son chemin à la main — en
-  mode Blob (systèmes de fichiers éphémères), l'audio était silencieusement
-  perdu. Elle passe maintenant par le magasin de médias commun, comme les
-  illustrations : l'audio suit le backend actif (disque local ou CDN). Le
-  déploiement familial actuel, sur disque local, n'était pas touché.
+- Read-aloud now also works when media is stored on Vercel Blob: the
+  default voice (edge) wrote its audio straight to the local disk by
+  building its path by hand — in Blob mode (ephemeral filesystems), the
+  audio was silently lost. It now goes through the shared media store,
+  like the illustrations: the audio follows the active backend (local disk
+  or CDN). The current family deployment, on local disk, was unaffected.
 
 ## [0.4.1.0] - 2026-07-23
 
 ### Added
 
-- **L'étagère de calcul change avec les jours** : les plateaux ne montrent
-  plus toujours les mêmes scènes. Chaque famille a maintenant plusieurs
-  ambiances appariées scène + phrase — marrons, feuilles ou fleurs pour
-  l'addition ; donner au doudou ou ranger dans sa boîte pour la
-  soustraction ; paniers, bols ou sacs pour la multiplication — et
-  l'étagère est préparée « pendant la nuit » : elle change d'un jour à
-  l'autre, jamais sous les yeux de l'enfant, et reste identique toute la
-  journée (même si la fenêtre reste ouverte passé minuit).
-- **Les petites histoires des calculs varient davantage** : la
-  multiplication ne remplit plus toujours des paniers (boîtes, corbeilles,
-  sacs et bols entrent dans la ronde), la soustraction alterne entre
-  donner, offrir ou prêter au doudou et ranger, poser ou rapporter à la
-  maison, et l'addition gagne aussi de nouvelles tournures. Une série
-  interrompue reprend toujours mot pour mot les mêmes énoncés.
+- **The arithmetic shelf changes with the days**: the trays no longer
+  always show the same scenes. Each family now has several paired
+  scene + phrase moods — chestnuts, leaves or flowers for addition; giving
+  to the doudou or putting away in its box for subtraction; baskets, bowls
+  or bags for multiplication — and the shelf is prepared "overnight": it
+  changes from one day to the next, never before the child's eyes, and
+  stays identical all day (even if the window stays open past midnight).
+- **The little stories of the operations vary more**: multiplication no
+  longer always fills baskets (boxes, hampers, bags and bowls join the
+  round), subtraction alternates between giving, offering or lending to
+  the doudou and putting away, setting down or bringing home, and addition
+  gains new phrasings too. An interrupted série always resumes with word
+  for word the same problems.
 
 ### Changed
 
-- Sur l'étagère des calculs, la flèche « retour » (qui doublonnait la croix
-  de la fenêtre) et le trait de séparation sous les plateaux ont été
-  retirés : fermer la fenêtre est LE geste de sortie ; la flèche ne reste
-  qu'en série, pour « reposer le plateau ».
-- Les icônes du bureau et le portrait de l'écran d'accueil montrent
-  désormais la petite main du pointeur, comme tout ce qui se clique.
+- On the arithmetic shelf, the "back" arrow (which duplicated the window's
+  close cross) and the separator line under the trays were removed:
+  closing the window is THE exit gesture; the arrow only remains inside a
+  série, to "put the tray back".
+- The desktop icons and the home-screen portrait now show the little
+  pointer hand, like everything clickable.
 
 ### Fixed
 
-- Les énoncés qui ne mettent pas en scène le doudou gardent exactement le
-  même libellé que le doudou soit chargé ou non : une base de données
-  lente au chargement ne peut plus re-formuler ces phrases-là d'une série
-  reprise. (Ceux qui citent le doudou suivent, eux, la configuration du
-  moment — c'est leur rôle.)
+- Problems that don't feature the doudou keep exactly the same wording
+  whether the doudou is loaded or not: a database slow to load can no
+  longer re-word those sentences in a resumed série. (The ones that
+  mention the doudou do follow the current configuration — that's their
+  role.)
 
 ## [0.4.0.0] - 2026-07-22
 
 ### Added
 
-- **Le bureau d'Arsène** : l'accueil devient un petit ordinateur calme.
-  L'app s'ouvre sur l'écran de session — le portrait de l'enfant (son héros),
-  son prénom, un clic pour entrer, jamais de mot de passe — puis sur un vrai
-  bureau : trois icônes (Histoires, Calculs, Bibliothèque) posées sur un
-  lavis crème, avec un soleil pâle et une colline sauge à l'horizon.
-- Chaque activité s'ouvre dans une **vraie fenêtre** : barre de titre avec le
-  nom et le pictogramme de l'app, grande croix douce pour fermer, et la
-  fenêtre se déplace en tirant sa barre de titre — la barre ne peut jamais
-  sortir de l'écran, et chaque ouverture repart centrée. Sur un petit écran,
-  la fenêtre occupe tout l'espace et le déplacement s'efface.
-- Les gestes du vrai ordinateur s'apprennent tels quels : un clic
-  sélectionne une icône (son nom se surligne, comme sur un vrai bureau), le
-  **double-clic l'ouvre** — avec le délai du système, jamais un seuil
-  maison — et Entrée fonctionne aussi.
-- Le rituel **« Ranger le bureau »**, discret dans un coin, referme la
-  session vers le portrait. Session fermée, toute l'app se présente d'abord
-  par le portrait : ni le bouton Retour ni un lien direct ne sautent le
-  rituel.
+- **Arsène's desktop**: the home screen becomes a small calm computer. The
+  app opens on the session screen — the child's portrait (their hero),
+  their first name, one click to enter, never a password — then on a real
+  desktop: three icons (Stories, Arithmetic, Library) laid on a cream
+  wash, with a pale sun and a sage hill on the horizon.
+- Each activity opens in a **real window**: a title bar with the app's
+  name and pictogram, a large soft cross to close, and the window moves by
+  dragging its title bar — the bar can never leave the screen, and every
+  opening starts centered again. On a small screen, the window fills the
+  whole space and dragging goes away.
+- The real computer's gestures are learned as-is: one click selects an
+  icon (its name highlights, like on a real desktop), a **double-click
+  opens it** — with the system's delay, never a home-made threshold — and
+  Enter works too.
+- The **"Ranger le bureau"** ritual, discreet in a corner, closes the
+  session back to the portrait. With the session closed, the whole app
+  presents itself through the portrait first: neither the Back button nor
+  a direct link skips the ritual.
 
 ### Changed
 
-- Une histoire ou une série de calcul en cours **reprend exactement** après
-  fermeture de sa fenêtre — le cadre n'introduit aucune perte, et une page
-  ouverte depuis une liste défilée repart toujours en haut.
-- L'espace parent (/parents) reste volontairement hors du bureau : pas
-  d'icône, accès direct par l'adresse, présentation inchangée.
-- L'impression des livrets et des fiches depuis une fenêtre rend exactement
-  comme avant : le cadre disparaît entièrement du papier.
+- An in-progress story or arithmetic série **resumes exactly** after its
+  window is closed — the frame introduces no loss, and a page opened from
+  a scrolled list always starts back at the top.
+- The parent space (/parents) deliberately stays outside the desktop: no
+  icon, direct access by address, unchanged presentation.
+- Printing booklets and sheets from a window renders exactly as before:
+  the frame disappears entirely from the paper.
 
 ### Fixed
 
-- Un déplacement de fenêtre interrompu (redimensionnement, Échap, changement
-  d'onglet) ne peut plus laisser la fenêtre coincée hors de l'écran.
-- Si le stockage local de l'appareil est indisponible, la session vit en
-  mémoire le temps de l'onglet : l'écran-portrait ne redevient jamais une
-  barrière répétée.
-- Un souci de connexion pendant l'ouverture d'une activité ne fige plus les
-  icônes du bureau : elles redeviennent utilisables d'elles-mêmes.
-- Un prénom accentué reconnaît son héros quelle que soit la façon dont
-  l'accent a été saisi dans l'espace parent.
+- An interrupted window drag (resize, Escape, tab switch) can no longer
+  leave the window stuck off-screen.
+- If the device's local storage is unavailable, the session lives in
+  memory for the tab's lifetime: the portrait screen never becomes a
+  repeated barrier.
+- A connection hiccup while opening an activity no longer freezes the
+  desktop icons: they become usable again on their own.
+- An accented first name recognizes its hero regardless of how the accent
+  was typed in the parent space.
 
 ## [0.3.1.0] - 2026-07-20
 
 ### Changed
 
-- Les illustrations annoncent désormais leurs dimensions à la page : plus de
-  petit saut de mise en page pendant qu'une image de la bibliothèque, d'une
-  histoire ou d'un livret imprimé finit de charger.
-- Grand ménage de printemps du code avec l'adoption des presets ultracite
-  (Biome) : imports, attributs et clés triés partout, réécritures plus
-  explicites (comparaisons null/undefined précises, expressions régulières
-  hoistées, `+= 1`) — sans aucun changement de comportement, les suites
-  golden le garantissent.
-- L'ordre des champs des schémas d'histoire envoyés au modèle (titre puis
-  récit puis choix) est maintenant verrouillé par un test : une future passe
-  de formatage ne pourra plus le réordonner en silence.
+- Illustrations now announce their dimensions to the page: no more small
+  layout jump while an image from the library, a story or a printed
+  booklet finishes loading.
+- A big spring cleaning of the code with the adoption of the ultracite
+  presets (Biome): imports, attributes and keys sorted everywhere, more
+  explicit rewrites (precise null/undefined comparisons, hoisted regular
+  expressions, `+= 1`) — with no behavior change at all, the golden suites
+  guarantee it.
+- The field order of the story schemas sent to the model (title then
+  narration then choices) is now locked by a test: a future formatting
+  pass can no longer silently reorder it.
 
 ### Fixed
 
-- Le tri automatique des clés avait déplacé des commentaires de section
-  (variables d'environnement, schéma de la base) sous les mauvaises entrées ;
-  les groupes sémantiques sont restaurés et protégés.
+- The automatic key sorting had moved section comments (environment
+  variables, database schema) under the wrong entries; the semantic groups
+  are restored and protected.
 
 ## [0.3.0.0] - 2026-07-20
 
 ### Added
 
-- L'étagère de plateaux : en entrant dans « Poser des calculs », l'enfant
-  choisit désormais lui-même sa famille d'opération — un plateau par famille
-  préparée par le parent, posé sur une planche, avec sa petite scène fixe
-  (des marrons pour les additions, le doudou pour les soustractions, des
-  paniers pour les multiplications), le signe en médaillon et une phrase
-  courte. Une famille non préparée n'apparaît simplement pas.
-- Chaque plateau se souvient de sa série en cours : un plateau « sorti » de
-  la planche se reprend exactement où il en était, même après un détour par
-  un autre plateau — et une série commencée avant cette version est
-  retrouvée elle aussi.
-- La flèche fait maintenant le trajet en deux temps : depuis la série elle
-  « repose le plateau » (retour à l'étagère), depuis l'étagère elle rend à
-  l'accueil. La fin d'une série redevient un instant : 🌿, puis l'étagère
-  réapparaît avec le plateau rangé.
-- Côté parents, la page des calculs se réorganise en une carte par famille
-  d'opérations : activer/désactiver chaque famille, choisir son palier
-  propre, imprimer une fiche A5 par famille. Les conséquences sont dites
-  avant le geste (« Changer le palier range la série en cours »), et au
-  moins une famille reste toujours sur l'étagère.
-- L'étagère s'adapte à l'écran : les plateaux se compriment sans jamais
-  passer sous la planche, s'empilent sur petit écran (chacun avec sa
-  planche), s'annoncent au lecteur d'écran (« Prendre le plateau des
-  additions — série en cours ») et respectent la préférence « réduire les
-  animations ».
+- The tray shelf: on entering "Poser des calculs", the child now chooses
+  their operation family themselves — one tray per family prepared by the
+  parent, laid on a plank, with its small fixed scene (chestnuts for
+  additions, the doudou for subtractions, baskets for multiplications),
+  the sign in a medallion and a short phrase. A family that isn't prepared
+  simply doesn't appear.
+- Each tray remembers its in-progress série: a tray "taken off" the plank
+  resumes exactly where it was, even after a detour through another tray —
+  and a série started before this version is recovered too.
+- The arrow now makes the journey in two steps: from the série it "puts
+  the tray back" (return to the shelf), from the shelf it returns home.
+  The end of a série becomes a moment again: 🌿, then the shelf reappears
+  with the tray put away.
+- On the parent side, the arithmetic page reorganizes into one card per
+  operation family: activate/deactivate each family, choose its own
+  palier, print an A5 sheet per family. Consequences are stated before the
+  gesture ("Changing the palier puts the current série away"), and at
+  least one family always stays on the shelf.
+- The shelf adapts to the screen: trays compress without ever going under
+  the plank, stack on a small screen (each with its plank), announce
+  themselves to the screen reader ("Take the additions tray — série in
+  progress") and honor the "reduce motion" preference.
 
 ### Changed
 
-- Les réglages du calcul vivent désormais par famille d'opérations (la
-  migration 0010 convertit l'ancien réglage unique en préservant le palier
-  choisi — exécuter `bun run db:migrate` avec le déploiement) ; la taille de
-  série reste globale, et celle d'un ancien appareil est conservée.
-- La documentation projet décrit l'étagère de plateaux et son cycle de vie
-  des données (CLAUDE.md, schéma, backlog).
+- The arithmetic settings now live per operation family (migration 0010
+  converts the old single setting while preserving the chosen palier —
+  run `bun run db:migrate` with the deployment); the série size stays
+  global, and an older device's size is preserved.
+- The project documentation describes the tray shelf and its data
+  lifecycle (CLAUDE.md, schema, backlog).
 
 ### Fixed
 
-- Une visite hors ligne (ou avant la migration) ne peut plus faire oublier
-  une série en cours : le grand ménage des séries locales n'a lieu que sur
-  des réglages réellement lus en base, et la migration d'une série d'avant
-  l'étagère ne s'efface qu'après vérification de sa nouvelle place.
-- Si les réglages ne se chargent pas, la page parents l'affiche calmement au
-  lieu de présenter un formulaire vide qui aurait pu écraser les vrais
-  réglages en croyant les réparer.
-- Une série au contenu impossible à régénérer se range d'elle-même au lieu
-  de rester sur l'écran « L'atelier est rangé. » ; les messages d'erreur
-  côté parents restent en français calme, sans détail technique.
-- `bun run lint` fonctionne aussi depuis un espace de travail d'agent
-  (l'exclusion Biome des worktrees est ancrée à la racine de la config).
+- An offline visit (or one before the migration) can no longer make an
+  in-progress série forgotten: the big cleanup of local séries only
+  happens on settings actually read from the database, and the migration
+  of a pre-shelf série is only erased after verifying its new place.
+- If the settings fail to load, the parents page says so calmly instead of
+  presenting an empty form that could have overwritten the real settings
+  while believing it was repairing them.
+- A série whose content can't be regenerated puts itself away instead of
+  staying on the "L'atelier est rangé." screen; parent-side error messages
+  stay in calm language, with no technical detail.
+- `bun run lint` also works from an agent workspace (the Biome exclusion
+  of worktrees is anchored to the config root).
 
 ## [0.2.2.1] - 2026-07-20
 
 ### Changed
 
-- L'app s'appelle maintenant « L'atelier d'Arsène » (dérivé du prénom :
-  « L'atelier de Léa » pour un autre foyer, « Le petit atelier » sans prénom) —
-  un nom qui couvre les histoires, les calculs et les prochains plateaux.
-  L'onglet du navigateur et l'écran d'accueil suivent au prochain déploiement ;
-  les livrets imprimés gardent leur pied de page « Une histoire d'Arsène ».
-- La description de l'app devient « Un endroit calme pour lire, inventer et
-  calculer. »
+- The app is now called "L'atelier d'Arsène" (derived from the first name:
+  "L'atelier de Léa" for another household, "Le petit atelier" without a
+  first name) — a name that covers the stories, the arithmetic and the
+  upcoming trays. The browser tab and the home screen follow on the next
+  deployment; printed booklets keep their "Une histoire d'Arsène" footer.
+- The app description becomes "Un endroit calme pour lire, inventer et
+  calculer."
 
 ## [0.2.2.0] - 2026-07-19
 
 ### Changed
 
-- Les fonctions serveur utilisent l'API de validation actuelle de TanStack
-  Start (`validator` remplace l'alias déprécié `inputValidator`, strictement
-  équivalent) — le serveur de dev démarre désormais sans le mur
-  d'avertissements de dépréciation. Aucun changement de comportement.
+- The server functions use TanStack Start's current validation API
+  (`validator` replaces the deprecated `inputValidator` alias, strictly
+  equivalent) — the dev server now starts without the wall of deprecation
+  warnings. No behavior change.
 
 ### Fixed
 
-- `bun run lint` ne casse plus quand un espace de travail d'agent existe sous
-  `.claude/worktrees/` (exclusion Biome + entrée `.gitignore`) ; les réglages
-  locaux `.claude/settings.local.json` restent aussi hors du dépôt.
+- `bun run lint` no longer breaks when an agent workspace exists under
+  `.claude/worktrees/` (Biome exclusion + `.gitignore` entry); the local
+  `.claude/settings.local.json` settings also stay out of the repository.
 
 ## [0.2.1.0] - 2026-07-18
 
 ### Added
 
-- Atelier calcul : les chiffres du pavé doux se glissent maintenant du bout du
-  doigt directement dans les cases de l'opération — la tuile suit le doigt et
-  s'encre à l'endroit posé, comme un crayon qui se pose. Le tap d'avant marche
-  toujours exactement pareil ; les deux gestes se mélangent librement.
+- Arithmetic workshop: the soft numpad's digits now slide under the
+  fingertip straight into the operation's cells — the tile follows the
+  finger and inks itself where it lands, like a pencil setting down. The
+  previous tap still works exactly the same; both gestures mix freely.
 
 ### Changed
 
-- Pendant un glissement, une seule case s'illumine à la fois (celle sous le
-  doigt) — l'ancienne sélection s'éteint le temps du geste.
-- Le dépôt est indulgent pour les petits doigts : si le doigt est juste à côté
-  d'une case mais que la tuile la chevauche, le chiffre s'y pose quand même.
-- La petite case de retenue est un peu plus facile à toucher (cible tactile
-  élargie à 44 px de haut).
+- During a drag, only one cell lights up at a time (the one under the
+  finger) — the previous selection goes out for the duration of the
+  gesture.
+- The drop is forgiving for small fingers: if the finger is just next to a
+  cell but the tile overlaps it, the digit lands there anyway.
+- The small carry cell is a bit easier to touch (touch target enlarged to
+  44 px tall).
 
 ## [0.2.0.0] - 2026-07-17
 
 ### Added
 
-- L'accueil devient une étagère à deux portes : « Histoire où tu choisis » et
-  la nouvelle mini-app « Poser des calculs » — deux activités indépendantes,
-  sans aucune mécanique croisée.
-- Atelier `/calcul` : une série courte d'opérations posées (3 par défaut),
-  présentée comme des plateaux qui se rangent — l'enfant écrit librement au
-  pavé doux (tout s'encre comme au crayon, jamais de rouge, jamais de note),
-  compare lui-même avec la version résolue quand il a fini, et l'atelier se
-  range de lui-même à la fin de la série. Une opération quittée en cours
-  reprend exactement où elle en était.
-- Énoncés du monde de l'enfant : chaque opération peut s'habiller d'une courte
-  phrase avec le héros et le doudou de la famille (« Arsène range 24 marrons,
-  Doudou en apporte 8 ») — générée localement, sans IA.
-- Fiches A5 à imprimer : des opérations posées à compléter au crayon, dans le
-  même format que les livrets d'histoires, calibrées sur le palier choisi.
-- Espace parent `/parents/calcul` : choix du palier (7 paliers, des additions
-  sans retenue aux multiplications posées — c'est l'adulte qui décide, jamais
-  un algorithme), taille des séries, impression des fiches.
-- Le calcul fonctionne même sans réseau : le palier est mémorisé sur
-  l'appareil et l'enfant ne voit jamais d'erreur.
+- The home screen becomes a shelf with two doors: "Histoire où tu choisis"
+  and the new "Poser des calculs" mini-app — two independent activities,
+  with no crossed mechanics.
+- `/calcul` workshop: a short série of posed operations (3 by default),
+  presented as trays that put themselves away — the child writes freely on
+  the soft numpad (everything inks like pencil, never red, never a grade),
+  compares by themselves with the solved version when done, and the
+  workshop puts itself away at the end of the série. An operation left
+  mid-way resumes exactly where it was.
+- Word problems from the child's world: each operation can wear a short
+  sentence with the family's hero and doudou ("Arsène range 24 marrons,
+  Doudou en apporte 8") — generated locally, no AI.
+- Printable A5 sheets: posed operations to complete in pencil, in the same
+  format as the story booklets, calibrated on the chosen palier.
+- Parent space `/parents/calcul`: palier choice (7 paliers, from carrying-
+  free additions to posed multiplications — the adult decides, never an
+  algorithm), série sizes, sheet printing.
+- Arithmetic works even without a network: the palier is remembered on the
+  device and the child never sees an error.
 
 ### Changed
 
-- La page d'accueil présente désormais les deux activités côte à côte ; la
-  bibliothèque reste accessible comme avant.
+- The home page now presents the two activities side by side; the library
+  stays reachable as before.
 
 ### Infrastructure
 
-- Nouveau module pur `src/lib/operations` (générateur déterministe seedé,
-  géométrie partagée écran/print, échelle des paliers, énoncés à gabarits),
-  verrouillé par 60 vérifications golden — certaines balayant tous les
-  paliers × 60 seeds (`bun run test:operations`).
-- Table `math_skills` (migration additive 0009) pour le palier et la taille
-  de série choisis par le parent.
+- New pure module `src/lib/operations` (seeded deterministic generator,
+  shared screen/print geometry, palier ladder, template word problems),
+  locked by 60 golden checks — some sweeping every palier × 60 seeds
+  (`bun run test:operations`).
+- `math_skills` table (additive migration 0009) for the parent-chosen
+  palier and série size.

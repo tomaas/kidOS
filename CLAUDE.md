@@ -78,8 +78,10 @@ yes → don't.
   migration rewrites rows.
 - `bun run deploy` — `docker compose up -d --build` (see Nitro bullet; needs
   `.env.production` + optionally `.env` for build-time `VITE_*` args).
-- Releases: 4-digit `VERSION` + `CHANGELOG.md` (French, Keep-a-Changelog
-  style); deferred work lives in `TODOS.md`.
+- Releases: 4-digit `VERSION` + `CHANGELOG.md` (English, Keep-a-Changelog
+  style); deferred work lives in `TODOS.md`. Repo language convention:
+  commit messages, PR titles/bodies, changelog and docs are written in
+  ENGLISH (the app's child/parent-facing UI strings stay per-locale).
 
 ## Architecture
 
