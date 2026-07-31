@@ -207,6 +207,24 @@ const envSandbox = mkdtempSync(join(tmpdir(), "local-sqlite-golden-env-"));
   check("a file: URL passes full validation", r.status === 0, r.stderr);
 }
 {
+  // Boot validation is INFRA-ONLY (env→DB settings move) : les clés provider
+  // peuvent vivre uniquement dans app_settings — un boot sans AUCUNE clé,
+  // même avec IMAGE_ENABLED=true sans GEMINI_API_KEY (ancien cas fatal) et
+  // TTS elevenlabs sans clé, doit passer. La vérification se fait au point
+  // d'usage (config-status côté /parents, soft-failure côté enfant).
+  const r = runChild("child:env", {
+    DATABASE_URL: `file:${envSandbox}/no-keys.db`,
+    IMAGE_ENABLED: "true",
+    TTS_ENABLED: "true",
+    TTS_PROVIDER: "elevenlabs",
+  });
+  check(
+    "boot passes with NO provider key at all (validation is infra-only)",
+    r.status === 0,
+    r.stderr
+  );
+}
+{
   // `file://data/app.db` makes "data" a URL AUTHORITY — libsql and the
   // bootstrap mkdir would disagree on the real path. Must be rejected.
   const r = runChild("child:env", {

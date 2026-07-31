@@ -6,6 +6,7 @@ import {
   type Locale,
   normalizeLocale,
 } from "~/lib/i18n/locale";
+import { setSetting, UI_LANGUAGE_KEY } from "~/server/app-config";
 import { db } from "~/server/db";
 import { appSettings } from "~/server/db/schema";
 
@@ -18,17 +19,6 @@ import { appSettings } from "~/server/db/schema";
  * le libellé d'échec appartient au CLIENT (catalogue i18n) — le serveur ne
  * choisit pas la langue d'un message destiné au parent.
  */
-
-const UI_LANGUAGE_KEY = "ui-language";
-
-/**
- * House timestamp format — same idiom as the sibling *-functions.ts files
- * (space-separated, 23 chars). Note: the column DEFAULT (strftime, schema.ts)
- * additionally carries "+00" — both shapes coexist app-wide by convention.
- */
-function nowSqlTimestamp(): string {
-  return new Date().toISOString().replace("T", " ").slice(0, 23);
-}
 
 export const getUiLocaleFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ locale: Locale }> => {
@@ -49,13 +39,10 @@ export const saveUiLocaleFn = createServerFn({ method: "POST" })
   .validator(z.object({ locale: z.enum(["fr", "en"]) }))
   .handler(async ({ data }): Promise<{ success: boolean }> => {
     try {
-      await db
-        .insert(appSettings)
-        .values({ key: UI_LANGUAGE_KEY, value: data.locale })
-        .onConflictDoUpdate({
-          set: { updatedAt: nowSqlTimestamp(), value: data.locale },
-          target: appSettings.key,
-        });
+      // Écrivain CENTRAL (app-config.ts) : tout writer de `app_settings`
+      // passe par setSetting/applySettingsPatch — validation de clé et
+      // transaction ne peuvent pas être contournées.
+      await setSetting(UI_LANGUAGE_KEY, data.locale);
       return { success: true };
     } catch (error) {
       // Le détail technique (chemin du fichier SQLite, SQL) reste côté serveur — le
