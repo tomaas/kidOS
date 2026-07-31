@@ -55,6 +55,18 @@
      de theme.css, seule surface froide de l'atelier. */
   --popover: oklch(0.995 0.008 85);
   --popover-foreground: oklch(0.32 0.03 50);
+  /* Le panneau latéral de l'espace parent suit la même crème chaude — sans ces
+     redéfinitions, les jetons --sidebar-* retomberaient sur le blanc froid de
+     theme.css (le même écueil que --popover ci-dessus). Surface légèrement
+     plus creusée que la page pour que l'étagère se lise comme un plan propre. */
+  --sidebar: oklch(0.97 0.018 85);
+  --sidebar-foreground: oklch(0.32 0.03 50);
+  --sidebar-primary: oklch(0.62 0.13 50);
+  --sidebar-primary-foreground: oklch(0.99 0.01 85);
+  --sidebar-accent: oklch(0.93 0.04 80);
+  --sidebar-accent-foreground: oklch(0.4 0.04 50);
+  --sidebar-border: oklch(0.9 0.025 80);
+  --sidebar-ring: oklch(0.78 0.09 50);
 }
 
 /* Liste sans ascenseur visible (la liste de la palette ⌘K, classe attendue par
@@ -230,6 +242,17 @@ body {
      de fenêtre — un Ctrl+P la palette ouverte imprime le livret, pas le menu. */
   [data-slot="dialog-overlay"],
   [data-slot="dialog-content"] {
+    display: none !important;
+  }
+
+  /* Le panneau latéral de l'espace parent (et sa feuille mobile, portalisée
+     dans <body>) ne doit jamais apparaître sur une fiche A5 imprimée depuis
+     /parents/calcul : même traitement que la palette ci-dessus. */
+  [data-slot="sidebar"],
+  [data-slot="sidebar-trigger"],
+  [data-slot="sidebar-rail"],
+  [data-slot="sheet-overlay"],
+  [data-slot="sheet-content"] {
     display: none !important;
   }
 
