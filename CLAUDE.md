@@ -61,7 +61,11 @@ yes → don't.
   prose contracts: no `ssr:` option under `src/app/_bureau/**` and the
   closed-session gate CALLED in exactly two files, never `__root`, PLUS the
   ⌘K palette registry (every destination is a served URL, unique ids, and
-  never a shortcut into a bureau mini-app);
+  never a shortcut into a bureau mini-app), PLUS the /parents sidebar shell
+  (the `/parents` layout route present with its 8 re-parented children,
+  every `SECTIONS_PARENTS` entry a served URL with unique ids, no `ssr:`
+  option under `src/app/parents/**`, and the `/parents/` →
+  `/parents/reglages` redirect with a served target);
   `test:settings` pins the app-config settings service (precedence
   db>env>default, the FOUR secret operations, invalid-means-fallback
   bool/enum parsing, `hintFor` masking, the boundary secret-scan on the
@@ -92,7 +96,13 @@ yes → don't.
   DESKTOP — see Bureau bullet) + aventure + calcul + bibliotheque (relocated
   under the pathless layout `src/app/_bureau/`, public URLs unchanged) +
   parents section, incl. /parents/calcul — /parents stays OUTSIDE the
-  desktop grammar).
+  desktop grammar). The parents section is a SIDEBAR SHELL: the layout route
+  `src/app/parents/route.tsx` renders the shared sidebar (nav from the pure
+  registry `src/lib/parents/sections.ts`, footer = back-to-desktop + the ⌘K
+  hint) around every parent page; the old hub card grid is retired —
+  `/parents` redirects (beforeLoad) to `/parents/reglages`. The sidebar
+  component family is base-nova, vendored via components.json + the shadcn
+  CLI into `src/components/ui/`.
 - **Bureau (the calm fake-OS frame)**: `/` renders the portrait screen OR
   the desktop (3 icons, dblclick native + Enter — the "Ouvrir" fallback was
   REMOVED by user decision 2026-07-22, single click only selects; "Ranger
@@ -106,12 +116,13 @@ yes → don't.
   without drag, print neutralized (`.bureau-fenetre` rules). CONTRACT: the
   layout never sets `ssr` (Selective SSR is inherited down — an `ssr:false`
   would silently make the mini-apps client-only; golden-pinned, no `ssr:`
-  option anywhere under `_bureau/`); the closed-session gate
+  option anywhere under `_bureau/` — same contract under `parents/`); the
+  closed-session gate
   lives at exactly TWO places (`_bureau` layout as an optimistic overlay +
   `/`), never `__root` (else /parents and /data/$ would be gated). The
-  `__root` shell is route-aware: full-bleed for the desktop layer, the
-  `max-w-5xl` container is kept for /parents (the window frame provides the
-  container inside).
+  `__root` shell is full-bleed everywhere — it no longer special-cases
+  /parents (the parents sidebar layout owns its own reading column; the
+  window frame provides the container inside the bureau).
 - **⌘K palette (parent door)**: `src/components/palette-parent.tsx`, mounted
   ONCE in `__root` inside the `LocaleProvider` — so ⌘K / Ctrl+K works on every
   page, including over the desktop and the portrait screen (it is portaled to
@@ -120,18 +131,21 @@ yes → don't.
   that writes something, and never a shortcut into a mini-app: the palette
   EXTENDS the /parents rule (reachable by URL, never drawn in the child's
   grammar) instead of contradicting it, so there is deliberately NO visible
-  trigger in the child layer; the shortcut is recalled on /parents only
-  (`palette.indice`). It is mounted only while OPEN — nothing in the DOM when
+  trigger in the child layer; the shortcut is recalled in the parents
+  sidebar footer only (`palette.indice`). It is mounted only while OPEN — nothing in the DOM when
   closed (not even the dialogue's sr-only title), and the search therefore
   starts blank every time. Destinations live in the pure registry
   `src/lib/palette/entrees.ts` (id = the catalog key of the
-  matching /parents card, so renaming a section cannot desync the palette;
+  matching parents sidebar section, so renaming a section cannot desync the
+  palette;
   `motsCles` carries the URL segments so "reglages" finds Settings under an
   English UI and vice-versa), golden-pinned by `test:routes` + `test:i18n`.
   Components: shadcn/ui `command` + `dialog`, variante BASE (`base-nova`
   registry, @base-ui/react primitives + `cmdk`) vendored into
-  `src/components/ui/` — the deviations from the registry bytes are documented
-  in each file's header, including the `data-selected:` →
+  `src/components/ui/` (the repo carries a `components.json` so the shadcn
+  CLI vendors base-nova components — the sidebar family for the /parents
+  shell came in the same way) — the deviations from the registry bytes are
+  documented in each file's header, including the `data-selected:` →
   `data-[selected=true]:` fix (cmdk emits `data-selected="false"`, so the
   presence-only Tailwind variant highlighted EVERY row). `--popover` joins the
   calm palette in `globals.css` (else `bg-popover` fell back to theme.css's
@@ -174,7 +188,7 @@ yes → don't.
   the SAME call as the arc) and `story_segments.scene_hint` (per-beat scene
   description for the illustrator).
 - **UI language (multilang phase 1)**: the desktop SHELL is bilingual fr/en —
-  a PARENT setting (🌍 card on /parents), persisted in the `app_settings`
+  a PARENT setting (🌍 section on /parents/reglages), persisted in the `app_settings`
   table (key `ui-language`), read ONLY by the `__root` loader
   (`getShellContextFn` — locale + branding in one read, never throws — DB
   down → "fr" + deploy branding) and propagated via

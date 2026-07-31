@@ -11,6 +11,12 @@
  * chaque entrée vise une URL réellement servie, et aucune ne raccourcit vers
  * une mini-app du bureau (la palette est une porte parent, pas un raccourci
  * enfant).
+ *
+ * Épingle ENFIN la coquille /parents (panneau latéral) : le registre pur des
+ * sections (lib/parents/sections.ts) vise des URLs servies, la route layout
+ * `/parents` re-parente ses 8 enfants, aucune option `ssr:` sous
+ * src/app/parents/**, et l'ancien hub `/parents/` redirige vers
+ * /parents/reglages (cible servie).
  *   bun run src/lib/bureau/__tests__/routes.golden.ts
  * (wired as `bun run test:routes`). Exits non-zero on any failure.
  */
@@ -18,6 +24,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { ENTREES_PALETTE } from "~/lib/palette/entrees";
+import { SECTIONS_PARENTS } from "~/lib/parents/sections";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {
@@ -157,6 +164,53 @@ check(
   versMiniApp.map((e) => e.to).join(", ")
 );
 
+/* ---------------- La coquille /parents (panneau latéral) ------------------ */
+
+// Le registre pur des sections (lib/parents/sections.ts) nourrit la sidebar :
+// chaque section vise une URL RÉELLEMENT servie — même technique que la
+// palette, l'arbre généré tranche.
+for (const section of SECTIONS_PARENTS) {
+  check(
+    `sections parents → URL servie: ${section.to}`,
+    routeTree.includes(`fullPath: '${section.to}'`) ||
+      routeTree.includes(`fullPath: '${section.to}/'`)
+  );
+}
+
+// Les ids sont uniques (ils servent de clé de libellé ET de clé React).
+const idsSections = SECTIONS_PARENTS.map((s) => s.id);
+check(
+  "sections parents : ids uniques",
+  new Set(idsSections).size === idsSections.length,
+  idsSections.join(", ")
+);
+
+// La route layout /parents existe (id '/parents') et re-parente ses 8
+// enfants (7 sections + l'index de redirection) — l'empreinte textuelle est
+// `parentRoute: typeof ParentsRouteRoute` dans le bloc declare module.
+check("la layout /parents existe (id)", routeTree.includes("id: '/parents'"));
+const ENFANTS_PARENTS_ATTENDUS = 8;
+const enfantsParents = routeTree.match(
+  /parentRoute: typeof ParentsRouteRoute\b/g
+);
+check(
+  `la layout /parents re-parente ses ${ENFANTS_PARENTS_ATTENDUS} enfants`,
+  (enfantsParents?.length ?? 0) === ENFANTS_PARENTS_ATTENDUS,
+  `trouvé ${enfantsParents?.length ?? 0} occurrence(s)`
+);
+
+// L'ancien hub est une REDIRECTION : /parents/ atterrit sur les réglages, et
+// la cible est bien une URL servie (une réécriture de la cible casse ici).
+const indexParents = readFileSync("src/app/parents/index.tsx", "utf8");
+check(
+  "/parents/ redirige vers /parents/reglages",
+  indexParents.includes('redirect({ to: "/parents/reglages" })')
+);
+check(
+  "la cible de la redirection est une URL servie",
+  routeTree.includes("fullPath: '/parents/reglages'")
+);
+
 /* --------------- Contrats prose → épinglés (D17-A + T2-A) ----------------- */
 
 // (D17-A) Selective SSR : AUCUNE option `ssr:` sous src/app/_bureau/** — la
@@ -180,6 +234,22 @@ check(
   sousBureau.length > 0 && avecOptionSsr.length === 0,
   avecOptionSsr.map((s) => s.path).join(", ") ||
     "aucun fichier scanné sous src/app/_bureau/"
+);
+
+// Même contrat pour la coquille /parents : la layout (route.tsx) est le
+// parent de TOUTES les pages parent — un `ssr: false` posé là rendrait
+// silencieusement tout l'espace parent client-only.
+const sousParents = sources.filter((s) =>
+  s.path.startsWith("src/app/parents/")
+);
+const avecOptionSsrParents = sousParents.filter((s) =>
+  OPTION_SSR.test(sansCommentaires(s.contenu))
+);
+check(
+  "contrat: aucune option `ssr:` sous src/app/parents/** (héritage Selective SSR)",
+  sousParents.length > 0 && avecOptionSsrParents.length === 0,
+  avecOptionSsrParents.map((s) => s.path).join(", ") ||
+    "aucun fichier scanné sous src/app/parents/"
 );
 
 // (T2-A) La gate session-fermée vit à exactement DEUX endroits : `/` et la

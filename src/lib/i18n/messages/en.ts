@@ -227,8 +227,6 @@ export const en: Messages = {
       titre: "The image model",
     },
     index: {
-      intro:
-        "Manage what the child can choose: heroes, places, elements and cuddly toys. Stories already created never change.",
       sections: {
         calcul: {
           description:

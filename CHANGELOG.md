@@ -4,6 +4,38 @@ All notable changes to the app, one version per release.
 Format: [Keep a Changelog](https://keepachangelog.com/) adapted, 4-digit
 versions `MAJOR.MINOR.PATCH.MICRO` (`VERSION` file).
 
+## [0.7.0.0] - 2026-07-31
+
+### Added
+
+- **A sidebar for the parent space**: every parent page (settings, heroes,
+  places, elements, cuddly toys, sums, image model) now shares one side
+  panel — the sections are always one click away instead of a round trip
+  through a hub page. The panel folds away (its trigger button, or ⌘B /
+  Ctrl+B) and becomes a drawer on small screens; a printed A5 sheet never
+  shows it. Its footer carries the way back to the desktop and the ⌘K
+  shortcut reminder — still parent-side only, never in the child's layer.
+- New golden assertions (`test:routes`): the `/parents` layout route exists
+  and re-parents its eight children, every sidebar section is a URL the app
+  really serves (unique ids), no `ssr:` option anywhere under the parents
+  routes, and the old hub URL really redirects to the settings page.
+
+### Changed
+
+- **The parent hub page is retired**: `/parents` now lands directly on the
+  settings page (`/parents/reglages`) — old links and the ⌘K "Parent space"
+  entry keep working. The 🌍 language setting moved onto the settings page.
+- The sections live in one pure registry (`src/lib/parents/sections.ts`)
+  shared by the sidebar and the ⌘K menu — renaming or reordering a section
+  cannot desync them.
+- The root shell is full-bleed everywhere: the parents layout owns its own
+  reading column (pages no longer carry their own width wrapper).
+
+### Removed
+
+- The unused parent-hub introduction text left both catalogs (the page that
+  displayed it no longer exists).
+
 ## [0.6.1.0] - 2026-07-31
 
 ### Added
