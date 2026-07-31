@@ -50,6 +50,23 @@
   --border: oklch(0.9 0.025 80);
   --input: oklch(0.92 0.025 80);
   --ring: oklch(0.78 0.09 50);
+  /* Les surfaces flottantes (la palette ⌘K et son dialogue) suivent la même
+     crème que les cartes — sans ça, `bg-popover` retomberait sur le blanc pur
+     de theme.css, seule surface froide de l'atelier. */
+  --popover: oklch(0.995 0.008 85);
+  --popover-foreground: oklch(0.32 0.03 50);
+}
+
+/* Liste sans ascenseur visible (la liste de la palette ⌘K, classe attendue par
+   le composant shadcn `command`) : le défilement reste au clavier et à la
+   molette, il n'ajoute simplement pas de barre grise dans un dialogue calme. */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 html {
@@ -205,6 +222,14 @@ body {
 
   /* Everything except the printable story is hidden. */
   .no-print {
+    display: none !important;
+  }
+
+  /* La palette ⌘K est portalisée dans <body>, donc hors de toute règle
+     d'impression existante : elle est neutralisée explicitement, comme le cadre
+     de fenêtre — un Ctrl+P la palette ouverte imprime le livret, pas le menu. */
+  [data-slot="dialog-overlay"],
+  [data-slot="dialog-content"] {
     display: none !important;
   }
 

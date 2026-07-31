@@ -54,11 +54,14 @@ yes → don't.
   `test:i18n` pins the UI-locale module (fr↔en catalog key parity, the
   calm-wording scan on BOTH catalogs, byte-identity of the relocated French
   labels, per-locale branding incl. French elision / English possessive,
-  `normalizeLocale` strictness);
+  `normalizeLocale` strictness, every ⌘K palette entry resolving to a
+  non-empty label in BOTH catalogs);
   `test:routes` pins public-URL integrity of the `_bureau/` relocation (no
   URL changed, no stale route id, /parents never under the layout) plus two
   prose contracts: no `ssr:` option under `src/app/_bureau/**` and the
-  closed-session gate CALLED in exactly two files, never `__root`;
+  closed-session gate CALLED in exactly two files, never `__root`, PLUS the
+  ⌘K palette registry (every destination is a served URL, unique ids, and
+  never a shortcut into a bureau mini-app);
   `test:settings` pins the app-config settings service (precedence
   db>env>default, the FOUR secret operations, invalid-means-fallback
   bool/enum parsing, `hintFor` masking, the boundary secret-scan on the
@@ -109,6 +112,32 @@ yes → don't.
   `__root` shell is route-aware: full-bleed for the desktop layer, the
   `max-w-5xl` container is kept for /parents (the window frame provides the
   container inside).
+- **⌘K palette (parent door)**: `src/components/palette-parent.tsx`, mounted
+  ONCE in `__root` inside the `LocaleProvider` — so ⌘K / Ctrl+K works on every
+  page, including over the desktop and the portrait screen (it is portaled to
+  `<body>`, hence outside the `inert` wrapper of the closed-session gate). It
+  is NAVIGATION ONLY (parent pages + back to the desktop) — never an action
+  that writes something, and never a shortcut into a mini-app: the palette
+  EXTENDS the /parents rule (reachable by URL, never drawn in the child's
+  grammar) instead of contradicting it, so there is deliberately NO visible
+  trigger in the child layer; the shortcut is recalled on /parents only
+  (`palette.indice`). It is mounted only while OPEN — nothing in the DOM when
+  closed (not even the dialogue's sr-only title), and the search therefore
+  starts blank every time. Destinations live in the pure registry
+  `src/lib/palette/entrees.ts` (id = the catalog key of the
+  matching /parents card, so renaming a section cannot desync the palette;
+  `motsCles` carries the URL segments so "reglages" finds Settings under an
+  English UI and vice-versa), golden-pinned by `test:routes` + `test:i18n`.
+  Components: shadcn/ui `command` + `dialog`, variante BASE (`base-nova`
+  registry, @base-ui/react primitives + `cmdk`) vendored into
+  `src/components/ui/` — the deviations from the registry bytes are documented
+  in each file's header, including the `data-selected:` →
+  `data-[selected=true]:` fix (cmdk emits `data-selected="false"`, so the
+  presence-only Tailwind variant highlighted EVERY row). `--popover` joins the
+  calm palette in `globals.css` (else `bg-popover` fell back to theme.css's
+  pure white), the `no-scrollbar` utility is defined there too, and
+  `@media print` neutralizes the dialogue — a Ctrl+P with the palette open
+  prints the booklet, not the menu.
 - **Nitro**: `node-server` preset → builds a standalone `.output/server/
   index.mjs` (traced deps included, native libsql binding too) that `bun run
   start` and the Docker image both run. Deploy = `Dockerfile` (multi-stage:

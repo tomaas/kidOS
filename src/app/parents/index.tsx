@@ -81,6 +81,10 @@ function ParentsIndexPage() {
       </ul>
 
       <SectionLangue />
+
+      {/* Le rappel du raccourci vit ICI, côté parent, et nulle part dans la
+          couche enfant : la palette reste une porte discrète, comme /parents. */}
+      <p className="text-muted-foreground text-sm">{m.palette.indice}</p>
     </div>
   );
 }
