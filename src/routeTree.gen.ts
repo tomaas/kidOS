@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './app/__root'
 import { Route as BureauRouteRouteImport } from './app/_bureau/route'
 import { Route as IndexRouteImport } from './app/index'
 import { Route as ParentsIndexRouteImport } from './app/parents/index'
+import { Route as ParentsReglagesRouteImport } from './app/parents/reglages'
 import { Route as ParentsLieuxRouteImport } from './app/parents/lieux'
 import { Route as ParentsImageModelRouteImport } from './app/parents/image-model'
 import { Route as ParentsHeroesRouteImport } from './app/parents/heroes'
@@ -36,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
 const ParentsIndexRoute = ParentsIndexRouteImport.update({
   id: '/parents/',
   path: '/parents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentsReglagesRoute = ParentsReglagesRouteImport.update({
+  id: '/parents/reglages',
+  path: '/parents/reglages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParentsLieuxRoute = ParentsLieuxRouteImport.update({
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/parents/heroes': typeof ParentsHeroesRoute
   '/parents/image-model': typeof ParentsImageModelRoute
   '/parents/lieux': typeof ParentsLieuxRoute
+  '/parents/reglages': typeof ParentsReglagesRoute
   '/parents/': typeof ParentsIndexRoute
   '/aventure/$id': typeof BureauAventureIdRoute
   '/aventure/': typeof BureauAventureIndexRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/parents/heroes': typeof ParentsHeroesRoute
   '/parents/image-model': typeof ParentsImageModelRoute
   '/parents/lieux': typeof ParentsLieuxRoute
+  '/parents/reglages': typeof ParentsReglagesRoute
   '/parents': typeof ParentsIndexRoute
   '/aventure/$id': typeof BureauAventureIdRoute
   '/aventure': typeof BureauAventureIndexRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/parents/heroes': typeof ParentsHeroesRoute
   '/parents/image-model': typeof ParentsImageModelRoute
   '/parents/lieux': typeof ParentsLieuxRoute
+  '/parents/reglages': typeof ParentsReglagesRoute
   '/parents/': typeof ParentsIndexRoute
   '/_bureau/aventure/$id': typeof BureauAventureIdRoute
   '/_bureau/aventure/': typeof BureauAventureIndexRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/parents/heroes'
     | '/parents/image-model'
     | '/parents/lieux'
+    | '/parents/reglages'
     | '/parents/'
     | '/aventure/$id'
     | '/aventure/'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/parents/heroes'
     | '/parents/image-model'
     | '/parents/lieux'
+    | '/parents/reglages'
     | '/parents'
     | '/aventure/$id'
     | '/aventure'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/parents/heroes'
     | '/parents/image-model'
     | '/parents/lieux'
+    | '/parents/reglages'
     | '/parents/'
     | '/_bureau/aventure/$id'
     | '/_bureau/aventure/'
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   ParentsHeroesRoute: typeof ParentsHeroesRoute
   ParentsImageModelRoute: typeof ParentsImageModelRoute
   ParentsLieuxRoute: typeof ParentsLieuxRoute
+  ParentsReglagesRoute: typeof ParentsReglagesRoute
   ParentsIndexRoute: typeof ParentsIndexRoute
 }
 
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       path: '/parents'
       fullPath: '/parents/'
       preLoaderRoute: typeof ParentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parents/reglages': {
+      id: '/parents/reglages'
+      path: '/parents/reglages'
+      fullPath: '/parents/reglages'
+      preLoaderRoute: typeof ParentsReglagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parents/lieux': {
@@ -334,6 +354,7 @@ const rootRouteChildren: RootRouteChildren = {
   ParentsHeroesRoute: ParentsHeroesRoute,
   ParentsImageModelRoute: ParentsImageModelRoute,
   ParentsLieuxRoute: ParentsLieuxRoute,
+  ParentsReglagesRoute: ParentsReglagesRoute,
   ParentsIndexRoute: ParentsIndexRoute,
 }
 export const routeTree = rootRouteImport

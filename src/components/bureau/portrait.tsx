@@ -13,10 +13,10 @@
  * d'image cassée.
  */
 
+import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { brandingFor, childName } from "~/config/app";
 import { matchesChildName } from "~/lib/bureau/identite";
-import { useLocale, useMessages } from "~/lib/i18n";
+import { useMessages } from "~/lib/i18n";
 import { listHeroesFn } from "~/server/heroes-functions";
 import { isRenderableImagePath } from "~/server/providers/types";
 
@@ -25,8 +25,14 @@ interface PortraitInfo {
   imagePath: string | null;
 }
 
+// Le prénom et la marque viennent du loader RACINE (réglage parent en base,
+// VITE_* du déploiement en secours) — plus jamais une constante de build :
+// renommer l'enfant s'applique au prochain rechargement, sans rebuild.
+const rootRoute = getRouteApi("__root__");
+
 export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
-  const locale = useLocale();
+  const { branding, brandingSource } = rootRoute.useLoaderData();
+  const childName = brandingSource.childName.trim();
   const m = useMessages();
   const [portrait, setPortrait] = useState<PortraitInfo | null>(null);
   const [imageCassee, setImageCassee] = useState(false);
@@ -77,9 +83,7 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
             </span>
           )}
         </span>
-        <span className="font-bold text-4xl">
-          {childName || brandingFor(locale).name}
-        </span>
+        <span className="font-bold text-4xl">{childName || branding.name}</span>
         <span className="text-muted-foreground text-xl">{m.bureau.entrer}</span>
       </button>
     </div>

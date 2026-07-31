@@ -8,7 +8,10 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --ignore-scripts
 COPY . .
-# VITE_* vars are compile-time (baked into the client bundle) → build args.
+# LEGACY-OPTIONNEL (env→DB, v0.6) : la marque se règle désormais à
+# /parents/reglages (table app_settings) ; ces args ne servent plus que de
+# SECOURS pour un déploiement existant qui n'a rien posé en base. Gardés une
+# release, suppression envisagée ensuite (TODOS.md).
 ARG VITE_CHILD_NAME
 ARG VITE_APP_NAME
 ARG VITE_APP_DESCRIPTION
@@ -19,6 +22,16 @@ RUN SKIP_ENV_VALIDATION=1 bun run build
 FROM node:22-slim
 WORKDIR /app
 ENV NODE_ENV=production PORT=3009
+# Secours legacy runtime (mêmes valeurs que les build args) : le serveur lit
+# process.env.VITE_* quand aucune ligne branding:* n'existe en base.
+ARG VITE_CHILD_NAME
+ARG VITE_APP_NAME
+ARG VITE_APP_DESCRIPTION
+ARG VITE_STORY_LABEL
+ENV VITE_CHILD_NAME=$VITE_CHILD_NAME \
+    VITE_APP_NAME=$VITE_APP_NAME \
+    VITE_APP_DESCRIPTION=$VITE_APP_DESCRIPTION \
+    VITE_STORY_LABEL=$VITE_STORY_LABEL
 COPY --from=build /app/.output ./.output
 # Migrations auto-apply at startup (src/server/db/index.ts) and are resolved
 # from the CWD — ship the folder next to the server bundle.

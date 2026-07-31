@@ -1,7 +1,7 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
-import { serverEnv } from "~/env";
 import { generateId } from "~/lib/id-generator";
+import type { ProviderConfig } from "~/server/app-config";
 import { saveMedia } from "~/server/providers/media-store";
 
 // Gemini image models bill per OUTPUT token at $30 / 1M tokens; a standard
@@ -47,21 +47,26 @@ const IMAGE_USD_PER_IMAGE = 0.039;
  */
 export async function generateImage(
   prompt: string,
+  // L'INSTANTANÉ de config de l'opération (clé + résolution + modèle par
+  // défaut) — pris à la frontière de la server function, jamais relu ici.
+  config: ProviderConfig,
   model?: string,
   referenceImage?: Uint8Array | URL
 ): Promise<string> {
-  if (!serverEnv.geminiApiKey) {
-    throw new Error("GEMINI_API_KEY manquante.");
+  if (!config.geminiApiKey) {
+    // Clé absente (ni ligne DB ni env) : AUCUN appel réseau — le beat garde
+    // son état calme « pas de dessin », le statut vit côté /parents.
+    throw new Error("Clé Gemini non configurée.");
   }
 
-  const google = createGoogleGenerativeAI({ apiKey: serverEnv.geminiApiKey });
+  const google = createGoogleGenerativeAI({ apiKey: config.geminiApiKey });
 
   const providerOptions = {
     google: {
       // Pin a low, display-matched output to cut cost (see header).
       imageConfig: {
         aspectRatio: "4:3",
-        imageSize: serverEnv.imageResolution,
+        imageSize: config.imageResolution,
       },
       responseModalities: ["IMAGE"],
     },
@@ -71,7 +76,7 @@ export async function generateImage(
     // A stalled Gemini call must fail (→ calm "no drawing" state) rather
     // than hold the request open past any client reveal timeout.
     abortSignal: AbortSignal.timeout(90_000),
-    model: google(model ?? serverEnv.imageModel),
+    model: google(model ?? config.imageModel),
     ...(referenceImage
       ? {
           messages: [
@@ -93,7 +98,7 @@ export async function generateImage(
     throw new Error("Aucune image renvoyée par le générateur d'image.");
   }
 
-  const usedModel = model ?? serverEnv.imageModel;
+  const usedModel = model ?? config.imageModel;
   console.log(
     `[image-gen] model=${usedModel} ref=${referenceImage ? "yes" : "no"} prompt=${prompt}`
   );

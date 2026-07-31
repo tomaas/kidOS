@@ -245,6 +245,11 @@ export const en: Messages = {
           description: "The places where the story can happen.",
           titre: "Places",
         },
+        reglages: {
+          description:
+            "Keys, models, pictures and voice — the workshop's configuration.",
+          titre: "Settings",
+        },
       },
     },
     langue: {
@@ -264,6 +269,63 @@ export const en: Messages = {
       pasPuGenerer: "The drawing couldn't be generated.",
       prompt: "Prompt",
       titre: "Try a prompt",
+    },
+    reglages: {
+      ariaEffacer: "Clear the key ({champ})",
+      ariaRevenirDefaut: "Return to the deployment setting ({champ})",
+      badgeDefaut: "deployment setting",
+      champVide: "A field left empty takes the deployment setting again.",
+      cleEnPlace: "A key is in place ({indice}).",
+      cleEnPlaceSansIndice: "A key is in place.",
+      cleNonConfiguree: "No key is configured yet.",
+      effacer: "Clear the key",
+      enregistre: "Saved.",
+      enregistrer: "Save",
+      fonctionEnPause:
+        "Without a configured key, this feature stays paused for now.",
+      garderCle: "Leave empty to keep the current key.",
+      intro:
+        "The workshop's keys, models and options. Anything set here applies to the next stories, with no redeploy; when nothing is set, the deployment value applies.",
+      revenirDefaut: "Return to the deployment setting",
+      sections: {
+        atelier: {
+          apercu: "Preview",
+          description:
+            "The child's first name and the workshop's wording — the tab title, the portrait and the printed booklet follow.",
+          descriptionApp: "Description (browser tab)",
+          nomApp: "Workshop name",
+          prenom: "Child's first name",
+          titre: "First name & workshop",
+          titreLivret: "Booklet signature",
+        },
+        histoires: {
+          cle: "Anthropic key",
+          description: "The key and the model that write the stories.",
+          modele: "Writing model",
+          titre: "Stories",
+        },
+        images: {
+          activees: "On",
+          cle: "Gemini key",
+          desactivees: "Off",
+          description:
+            "Story illustrations: on/off, key, model and resolution.",
+          etat: "Illustrations",
+          modele: "Default model",
+          resolution: "Resolution",
+          titre: "Pictures",
+        },
+        voix: {
+          activee: "On",
+          cle: "ElevenLabs key",
+          desactivee: "Off",
+          description: "Reading aloud: on/off and provider.",
+          etat: "Read-aloud voice",
+          fournisseur: "Provider",
+          titre: "The voice",
+        },
+      },
+      titre: "Settings",
     },
   },
 };

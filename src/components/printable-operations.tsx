@@ -146,6 +146,9 @@ export function PrintableOperationsSheet({
   operations: GeneratedOperation[];
   entities?: EnonceEntities;
 }) {
+  // La fiche s'imprime dans la langue de l'ATELIER (locale UI) — le colophon
+  // suit la même langue.
+  const locale = useLocale();
   return (
     <article className="printable-story hidden">
       <h1
@@ -163,7 +166,7 @@ export function PrintableOperationsSheet({
           />
         ))}
       </div>
-      <Colophon />
+      <Colophon lang={locale} />
     </article>
   );
 }

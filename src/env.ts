@@ -74,10 +74,13 @@ export const serverEnv = {
 } as const;
 
 /**
- * Validate required env at startup so a misconfiguration fails loudly with a
- * clear message instead of a cryptic libSQL / provider error mid-request.
- * Conditional: image/TTS keys are only required when their flag is on.
- * Skipped when SKIP_ENV_VALIDATION is set (used by the build).
+ * Validate INFRA env at startup so a misconfiguration fails loudly with a
+ * clear message instead of a cryptic libSQL error mid-request. INFRA ONLY :
+ * les clés provider (Anthropic/Gemini/ElevenLabs) et les gates image/TTS ne
+ * sont PLUS bloquantes au boot — elles peuvent vivre uniquement en base
+ * (app_settings, voir server/app-config.ts) et se vérifient au point
+ * d'usage (statut de configuration calme côté /parents, soft-failure côté
+ * enfant). Skipped when SKIP_ENV_VALIDATION is set (used by the build).
  */
 function validateServerEnv(): void {
   if (process.env.SKIP_ENV_VALIDATION) {
@@ -85,10 +88,6 @@ function validateServerEnv(): void {
   }
 
   const errors: string[] = [];
-
-  if (!serverEnv.anthropicApiKey) {
-    errors.push("ANTHROPIC_API_KEY est requis.");
-  }
 
   if (!serverEnv.databaseUrl.startsWith("file:")) {
     errors.push(
@@ -117,20 +116,6 @@ function validateServerEnv(): void {
     );
   }
 
-  if (serverEnv.imageEnabled && !serverEnv.geminiApiKey) {
-    errors.push("GEMINI_API_KEY est requis quand IMAGE_ENABLED=true.");
-  }
-
-  if (
-    serverEnv.ttsEnabled &&
-    serverEnv.ttsProvider === "elevenlabs" &&
-    !serverEnv.elevenLabsApiKey
-  ) {
-    errors.push(
-      "ELEVENLABS_API_KEY est requis quand TTS_ENABLED=true et TTS_PROVIDER=elevenlabs."
-    );
-  }
-
   if (errors.length > 0) {
     throw new Error(
       `Configuration .env.local incomplète :\n- ${errors.join("\n- ")}`
@@ -140,25 +125,5 @@ function validateServerEnv(): void {
 
 validateServerEnv();
 
-/**
- * Flags that are safe to send to the client so the UI can hide/show the
- * "Écouter" button and the illustration slot. No secrets here.
- */
-export interface PublicFlags {
-  defaultLang: "fr" | "ru" | "en";
-  imageEnabled: boolean;
-  // The env default image model, mirrored so the /parents picker's "par défaut"
-  // badge + the localStorage hook's default track the deployed env (not a
-  // hard-coded mirror). The id itself is not a secret.
-  imageModel: string;
-  ttsEnabled: boolean;
-}
-
-export function getPublicFlags(): PublicFlags {
-  return {
-    defaultLang: serverEnv.defaultLang,
-    imageEnabled: serverEnv.imageEnabled,
-    imageModel: serverEnv.imageModel,
-    ttsEnabled: serverEnv.ttsEnabled,
-  };
-}
+// Les flags publics (client) dérivent désormais de l'INSTANTANÉ AppConfig —
+// voir publicFlagsFromConfig dans server/app-config.ts (env.ts reste db-free).

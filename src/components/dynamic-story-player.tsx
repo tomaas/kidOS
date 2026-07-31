@@ -528,6 +528,7 @@ export function DynamicStoryPlayer({
         </div>
         <PrintableDynamicStory
           aids={aids}
+          lang={storyLang}
           segments={completeSegments}
           title={title}
         />
@@ -594,6 +595,7 @@ export function DynamicStoryPlayer({
       {/* Hidden on screen; the print dialog renders the full chosen path. */}
       <PrintableDynamicStory
         aids={aids}
+        lang={storyLang}
         segments={completeSegments}
         title={title}
       />

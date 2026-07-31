@@ -266,6 +266,11 @@ export const fr = {
           description: "Les endroits où l'histoire peut se passer.",
           titre: "Les lieux",
         },
+        reglages: {
+          description:
+            "Clés, modèles, images et voix — la configuration de l'atelier.",
+          titre: "Les réglages",
+        },
       },
     },
     langue: {
@@ -287,6 +292,70 @@ export const fr = {
       pasPuGenerer: "Le dessin n'a pas pu être généré.",
       prompt: "Prompt",
       titre: "Tester un prompt",
+    },
+    // La page /parents/reglages — clés, modèles et options, posés en base
+    // (app_settings) avec l'env du déploiement en secours. Ton CALME : un
+    // état « non configurée » est neutre, jamais une urgence.
+    reglages: {
+      // Gabarit d'aria ({champ} = le libellé du champ) — composé via
+      // formatMessage, comme parents.entites.
+      ariaEffacer: "Effacer la clé ({champ})",
+      ariaRevenirDefaut: "Revenir au réglage du déploiement ({champ})",
+      badgeDefaut: "réglage du déploiement",
+      champVide: "Un champ laissé vide reprend le réglage du déploiement.",
+      cleEnPlace: "Une clé est en place ({indice}).",
+      cleEnPlaceSansIndice: "Une clé est en place.",
+      cleNonConfiguree: "Aucune clé n'est configurée pour le moment.",
+      effacer: "Effacer la clé",
+      enregistre: "Enregistré.",
+      enregistrer: "Enregistrer",
+      // Statut « missing-key » (code serveur, features.*) — neutre et calme :
+      // jamais une urgence, jamais du rouge.
+      fonctionEnPause:
+        "Sans clé configurée, cette fonction reste en pause pour le moment.",
+      garderCle: "Laisse vide pour garder la clé actuelle.",
+      intro:
+        "Les clés, modèles et options de l'atelier. Un réglage posé ici s'applique aux prochaines histoires, sans redéploiement ; sans réglage, la valeur du déploiement s'applique.",
+      revenirDefaut: "Revenir au réglage du déploiement",
+      sections: {
+        atelier: {
+          apercu: "Aperçu",
+          description:
+            "Le prénom de l'enfant et les textes de l'atelier — le titre de l'onglet, le portrait et le livret imprimé suivent.",
+          descriptionApp: "Description (onglet du navigateur)",
+          nomApp: "Nom de l'atelier",
+          prenom: "Prénom de l'enfant",
+          titre: "Le prénom & l'atelier",
+          titreLivret: "Signature du livret",
+        },
+        histoires: {
+          cle: "Clé Anthropic",
+          description: "La clé et le modèle qui écrivent les histoires.",
+          modele: "Modèle d'écriture",
+          titre: "Les histoires",
+        },
+        images: {
+          activees: "Activées",
+          cle: "Clé Gemini",
+          desactivees: "Désactivées",
+          description:
+            "Les illustrations des histoires : activation, clé, modèle et résolution.",
+          etat: "Illustrations",
+          modele: "Modèle par défaut",
+          resolution: "Résolution",
+          titre: "Les images",
+        },
+        voix: {
+          activee: "Activée",
+          cle: "Clé ElevenLabs",
+          desactivee: "Désactivée",
+          description: "La lecture à voix haute : activation et fournisseur.",
+          etat: "Lecture à voix haute",
+          fournisseur: "Fournisseur",
+          titre: "La voix",
+        },
+      },
+      titre: "Les réglages",
     },
   },
 };
