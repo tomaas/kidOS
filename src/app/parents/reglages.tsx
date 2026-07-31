@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { formatMessage, useMessages } from "~/lib/i18n";
+import { composeBranding } from "~/config/app";
+import { formatMessage, useLocale, useMessages } from "~/lib/i18n";
 import type {
   AppSettingsStatus,
   SecretStatus,
@@ -69,6 +70,7 @@ function ParentsReglagesPage() {
         <p className="text-muted-foreground">{m.parents.reglages.intro}</p>
       </div>
 
+      <SectionAtelier status={status} />
       <SectionHistoires status={status} />
       <SectionImages status={status} />
       <SectionVoix status={status} />
@@ -317,6 +319,113 @@ function CarteSection({
 }
 
 /* ── Sections ────────────────────────────────────────────────────────────── */
+
+/**
+ * Le prénom & les textes de l'atelier — la marque, posée en base (plus
+ * jamais un rebuild Docker pour renommer l'enfant). L'aperçu se dérive en
+ * direct via la pure composeBranding ; un champ vidé reprend la valeur du
+ * déploiement (VITE_*).
+ */
+function SectionAtelier({ status }: { status: AppSettingsStatus }) {
+  const m = useMessages();
+  const t = m.parents.reglages.sections.atelier;
+  const locale = useLocale();
+  const { enregistrer, etat } = useEnregistrement();
+  const [prenom, setPrenom] = useState(status.branding.childName.value);
+  const [nomApp, setNomApp] = useState(status.branding.appName.value);
+  const [descriptionApp, setDescriptionApp] = useState(
+    status.branding.appDescription.value
+  );
+  const [titreLivret, setTitreLivret] = useState(
+    status.branding.storyLabel.value
+  );
+
+  // Aperçu en direct (pure composeBranding — la même dérivation que le
+  // serveur) : le nom d'atelier et la signature du livret qui suivraient.
+  const apercu = composeBranding(locale, {
+    appDescription: descriptionApp,
+    appName: nomApp,
+    childName: prenom,
+    storyLabel: titreLivret,
+  });
+
+  function onEnregistrer() {
+    const operations: Operation[] = [];
+    const champs: [SettingKey, string, string][] = [
+      ["branding:child-name", prenom, status.branding.childName.value],
+      ["branding:app-name", nomApp, status.branding.appName.value],
+      [
+        "branding:app-description",
+        descriptionApp,
+        status.branding.appDescription.value,
+      ],
+      ["branding:story-label", titreLivret, status.branding.storyLabel.value],
+    ];
+    for (const [key, valeur, initiale] of champs) {
+      if (valeur !== initiale) {
+        operations.push({ key, op: "set", value: valeur.trim() });
+      }
+    }
+    enregistrer(operations);
+  }
+
+  return (
+    <CarteSection description={t.description} emoji="🏡" titre={t.titre}>
+      <LigneChamp
+        badge={status.branding.childName.source === "default"}
+        label={t.prenom}
+      >
+        <Input
+          onChange={(event) => setPrenom(event.target.value)}
+          value={prenom}
+        />
+      </LigneChamp>
+      <LigneChamp
+        badge={status.branding.appName.source === "default"}
+        label={t.nomApp}
+      >
+        <Input
+          onChange={(event) => setNomApp(event.target.value)}
+          value={nomApp}
+        />
+      </LigneChamp>
+      <LigneChamp
+        badge={status.branding.appDescription.source === "default"}
+        label={t.descriptionApp}
+      >
+        <Input
+          onChange={(event) => setDescriptionApp(event.target.value)}
+          value={descriptionApp}
+        />
+      </LigneChamp>
+      <LigneChamp
+        badge={status.branding.storyLabel.source === "default"}
+        label={t.titreLivret}
+      >
+        <Input
+          onChange={(event) => setTitreLivret(event.target.value)}
+          value={titreLivret}
+        />
+      </LigneChamp>
+      <div className="rounded-xl bg-muted/50 p-4">
+        <p className="font-medium text-muted-foreground text-xs">{t.apercu}</p>
+        <p className="font-semibold">{apercu.name}</p>
+        <p className="text-muted-foreground text-sm italic">
+          {apercu.storyLabel}
+        </p>
+      </div>
+      <p className="text-muted-foreground text-xs">
+        {m.parents.reglages.champVide}
+      </p>
+      <div className="flex items-center gap-3">
+        <Button disabled={etat === "enregistrement"} onClick={onEnregistrer}>
+          {m.parents.reglages.enregistrer}
+        </Button>
+        <MessageEtat etat={etat} />
+      </div>
+    </CarteSection>
+  );
+}
 
 function SectionHistoires({ status }: { status: AppSettingsStatus }) {
   const m = useMessages();

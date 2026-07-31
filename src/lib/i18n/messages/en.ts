@@ -286,6 +286,16 @@ export const en: Messages = {
         "The workshop's keys, models and options. Anything set here applies to the next stories, with no redeploy; when nothing is set, the deployment value applies.",
       revenirDefaut: "Return to the deployment setting",
       sections: {
+        atelier: {
+          apercu: "Preview",
+          description:
+            "The child's first name and the workshop's wording — the tab title, the portrait and the printed booklet follow.",
+          descriptionApp: "Description (browser tab)",
+          nomApp: "Workshop name",
+          prenom: "Child's first name",
+          titre: "First name & workshop",
+          titreLivret: "Booklet signature",
+        },
         histoires: {
           cle: "Anthropic key",
           description: "The key and the model that write the stories.",

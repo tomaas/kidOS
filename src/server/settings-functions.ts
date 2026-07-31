@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
+import type { BrandingSource } from "~/config/app";
+import { composeBranding } from "~/config/app";
+import type { Branding } from "~/lib/i18n";
 import {
   DEFAULT_LOCALE,
   type Locale,
@@ -9,6 +11,7 @@ import {
 import {
   type AppSettingsStatus,
   applySettingsPatch,
+  configFromRows,
   envFallbackConfig,
   getSettingRows,
   isSecretSettingKey,
@@ -19,30 +22,48 @@ import {
   settingsStatusFromRows,
   UI_LANGUAGE_KEY,
 } from "~/server/app-config";
-import { db } from "~/server/db";
-import { appSettings } from "~/server/db/schema";
 
 /**
- * Réglages globaux (table `app_settings`) — pour l'instant un seul : la
- * locale de l'INTERFACE, choisie par le parent à /parents. Lue par le loader
- * racine à CHAQUE rendu SSR : la lecture ne jette JAMAIS (DB injoignable →
- * locale par défaut, log serveur) — le shell doit toujours rendre, l'enfant
- * ne voit jamais d'erreur de langue. L'écriture renvoie un booléen calme ;
- * le libellé d'échec appartient au CLIENT (catalogue i18n) — le serveur ne
- * choisit pas la langue d'un message destiné au parent.
+ * Réglages globaux (table `app_settings`) : la locale de l'INTERFACE et la
+ * MARQUE (choisies par le parent), lues par le loader racine à CHAQUE rendu
+ * SSR — la lecture ne jette JAMAIS (DB injoignable → défauts du déploiement,
+ * log serveur) : le shell doit toujours rendre, l'enfant ne voit jamais une
+ * erreur de configuration. Les écritures renvoient un booléen ou un CODE
+ * calme ; le libellé d'échec appartient au CLIENT (catalogue i18n) — le
+ * serveur ne choisit pas la langue d'un message destiné au parent.
  */
 
-export const getUiLocaleFn = createServerFn({ method: "GET" }).handler(
-  async (): Promise<{ locale: Locale }> => {
+/** Ce que le loader RACINE fournit au shell : la locale UI, la marque
+ * composée pour cette locale (titre d'onglet, portrait) et la source de
+ * marque brute — pour que les consommateurs à LANGUE D'HISTOIRE (colophon
+ * imprimé) recomposent via composeBranding(story.lang). Aucun secret. */
+export interface ShellContext {
+  branding: Branding;
+  brandingSource: BrandingSource;
+  locale: Locale;
+}
+
+export const getShellContextFn = createServerFn({ method: "GET" }).handler(
+  async (): Promise<ShellContext> => {
     try {
-      const [row] = await db
-        .select()
-        .from(appSettings)
-        .where(eq(appSettings.key, UI_LANGUAGE_KEY));
-      return { locale: normalizeLocale(row?.value) };
+      const rows = await getSettingRows();
+      const locale = normalizeLocale(rows.get(UI_LANGUAGE_KEY));
+      const { branding } = configFromRows(rows, envFallbackConfig());
+      return {
+        branding: composeBranding(locale, branding),
+        brandingSource: branding,
+        locale,
+      };
     } catch (error) {
-      console.error("getUiLocaleFn:", error);
-      return { locale: DEFAULT_LOCALE };
+      // Même contrat que l'ancien getUiLocaleFn : ne jette JAMAIS — le shell
+      // rend toujours, au pire en français avec la marque du déploiement.
+      console.error("getShellContextFn:", error);
+      const fallback = envFallbackConfig().branding;
+      return {
+        branding: composeBranding(DEFAULT_LOCALE, fallback),
+        brandingSource: fallback,
+        locale: DEFAULT_LOCALE,
+      };
     }
   }
 );

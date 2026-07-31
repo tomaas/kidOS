@@ -314,6 +314,16 @@ export const fr = {
         "Les clés, modèles et options de l'atelier. Un réglage posé ici s'applique aux prochaines histoires, sans redéploiement ; sans réglage, la valeur du déploiement s'applique.",
       revenirDefaut: "Revenir au réglage du déploiement",
       sections: {
+        atelier: {
+          apercu: "Aperçu",
+          description:
+            "Le prénom de l'enfant et les textes de l'atelier — le titre de l'onglet, le portrait et le livret imprimé suivent.",
+          descriptionApp: "Description (onglet du navigateur)",
+          nomApp: "Nom de l'atelier",
+          prenom: "Prénom de l'enfant",
+          titre: "Le prénom & l'atelier",
+          titreLivret: "Signature du livret",
+        },
         histoires: {
           cle: "Clé Anthropic",
           description: "La clé et le modèle qui écrivent les histoires.",
