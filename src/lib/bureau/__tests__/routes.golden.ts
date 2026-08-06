@@ -8,9 +8,15 @@
  * tirerait l'env serveur et le CSS — hors de portée d'un script bun pur.
  *
  * Épingle AUSSI les destinations de la palette ⌘K (lib/palette/entrees.ts) :
- * chaque entrée vise une URL réellement servie, et aucune ne raccourcit vers
+ * chaque entrée vise une URL réellement servie, aucune ne raccourcit vers
  * une mini-app du bureau (la palette est une porte parent, pas un raccourci
- * enfant).
+ * enfant), et l'ensemble canonique des ids est figé — une entrée supprimée
+ * ne peut pas passer inaperçue.
+ *
+ * Épingle AUSSI le registre des apps du bureau (components/bureau/apps.tsx) :
+ * l'ensemble canonique des 4 icônes et leurs chemins servis — supprimer une
+ * icône rendrait sa mini-app inatteignable par sa porte enfant sans faire
+ * échouer aucun golden.
  *
  * Épingle ENFIN la coquille /parents (panneau latéral) : le registre pur des
  * sections (lib/parents/sections.ts) vise des URLs servies, la route layout
@@ -23,6 +29,7 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { APPS_BUREAU } from "~/components/bureau/apps";
 import { ENTREES_PALETTE } from "~/lib/palette/entrees";
 import { SECTIONS_PARENTS } from "~/lib/parents/sections";
 
@@ -166,6 +173,43 @@ check(
   versMiniApp.map((e) => e.to).join(", ")
 );
 
+// L'ensemble canonique des DIX entrées — sans cette pin, un registre vidé ou
+// amputé (l'entrée /parents/sudoku supprimée, par exemple) rendrait les
+// boucles ci-dessus vacantes et laisserait tous les goldens verts alors
+// qu'une porte parent a disparu.
+const IDS_PALETTE_ATTENDUS =
+  "accueil, calcul, doudous, elements, espaceParent, heroes, imageModel, lieux, reglages, sudoku";
+check(
+  "palette : l'ensemble canonique des 10 ids",
+  [...idsPalette].sort().join(", ") === IDS_PALETTE_ATTENDUS,
+  idsPalette.join(", ")
+);
+
+/* ------------------- Les icônes du bureau (APPS_BUREAU) ------------------- */
+
+// Chaque icône du bureau doit viser une URL RÉELLEMENT servie — même
+// technique que la palette, l'arbre généré tranche. Tolérance sur la barre
+// finale : le router sert /calcul comme `/calcul/`.
+for (const app of APPS_BUREAU) {
+  check(
+    `icône bureau → URL servie: ${app.to}`,
+    routeTree.includes(`fullPath: '${app.to}'`) ||
+      routeTree.includes(`fullPath: '${app.to}/'`)
+  );
+}
+
+// L'ensemble canonique des QUATRE apps — la porte ENFANT de chaque mini-app.
+// Sans cette pin, supprimer l'icône sudoku laisserait la boucle ci-dessus
+// vacante (zéro itération, zéro échec) et l'app deviendrait inatteignable
+// dans la grammaire enfant sans qu'aucun golden n'échoue.
+const idsBureau = APPS_BUREAU.map((a) => a.id);
+const IDS_BUREAU_ATTENDUS = "bibliotheque, calculs, histoires, sudoku";
+check(
+  "bureau : l'ensemble canonique des 4 apps",
+  [...idsBureau].sort().join(", ") === IDS_BUREAU_ATTENDUS,
+  idsBureau.join(", ")
+);
+
 /* ---------------- La coquille /parents (panneau latéral) ------------------ */
 
 // Retrait des commentaires avant un scan de source : un fragment commenté
@@ -204,6 +248,17 @@ check(
   "sections parents : l'ensemble canonique des 8 ids",
   [...idsSections].sort().join(", ") === IDS_SECTIONS_ATTENDUS,
   idsSections.join(", ")
+);
+
+// Cohérence des registres : chaque section de la sidebar a son entrée dans
+// la palette ⌘K (la palette est un SUR-ensemble — elle ajoute accueil et
+// espaceParent) ; l'id partagé est aussi la clé de libellé commune.
+const idsPaletteSet = new Set<string>(idsPalette);
+const sectionsSansEntree = idsSections.filter((id) => !idsPaletteSet.has(id));
+check(
+  "chaque section parents a son entrée palette (même id)",
+  sectionsSansEntree.length === 0,
+  sectionsSansEntree.join(", ")
 );
 
 // La route layout /parents existe (id '/parents') et re-parente ses 9

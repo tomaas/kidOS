@@ -270,6 +270,7 @@ const EXPECTED_TABLES = [
   "places",
   "stories",
   "story_segments",
+  "sudoku_skills",
 ];
 
 const dbSandbox = mkdtempSync(join(tmpdir(), "local-sqlite-golden-db-"));

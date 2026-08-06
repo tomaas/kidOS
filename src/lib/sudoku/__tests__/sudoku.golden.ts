@@ -20,6 +20,10 @@
  *    termine chaque grille — l'enfant ne devine jamais) ;
  *  - nombre de givens dans les bornes constantes par (taille, générosité),
  *    entrée sûre qui ne lève jamais, générosité invalide clampée à 1 ;
+ *  - oracle indépendant : fixtures construites À LA MAIN (jamais issues du
+ *    générateur) prouvant que countSolutions sait rendre 0 et 2 et que
+ *    solveWithTier sait rendre null — sans elles, générateur et golden
+ *    partagent le même oracle et un compteur qui sous-compte passerait vert ;
  *  - budget temps : cible produit 150 ms pour un 9×9 générosité 3 ; le
  *    golden borne à 1500 ms pour absorber la variance CI ;
  *  - géométrie des régions : lignes, colonnes et régions de chaque solution
@@ -222,6 +226,68 @@ check(
   "balayage : chaque grille de givens est un sous-ensemble de sa solution",
   puzzles.every((p) => p.givens.every((v, i) => v === 0 || v === p.solution[i]))
 );
+
+/* ------------- Oracle indépendant : fixtures construites à la main ------------- */
+
+// Le balayage ci-dessus vérifie le générateur AVEC countSolutions et
+// solveWithTier — les mêmes implémentations que le générateur utilise pour
+// accepter une grille (oracle circulaire). Ces fixtures, dérivées à la main
+// et prouvées dans les commentaires, vérifient les vérificateurs eux-mêmes :
+// le compteur sait dire 0 et 2 (pas seulement 1), le solveur borné sait dire
+// null. Sans ça, un compteur qui sous-compte ou un solveur trop permissif
+// ferait passer le générateur ET le golden au vert.
+
+{
+  // AMBIGUË — « rectangle mortel » dérivé de la solution 4×4 épinglée
+  // (2413 / 3124 / 1342 / 4231). On vide les cases (0,0)=2, (0,1)=4,
+  // (3,0)=4, (3,1)=2 : un rectangle 2/4 sur exactement deux lignes {0,3},
+  // deux colonnes {0,1} et deux régions {haut-gauche, bas-gauche}.
+  // Preuve des 2 solutions : la ligne 0 restante donne {1,3}, la ligne 3
+  // {3,1}, la colonne 0 {3,1}, la colonne 1 {1,3} — les quatre cases vides
+  // ne peuvent recevoir que {2,4}, et chaque ligne/colonne/région du
+  // rectangle contient la paire ENTIÈRE : échanger 2↔4 sur les quatre cases
+  // reste valide partout. Exactement deux complétions : l'originale et
+  // l'échange.
+  const ambigue: Grille = [0, 0, 1, 3, 3, 1, 2, 4, 1, 3, 4, 2, 0, 0, 3, 1];
+  check(
+    "oracle : le compteur voit les 2 solutions du rectangle mortel (limite 2)",
+    countSolutions(4, ambigue, 2) === 2
+  );
+  check(
+    "oracle : exactement 2 solutions, pas plus (limite relevée à 5)",
+    countSolutions(4, ambigue, 5) === 2
+  );
+}
+
+{
+  // IMPOSSIBLE — la case (0,0) est vide mais ses pairs épuisent 1..4 :
+  // ligne 0 → {1,2,3}, colonne 0 → {4}. Aucun candidat, donc 0 solution.
+  // (Pas de doublon direct dans les givens : countSolutions est une
+  // machinerie interne qui ne valide jamais les givens eux-mêmes — le
+  // générateur ne lui donne que des sous-ensembles d'une solution valide ;
+  // la contradiction doit donc vivre dans une case VIDE.)
+  const impossible: Grille = [0, 1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  check(
+    "oracle : le compteur sait descendre à 0 (case vide sans candidat)",
+    countSolutions(4, impossible, 2) === 0
+  );
+}
+
+{
+  // INSOLUBLE AU PALIER — la grille 9×9 VIDE : aucun singleton nu (chaque
+  // case a 9 candidats), aucun singleton caché (chaque chiffre a 9 cases
+  // possibles par unité), aucun candidat bloqué (les candidats d'une boîte
+  // couvrent 3 lignes et 3 colonnes — jamais alignés). Le solveur borné
+  // doit rendre null à chaque palier : il sait dire « je ne termine pas »
+  // au lieu de deviner.
+  const vide: Grille = new Array(9 * 9).fill(0);
+  check(
+    "oracle : le solveur borné rend null sur la grille vide, aux 3 paliers",
+    solveWithTier(9, vide, 1) === null &&
+      solveWithTier(9, vide, 2) === null &&
+      solveWithTier(9, vide, 3) === null
+  );
+}
 
 /* --------------------- Mécanisme AE5 (empreinte de reprise) --------------------- */
 

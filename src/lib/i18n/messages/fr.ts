@@ -388,7 +388,8 @@ export const fr = {
     // choisit son plateau. L'« ouverture » décrit la GRILLE (combien de
     // chiffres sont déjà posés), jamais l'enfant — aucune échelle de niveau.
     sudoku: {
-      changerGenerosite: "Changer l'ouverture range la grille en cours.",
+      changerGenerosite:
+        "La grille en cours continue inchangée — la nouvelle ouverture s'applique à la prochaine grille.",
       derniereTaille: "Au moins une taille reste sur l'étagère.",
       enregistrement: "Enregistrement…",
       enregistrer: "Enregistrer",
@@ -400,7 +401,6 @@ export const fr = {
         2: "Grille ouverte — une bonne part des chiffres déjà posés",
         3: "Grille plus dense — peu de chiffres déjà posés",
       },
-      imprimerFiche: "Imprimer une grille",
       intro:
         "Prépare l'étagère — comme pour les calculs, c'est toi qui choisis les tailles de grille disponibles et l'ouverture de chacune. L'enfant choisit son plateau ; rien de tout cela ne lui est montré.",
       nApparaitPas:

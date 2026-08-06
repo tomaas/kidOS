@@ -345,7 +345,8 @@ export const en: Messages = {
       titre: "Settings",
     },
     sudoku: {
-      changerGenerosite: "Changing the openness puts the current grid away.",
+      changerGenerosite:
+        "The grid in progress continues unchanged — the new openness applies from the next grid.",
       derniereTaille: "At least one size stays on the shelf.",
       enregistrement: "Saving…",
       enregistrer: "Save",
@@ -355,7 +356,6 @@ export const en: Messages = {
         2: "Open grid — a good share of digits already placed",
         3: "Denser grid — few digits already placed",
       },
-      imprimerFiche: "Print a grid",
       intro:
         "Prepare the shelf — just like the sums, you choose which grid sizes are available and how open each one is. The child picks a tray; none of this is ever shown to them.",
       nApparaitPas:

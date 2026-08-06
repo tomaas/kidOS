@@ -62,7 +62,7 @@ yes → don't.
   closed-session gate CALLED in exactly two files, never `__root`, PLUS the
   ⌘K palette registry (every destination is a served URL, unique ids, and
   never a shortcut into a bureau mini-app), PLUS the /parents sidebar shell
-  (the `/parents` layout route present with its 8 re-parented children,
+  (the `/parents` layout route present with its 9 re-parented children,
   every `SECTIONS_PARENTS` entry a served URL with unique ids, no `ssr:`
   option under `src/app/parents/**`, and the `/parents/` →
   `/parents/reglages` redirect with a served target);
