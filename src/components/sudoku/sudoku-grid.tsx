@@ -55,9 +55,7 @@ const GRID_TEMPLATE_CLASS: Record<Taille, string> = {
   9: "grid-cols-9",
 };
 
-/** Bordures fines intérieures — encre douce, jamais un signal. */
-const THIN_BORDER = "border-muted-foreground/30";
-/** Bordures épaisses des régions — la seule aide (R6). */
+/** Bordures épaisses des régions — la seule aide (R6) ; le conteneur. */
 const THICK_BORDER = "border-foreground/60";
 
 function cellBorders(taille: Taille, row: number, col: number): string {
@@ -66,14 +64,18 @@ function cellBorders(taille: Taille, row: number, col: number): string {
   const lastRow = row === taille - 1;
   return cn(
     // Bord droit/bas de chaque case (le cadre du conteneur ferme la grille).
+    // Couleurs PAR CÔTÉ obligatoirement : `border-foreground/60` et
+    // `border-muted-foreground/30` colorent TOUS les côtés et tailwind-merge
+    // ne garde que la dernière — une case au bord droit épais + bas fin
+    // peindrait son trait de région en encre fine (axe discontinu).
     !lastCol &&
       ((col + 1) % boxCols === 0
-        ? `border-r-2 ${THICK_BORDER}`
-        : `border-r ${THIN_BORDER}`),
+        ? "border-r-2 border-r-foreground/60"
+        : "border-r border-r-muted-foreground/30"),
     !lastRow &&
       ((row + 1) % boxRows === 0
-        ? `border-b-2 ${THICK_BORDER}`
-        : `border-b ${THIN_BORDER}`)
+        ? "border-b-2 border-b-foreground/60"
+        : "border-b border-b-muted-foreground/30")
   );
 }
 
