@@ -77,6 +77,21 @@ function cellBorders(taille: Taille, row: number, col: number): string {
   );
 }
 
+function buildCellBorders(taille: Taille): readonly string[] {
+  return Array.from({ length: taille * taille }, (_, index) =>
+    cellBorders(taille, Math.floor(index / taille), index % taille)
+  );
+}
+
+// Bordures figées au niveau module : elles ne dépendent que de la taille,
+// mais chaque frappe re-rend la grille entière (writeCell change l'identité
+// de l'état) — jusqu'à 81 chaînes par rendu sans ce gel.
+const CELL_BORDERS: Record<Taille, readonly string[]> = {
+  4: buildCellBorders(4),
+  6: buildCellBorders(6),
+  9: buildCellBorders(9),
+};
+
 /**
  * Gabarit d'aria par état de case : donnée (inerte), remplie par l'enfant
  * (le chiffre écrit s'annonce — {chiffre}) ou encore à compléter. Les
@@ -119,7 +134,7 @@ export function SudokuGrid({
   const m = useMessages();
   const { taille } = state;
   const sizeClass = CELL_SIZE_CLASS[taille];
-  const indices = Array.from({ length: taille * taille }, (_, i) => i);
+  const cellBorderList = CELL_BORDERS[taille];
   return (
     <div
       className={cn(
@@ -129,10 +144,9 @@ export function SudokuGrid({
         variant === "solution" && "opacity-80"
       )}
     >
-      {indices.map((index) => {
+      {cellBorderList.map((borders, index) => {
         const row = Math.floor(index / taille);
         const col = index % taille;
-        const borders = cellBorders(taille, row, col);
         if (variant === "solution") {
           return (
             <span

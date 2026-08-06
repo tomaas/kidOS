@@ -83,6 +83,14 @@ const RANGE_MOMENT_MS = 1600;
 // dnd-kit's useSensor memo keeps a stable options identity across renders.
 const POINTER_ACTIVATION = { activationConstraint: { distance: 8 } };
 
+// Les pavés 1..N par taille, figés au niveau module : chaque frappe re-rend
+// la page entière (setGrille) et ne doit pas réallouer le tableau.
+const NUMPAD_DIGITS: Record<Taille, string[]> = {
+  4: ["1", "2", "3", "4"],
+  6: ["1", "2", "3", "4", "5", "6"],
+  9: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+};
+
 /**
  * Forgiving drop detection for small fingers: precise when the fingertip is
  * inside a cell (pointerWithin), else the cell the tile overlaps most counts
@@ -180,23 +188,10 @@ function SudokuWorkshopPage() {
     ) {
       return null;
     }
-    try {
-      return generateSudoku(grilleTaille, grilleGenerosite, grilleSeed);
-    } catch {
-      // KTD5 : un jet inattendu retombe sur l'étagère, en silence.
-      return null;
-    }
+    // KTD5 : le filet vit UNE fois, dans le module pur — generateSudoku ne
+    // lève jamais (épinglé par le golden « entrée sûre, ne lève jamais »).
+    return generateSudoku(grilleTaille, grilleGenerosite, grilleSeed);
   }, [grilleTaille, grilleGenerosite, grilleSeed]);
-
-  // Filet KTD5 : une grille sans puzzle (générateur qui a jeté) ne reste
-  // jamais à l'écran — retour calme à l'étagère, jamais une erreur.
-  useEffect(() => {
-    if (grille && puzzle === null) {
-      setGrille(null);
-      setSelected(null);
-      setPhase({ kind: "etagere" });
-    }
-  }, [grille, puzzle]);
 
   // L'état « sorti » des plateaux : lecture localStorage + vérification
   // d'empreinte bornées à UNE entrée d'étagère — memo sur (settings, phase),
@@ -209,19 +204,15 @@ function SudokuWorkshopPage() {
 
   /** Prendre un plateau (takeTray, module pur) : reprise exacte si la grille
       est reprenable, sinon grille fraîche à la générosité parentale de CETTE
-      taille. Un jet inattendu laisse l'enfant sur l'étagère, en silence. */
+      taille. takeTray hérite du no-throw du générateur (module pur). */
   function prendrePlateau(taille: Taille) {
     if (!settings) {
       return;
     }
-    try {
-      const state = takeTray(storage, settings, taille);
-      setSelected(null);
-      setGrille(state);
-      setPhase({ kind: "grille", taille });
-    } catch {
-      // KTD5 : jamais une erreur devant l'enfant.
-    }
+    const state = takeTray(storage, settings, taille);
+    setSelected(null);
+    setGrille(state);
+    setPhase({ kind: "grille", taille });
   }
 
   /** « Reposer le plateau » (R9) : retour à l'étagère, sans perte — la
@@ -258,7 +249,8 @@ function SudokuWorkshopPage() {
   }
 
   if (!(grille && puzzle)) {
-    // L'effet KTD5 ci-dessus ramène à l'étagère au prochain rendu.
+    // Rétrécissement de type : en phase grille/comparaison l'état est
+    // toujours posé (prendrePlateau) — garde inatteignable en pratique.
     return <div className="min-h-[80vh]" />;
   }
 
@@ -288,9 +280,7 @@ function SudokuWorkshopPage() {
   }
 
   const complete = isGrilleComplete(grille);
-  const numpadDigits = Array.from({ length: grille.taille }, (_, i) =>
-    String(i + 1)
-  );
+  const numpadDigits = NUMPAD_DIGITS[grille.taille];
 
   function setCell(index: number, digit: number | null) {
     // Everything derives from prev INSIDE the updater (never the render-time
