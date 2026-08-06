@@ -356,6 +356,31 @@ export const mathSkills = sqliteTable(
 );
 
 /**
+ * Settings of the "sudoku" mini-app, one row per ACTIVATED grid size, keyed
+ * `sudoku:<taille>` (KTD7 — mirror of math_skills): row present = size
+ * activated (a tray on the child's shelf at /sudoku), row absent = the size
+ * does not exist on screen (never a greyed tray). `generosite` is the
+ * parent's MANUAL per-size choice (1 = most givens, 3 = least) — purely
+ * descriptive, no automatic progression, no evaluation of the child (the
+ * calm constraint applies in full). An invalid value is repaired by
+ * clampGenerosite at read time (settingsFromRows), never an error.
+ */
+export const sudokuSkills = sqliteTable(
+  "sudoku_skills",
+  {
+    generosite: integer("generosite").notNull().default(2),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateId("sudokuskill")),
+    skill: text("skill").notNull(),
+    updatedAt: text("updated_at").default(
+      sql`(strftime('%Y-%m-%d %H:%M:%S.000+00', 'now'))`
+    ),
+  },
+  (table) => [uniqueIndex("sudoku_skills_skill_idx").on(table.skill)]
+);
+
+/**
  * Réglages GLOBAUX de l'app (clé/valeur, un enregistrement par réglage) —
  * des choix PARENT, jamais un état de l'enfant (contrainte calme : rien ici
  * ne mesure, ne compte ni n'évalue). Première clé : `ui-language`

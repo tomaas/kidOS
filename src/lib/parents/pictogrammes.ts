@@ -10,6 +10,7 @@
  */
 
 import {
+  Grid2x2,
   Grid3x3,
   type LucideIcon,
   MapPin,
@@ -30,4 +31,5 @@ export const PICTOGRAMMES_SECTIONS: Record<SectionParentsId, LucideIcon> = {
   imageModel: Palette,
   lieux: MapPin,
   reglages: Wrench,
+  sudoku: Grid2x2,
 };

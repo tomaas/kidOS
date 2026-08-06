@@ -10,22 +10,29 @@
  * /parents n'y figure JAMAIS : hors de l'OS, hors de la grammaire enfant.
  */
 
-import { BookHeart, Grid3x3, Leaf, type LucideIcon } from "lucide-react";
+import {
+  BookHeart,
+  Grid2x2,
+  Grid3x3,
+  Leaf,
+  type LucideIcon,
+} from "lucide-react";
 import type { TeinteIcone } from "~/components/bureau/icone";
 
 /** Les ids du registre = les clés de `bureau.apps` du catalogue (Messages). */
-export type AppBureauId = "histoires" | "calculs" | "bibliotheque";
+export type AppBureauId = "histoires" | "calculs" | "bibliotheque" | "sudoku";
 
 export interface AppBureau {
   icone: LucideIcon;
   id: AppBureauId;
   teinte: TeinteIcone;
-  to: "/aventure" | "/calcul" | "/bibliotheque";
+  to: "/aventure" | "/calcul" | "/bibliotheque" | "/sudoku";
 }
 
 // Chaque app a sa teinte de la palette calme (tuile d'application, comme les
 // icônes d'un vrai OS) — sauge pour les histoires, sable pour les calculs,
-// ocre pâle pour la bibliothèque. Jamais de couleur hors palette.
+// ocre pâle pour la bibliothèque, bleu-gris brumeux pour le sudoku. Jamais
+// de couleur hors palette.
 export const APPS_BUREAU: readonly AppBureau[] = [
   {
     icone: Leaf,
@@ -55,6 +62,16 @@ export const APPS_BUREAU: readonly AppBureau[] = [
       tuile: "border-primary/20 bg-gradient-to-b from-primary/10 to-primary/25",
     },
     to: "/bibliotheque",
+  },
+  {
+    icone: Grid2x2,
+    id: "sudoku",
+    teinte: {
+      glyphe: "text-tertiary-foreground",
+      tuile:
+        "border-tertiary-foreground/15 bg-gradient-to-b from-tertiary/55 to-tertiary",
+    },
+    to: "/sudoku",
   },
 ];
 

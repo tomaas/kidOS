@@ -4,6 +4,34 @@ All notable changes to the app, one version per release.
 Format: [Keep a Changelog](https://keepachangelog.com/) adapted, 4-digit
 versions `MAJOR.MINOR.PATCH.MICRO` (`VERSION` file).
 
+## [0.8.0.0] - 2026-08-06
+
+### Added
+
+- **A sudoku mini-app, fourth icon on the desktop**: `/sudoku` opens on a
+  shelf of trays — one per grid size the parent has activated (4×4, 6×6,
+  9×9) — and the child picks a tray, never a level. Every grid comes from a
+  seeded, technique-bounded generator: a unique solution, always solvable
+  without guessing, and an interrupted grid regenerates identically.
+- Solving reuses the calm gestures of the sums workshop: tap a cell or drag
+  a digit from the soft numpad, everything inks like pencil — the grid
+  never marks a digit wrong. Finishing is a self-comparison with the
+  completed grid, side by side, and a 🌿 transition back to the shelf.
+- Each tray **resumes where the child left it** (per-size, on this device);
+  a parent changing that size's generosity quietly starts a fresh grid.
+- The child can **print a blank A5 sheet** of the current grid — givens
+  only, no solution anywhere on paper.
+- A parent page at `/parents/sudoku`: per-size activation (the last active
+  size cannot be deactivated) and a per-size generosity — how many digits
+  are already placed and which solving steps the grid may need. Purely
+  descriptive, chosen by the parent; the app never evaluates the child.
+- The whole mini-app is bilingual (French/English), like the rest of the
+  shell.
+- New golden suite (`test:sudoku`): generator determinism, unique-solution
+  and technique-tier bounds, and the grid session lifecycle (resume, purge
+  on generosity mismatch, silent storage degradation); `test:routes` and
+  `test:i18n` extended to pin the new URLs, route ids and catalog entries.
+
 ## [0.7.0.0] - 2026-07-31
 
 ### Added

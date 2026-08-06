@@ -15,7 +15,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "test": "bun run test:golden && bun run test:coherence && bun run test:media && bun run test:data-route && bun run test:reading-aids && bun run test:operations && bun run test:bureau && bun run test:i18n && bun run test:routes && bun run test:settings && bun run test:db",
+    "test": "bun run test:golden && bun run test:coherence && bun run test:media && bun run test:data-route && bun run test:reading-aids && bun run test:operations && bun run test:bureau && bun run test:i18n && bun run test:routes && bun run test:settings && bun run test:db && bun run test:sudoku",
     "test:golden": "bun run src/server/providers/text/__tests__/prompt-identity.golden.ts && bun run src/server/providers/image/__tests__/segment-image-prompt.golden.ts",
     "test:reading-aids": "bun run src/lib/reading-aids/__tests__/reading-aids.golden.ts",
     "test:coherence": "SKIP_ENV_VALIDATION=1 bun run src/server/providers/text/__tests__/story-coherence.golden.ts && SKIP_ENV_VALIDATION=1 bun run src/server/providers/text/__tests__/english-coherence.golden.ts",
@@ -26,7 +26,8 @@
     "test:i18n": "bun run src/lib/i18n/__tests__/i18n.golden.ts",
     "test:routes": "bun run src/lib/bureau/__tests__/routes.golden.ts",
     "test:settings": "bun run src/server/__tests__/app-config.golden.ts",
-    "test:db": "bun run src/server/db/__tests__/local-sqlite.golden.ts"
+    "test:db": "bun run src/server/db/__tests__/local-sqlite.golden.ts",
+    "test:sudoku": "bun run src/lib/sudoku/__tests__/sudoku.golden.ts && bun run src/lib/sudoku/__tests__/sudoku-session.golden.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",

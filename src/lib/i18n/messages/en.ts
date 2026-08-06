@@ -71,6 +71,7 @@ export const en: Messages = {
       bibliotheque: "Library",
       calculs: "Sums",
       histoires: "Stories",
+      sudoku: "Sudoku",
     },
     entrer: "Come in",
     fermerFenetre: "Close the window",
@@ -261,6 +262,11 @@ export const en: Messages = {
             "Keys, models, pictures and voice — the workshop's configuration.",
           titre: "Settings",
         },
+        sudoku: {
+          description:
+            "The grid sizes on offer, how open each one is and the grids to print.",
+          titre: "Sudoku",
+        },
       },
     },
     langue: {
@@ -338,5 +344,54 @@ export const en: Messages = {
       },
       titre: "Settings",
     },
+    sudoku: {
+      changerGenerosite:
+        "The grid in progress continues unchanged — the new openness applies from the next grid.",
+      derniereTaille: "At least one size stays on the shelf.",
+      enregistrement: "Saving…",
+      enregistrer: "Save",
+      generosite: "Grid openness",
+      generosites: {
+        1: "Very open grid — many digits already placed",
+        2: "Open grid — a good share of digits already placed",
+        3: "Denser grid — few digits already placed",
+      },
+      intro:
+        "Prepare the shelf — just like the sums, you choose which grid sizes are available and how open each one is. The child picks a tray; none of this is ever shown to them.",
+      nApparaitPas:
+        "Not on the shelf. Turning it off forgets the chosen openness.",
+      rechargementEchoue:
+        "Saved — reloading failed, refresh the page to double-check.",
+      reglagesIndisponibles:
+        "Settings unavailable right now — reload the page in a moment.",
+      tailles: {
+        4: "Small grid (4 by 4)",
+        6: "Medium grid (6 by 6)",
+        9: "Large grid (9 by 9)",
+      },
+      titre: "Sudoku",
+    },
+  },
+  sudoku: {
+    ariaCellule: {
+      donnee: "Row {ligne}, column {colonne} — digit already placed",
+      remplie: "Row {ligne}, column {colonne}, {chiffre}",
+      vide: "Row {ligne}, column {colonne} — cell to fill in",
+    },
+    ariaEffacer: "Clear",
+    ariaReposerPlateau: "Put the tray back",
+    comparer: "I compare with the finished grid",
+    grilleEnCours: " — grid in progress",
+    imprimer: "Print the grid",
+    prendrePlateau: "Take the {taille} tray",
+    rangeMoment: "The grid is put away.",
+    ranger: "I put the grid away",
+    retourGrille: "Back to my grid",
+    tailles: {
+      4: "small grid (4 by 4)",
+      6: "medium grid (6 by 6)",
+      9: "large grid (9 by 9)",
+    },
+    titreFiche: "A grid to fill in",
   },
 };

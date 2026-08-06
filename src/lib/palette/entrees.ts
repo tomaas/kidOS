@@ -28,6 +28,7 @@ export type EntreePaletteId =
   | "elements"
   | "doudous"
   | "calcul"
+  | "sudoku"
   | "imageModel"
   | "reglages";
 
@@ -40,6 +41,7 @@ export type CheminPalette =
   | "/parents/elements"
   | "/parents/doudous"
   | "/parents/calcul"
+  | "/parents/sudoku"
   | "/parents/image-model"
   | "/parents/reglages";
 
@@ -97,6 +99,12 @@ export const ENTREES_PALETTE: readonly EntreePalette[] = [
     id: "calcul",
     motsCles: ["calcul", "operations", "sums"],
     to: "/parents/calcul",
+  },
+  {
+    groupe: "parent",
+    id: "sudoku",
+    motsCles: ["sudoku", "grille", "grilles"],
+    to: "/parents/sudoku",
   },
   {
     groupe: "parent",

@@ -62,7 +62,7 @@ yes → don't.
   closed-session gate CALLED in exactly two files, never `__root`, PLUS the
   ⌘K palette registry (every destination is a served URL, unique ids, and
   never a shortcut into a bureau mini-app), PLUS the /parents sidebar shell
-  (the `/parents` layout route present with its 8 re-parented children,
+  (the `/parents` layout route present with its 9 re-parented children,
   every `SECTIONS_PARENTS` entry a served URL with unique ids, no `ssr:`
   option under `src/app/parents/**`, and the `/parents/` →
   `/parents/reglages` redirect with a served target);
@@ -76,7 +76,11 @@ yes → don't.
   INFRA-ONLY env validations — provider keys are never boot-fatal — real
   boot on a blank dir with all migrations applied,
   idempotent restart, no spurious `.pre-migrate` snapshot, and the
-  Dockerfile contract — `drizzle/` shipped next to the server bundle).
+  Dockerfile contract — `drizzle/` shipped next to the server bundle);
+  `test:sudoku` pins the sudoku engine — seeded generator determinism,
+  unique-solution + technique-tier bounds — and the grille session
+  lifecycle: saved-generosity resume, authoritative purge, silent storage
+  degradation.
 - Migrations AUTO-APPLY at app startup (`db/index.ts`, idempotent) — no
   setup step. `db:generate` creates a new migration from schema edits;
   `db:migrate` applies them manually (rarely needed); `db:push` is also
@@ -104,7 +108,7 @@ yes → don't.
   component family is base-nova, vendored via components.json + the shadcn
   CLI into `src/components/ui/`.
 - **Bureau (the calm fake-OS frame)**: `/` renders the portrait screen OR
-  the desktop (3 icons, dblclick native + Enter — the "Ouvrir" fallback was
+  the desktop (4 icons, dblclick native + Enter — the "Ouvrir" fallback was
   REMOVED by user decision 2026-07-22, single click only selects; "Ranger
   le bureau" ritual) — the choice is 100% client (localStorage
   `bureau:session`, shape-guarded, silent failure; pure modules in
@@ -387,6 +391,16 @@ yes → don't.
   always clamped — a hand-edited row or cache never errors. A5 sheets per
   family via `PrintableOperationsSheet`
   (`src/components/printable-operations.tsx`).
+- **Sudoku mini-app** (`src/lib/sudoku/`, pure module, golden-tested via
+  `test:sudoku`): `/sudoku` opens on a shelf of trays, one per
+  parent-activated grid size (4×4/6×6/9×9); generosity (per size, chosen at
+  /parents/sudoku, table `sudoku_skills`) = givens count + solver technique
+  tier — every grid is seeded, unique-solution, solvable without guessing.
+  Solving reuses the calcul gestures (tap/drag on the soft numpad, pencil
+  ink, never red); finishing is a self-comparison that NEVER marks. Per-tray
+  resume in localStorage (`sudoku:grille:<taille>`, givens-fingerprint +
+  saved-generosity guarded; mismatch purges, storage failure silent). Child
+  prints a blank A5 grid — givens only, never the solution.
 
 ## Print
 
