@@ -14,7 +14,7 @@
  *
  * Épingle ENFIN la coquille /parents (panneau latéral) : le registre pur des
  * sections (lib/parents/sections.ts) vise des URLs servies, la route layout
- * `/parents` re-parente ses 8 enfants, aucune option `ssr:` sous
+ * `/parents` re-parente ses 9 enfants, aucune option `ssr:` sous
  * src/app/parents/**, et l'ancien hub `/parents/` redirige vers
  * /parents/reglages (cible servie).
  *   bun run src/lib/bureau/__tests__/routes.golden.ts
@@ -47,6 +47,7 @@ const URLS_PUBLIQUES = [
   "/aventure/",
   "/aventure/$id",
   "/calcul/",
+  "/sudoku/",
   "/bibliotheque",
   "/parents/",
   "/parents/calcul",
@@ -81,6 +82,7 @@ const NOUVEAUX_IDS = [
   'createFileRoute("/_bureau/aventure/")',
   'createFileRoute("/_bureau/aventure/$id")',
   'createFileRoute("/_bureau/calcul/")',
+  'createFileRoute("/_bureau/sudoku/")',
   'createFileRoute("/_bureau/bibliotheque")',
 ];
 
@@ -154,7 +156,7 @@ check(
 // La palette est une porte PARENT : elle ne raccourcit JAMAIS vers une
 // mini-app du bureau (l'enfant les ouvre par leur icône, jamais au clavier).
 const versMiniApp = ENTREES_PALETTE.filter((e) =>
-  ["/aventure", "/calcul", "/bibliotheque"].some(
+  ["/aventure", "/calcul", "/sudoku", "/bibliotheque"].some(
     (prefixe) => e.to === prefixe || e.to.startsWith(`${prefixe}/`)
   )
 );
@@ -204,8 +206,8 @@ check(
   idsSections.join(", ")
 );
 
-// La route layout /parents existe (id '/parents') et re-parente ses 8
-// enfants (7 sections + l'index de redirection) — l'empreinte textuelle est
+// La route layout /parents existe (id '/parents') et re-parente ses 9
+// enfants (8 sections + l'index de redirection) — l'empreinte textuelle est
 // `parentRoute: typeof ParentsRouteRoute` dans le bloc declare module.
 check("la layout /parents existe (id)", routeTree.includes("id: '/parents'"));
 const ENFANTS_PARENTS_ATTENDUS = 9;

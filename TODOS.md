@@ -35,6 +35,44 @@ branding d'envFallbackConfig) et documenter la migration dans le CHANGELOG.
 **Contexte :** Soustraction = seul le diminuende posé, emprunt = échange inverse 1 bleu → 10 verts (variante exacte à confirmer avec l'école) ; multiplication = ligne posée en un geste (« poser encore 48 ») ; spec détaillée de la multiplication à 2 chiffres (produits partiels, décalage) à écrire à ce moment-là.
 **Depends on:** Tranche 5.
 
+## Sudoku (mini-app grilles)
+
+### Petites notes au crayon (pencil marks)
+**Priority:** P2
+**Contexte :** Les vraies grilles se travaillent avec des petits chiffres
+candidats au coin des cases (« petites notes »). Hors périmètre du ship
+0.8.0.0 (le geste de base d'abord) ; pertinent surtout à partir du 6×6, où
+les singletons cachés demandent de tenir plusieurs candidats en tête. À
+concevoir dans la grammaire calme existante (encre en retrait, jamais un
+signal) — probablement un mode « petit crayon » sur le pavé.
+**Depends on:** l'observation du geste sudoku après ship.
+
+### Variantes de scène par jour sur les plateaux (motif varianteDuJour)
+**Priority:** P2
+**Contexte :** Les plateaux du calcul tournent leurs scènes PAR JOUR
+(`varianteDuJour`, seedée famille+jour local, stable dans la journée —
+décision UX 2026-07-23 « jamais toujours des marrons »). Les plateaux
+sudoku (4×4/6×6/9×9) sont nés avec une seule scène chacun ; appliquer le
+même motif (petit jeu de variantes scène+phrase par taille, aria stable à
+langue constante) quand l'observation montre que la constance lasse.
+**Depends on:** l'observation du geste sudoku après ship.
+
+### Impression parent en lot de grilles (feuilles A5)
+**Priority:** P3
+**Contexte :** L'enfant imprime UNE grille vierge depuis /sudoku (givens
+seulement, jamais la solution). Côté parent, /parents/calcul sait déjà
+imprimer des feuilles A5 d'opérations ; le pendant sudoku serait un lot de
+grilles fraîches par (taille, générosité) depuis /parents/sudoku —
+réutiliser le montage A5 existant, solution toujours absente du papier.
+
+### Légendes des grilles dans la vue de comparaison
+**Priority:** P3
+**Contexte :** La comparaison de fin montre les deux grilles côte à côte
+sans les nommer ; deux légendes discrètes (« ma grille » / « grille
+terminée ») aideraient un lecteur débutant à s'orienter. Deux clés de
+catalogue (parité fr↔en, scan calme) + le rendu — vérifier que la légende
+reste une aide de lecture, jamais un jugement.
+
 ## Bureau (le vrai petit ordinateur)
 
 ### Observer le bureau après ship (protocole 1 semaine)

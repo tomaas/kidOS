@@ -424,6 +424,7 @@ export const fr = {
   sudoku: {
     ariaCellule: {
       donnee: "Ligne {ligne}, colonne {colonne} — chiffre déjà posé",
+      remplie: "Ligne {ligne}, colonne {colonne}, {chiffre}",
       vide: "Ligne {ligne}, colonne {colonne} — case à compléter",
     },
     ariaEffacer: "Effacer",

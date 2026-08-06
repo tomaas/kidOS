@@ -78,6 +78,22 @@ function cellBorders(taille: Taille, row: number, col: number): string {
 }
 
 /**
+ * Gabarit d'aria par état de case : donnée (inerte), remplie par l'enfant
+ * (le chiffre écrit s'annonce — {chiffre}) ou encore à compléter. Les
+ * gabarits eux-mêmes vivent dans le catalogue (parité fr↔en épinglée).
+ */
+function ariaCelluleTemplate(
+  aria: { donnee: string; remplie: string; vide: string },
+  given: boolean,
+  digit: number | null
+): string {
+  if (given) {
+    return aria.donnee;
+  }
+  return digit === null ? aria.vide : aria.remplie;
+}
+
+/**
  * Variantes de rendu :
  * - "libre"    : la grille de travail — cases à compléter tapables ET cibles
  *                de drop, cases données inertes.
@@ -134,8 +150,12 @@ export function SudokuGrid({
         const given = isGivenCell(state, index);
         const digit = given ? givens[index] : state.entries[index];
         const ariaLabel = formatMessage(
-          given ? m.sudoku.ariaCellule.donnee : m.sudoku.ariaCellule.vide,
-          { colonne: String(col + 1), ligne: String(row + 1) }
+          ariaCelluleTemplate(m.sudoku.ariaCellule, given, digit),
+          {
+            chiffre: digit === null ? "" : String(digit),
+            colonne: String(col + 1),
+            ligne: String(row + 1),
+          }
         );
         if (variant === "lecture" || given) {
           // Case donnée (inerte, R5) ou grille relue en comparaison : le

@@ -375,6 +375,7 @@ export const en: Messages = {
   sudoku: {
     ariaCellule: {
       donnee: "Row {ligne}, column {colonne} — digit already placed",
+      remplie: "Row {ligne}, column {colonne}, {chiffre}",
       vide: "Row {ligne}, column {colonne} — cell to fill in",
     },
     ariaEffacer: "Clear",
