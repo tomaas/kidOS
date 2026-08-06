@@ -114,7 +114,8 @@
       "includes": [
         "src/lib/i18n/index.ts",
         "src/lib/operations/index.ts",
-        "src/lib/reading-aids/index.ts"
+        "src/lib/reading-aids/index.ts",
+        "src/lib/sudoku/index.ts"
       ],
       "linter": {
         "rules": {
