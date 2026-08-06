@@ -11,13 +11,14 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DIGIT_TILE_CLASSES,
   SoftNumpad,
 } from "~/components/calcul/soft-numpad";
 import { Comparaison } from "~/components/sudoku/comparaison";
+import { PrintableSudoku } from "~/components/sudoku/printable-sudoku";
 import { isSudokuCellRef, SudokuGrid } from "~/components/sudoku/sudoku-grid";
 import {
   SudokuShelf,
@@ -263,18 +264,26 @@ function SudokuWorkshopPage() {
 
   if (phase.kind === "comparaison") {
     return (
-      <WorkshopShell onReposer={reposerPlateau}>
-        <FadeIn>
-          <Comparaison
-            onRanger={() => setPhase({ kind: "range", taille: grille.taille })}
-            onRetourGrille={() =>
-              setPhase({ kind: "grille", taille: grille.taille })
-            }
-            puzzle={puzzle}
-            state={grille}
-          />
-        </FadeIn>
-      </WorkshopShell>
+      <>
+        <WorkshopShell onReposer={reposerPlateau}>
+          <FadeIn>
+            <Comparaison
+              onRanger={() =>
+                setPhase({ kind: "range", taille: grille.taille })
+              }
+              onRetourGrille={() =>
+                setPhase({ kind: "grille", taille: grille.taille })
+              }
+              puzzle={puzzle}
+              state={grille}
+            />
+          </FadeIn>
+        </WorkshopShell>
+        {/* La fiche A5 (R12/KTD6) — composée des seuls givens, en frère du
+            wrapper no-print : imprimer depuis la comparaison ne peut fuiter
+            ni les entrées ni la solution. */}
+        <PrintableSudoku givens={puzzle.givens} taille={puzzle.taille} />
+      </>
     );
   }
 
@@ -355,64 +364,79 @@ function SudokuWorkshopPage() {
   }
 
   return (
-    <WorkshopShell onReposer={reposerPlateau}>
-      <DndContext
-        collisionDetection={forgivingCollision}
-        id="sudoku-atelier-dnd"
-        onDragCancel={endDrag}
-        onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
-        sensors={sensors}
-      >
-        <SudokuGrid
-          givens={puzzle.givens}
-          onSelect={(index) => setSelected(index)}
-          selected={selected}
-          state={grille}
-          variant="libre"
-        />
+    <>
+      <WorkshopShell onReposer={reposerPlateau}>
+        <DndContext
+          collisionDetection={forgivingCollision}
+          id="sudoku-atelier-dnd"
+          onDragCancel={endDrag}
+          onDragEnd={handleDragEnd}
+          onDragStart={handleDragStart}
+          sensors={sensors}
+        >
+          <SudokuGrid
+            givens={puzzle.givens}
+            onSelect={(index) => setSelected(index)}
+            selected={selected}
+            state={grille}
+            variant="libre"
+          />
 
-        <SoftNumpad
-          ariaErase={m.sudoku.ariaEffacer}
-          digits={numpadDigits}
-          onDigit={writeDigit}
-          onErase={erase}
-        />
+          <SoftNumpad
+            ariaErase={m.sudoku.ariaEffacer}
+            digits={numpadDigits}
+            onDigit={writeDigit}
+            onErase={erase}
+          />
 
-        {/* Rangée d'actions — U5 y ajoutera le bouton d'impression. La
-            comparaison n'apparaît que grille PLEINE (R7), et rien ne se
-            déclenche tout seul : c'est un geste de l'enfant. */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {complete ? (
+          {/* Rangée d'actions. La comparaison n'apparaît que grille PLEINE
+            (R7), et rien ne se déclenche tout seul : c'est un geste de
+            l'enfant. L'impression (R12) sort la grille VIERGE — la fiche
+            est composée des seuls givens (KTD6), jamais du DOM. */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            {complete ? (
+              <Button
+                className="gap-2 text-muted-foreground text-xl"
+                onClick={() =>
+                  setPhase({ kind: "comparaison", taille: grille.taille })
+                }
+                variant="ghost"
+              >
+                {m.sudoku.comparer}
+              </Button>
+            ) : null}
             <Button
               className="gap-2 text-muted-foreground text-xl"
-              onClick={() =>
-                setPhase({ kind: "comparaison", taille: grille.taille })
-              }
+              onClick={() => window.print()}
+              type="button"
               variant="ghost"
             >
-              {m.sudoku.comparer}
+              <Printer className="size-5" />
+              {m.sudoku.imprimer}
             </Button>
-          ) : null}
-        </div>
+          </div>
 
-        {/* The dragged digit follows the finger as a tile — same ink as a key,
+          {/* The dragged digit follows the finger as a tile — same ink as a key,
           a soft shadow, nothing else. No drop animation: the digit is simply
           inked in the cell, like a pencil lifting. */}
-        <DragOverlay dropAnimation={null}>
-          {dragDigit ? (
-            <span
-              className={cn(
-                DIGIT_TILE_CLASSES,
-                "flex items-center justify-center border bg-background shadow-md"
-              )}
-            >
-              {dragDigit}
-            </span>
-          ) : null}
-        </DragOverlay>
-      </DndContext>
-    </WorkshopShell>
+          <DragOverlay dropAnimation={null}>
+            {dragDigit ? (
+              <span
+                className={cn(
+                  DIGIT_TILE_CLASSES,
+                  "flex items-center justify-center border bg-background shadow-md"
+                )}
+              >
+                {dragDigit}
+              </span>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      </WorkshopShell>
+      {/* La fiche A5 (R12/KTD6) — mêmes seuls givens qu'en comparaison, en
+          frère du wrapper no-print. */}
+      <PrintableSudoku givens={puzzle.givens} taille={puzzle.taille} />
+    </>
   );
 }
 
@@ -430,7 +454,10 @@ function WorkshopShell({
 }) {
   const m = useMessages();
   return (
-    <div className="mx-auto flex min-h-[80vh] w-full max-w-3xl flex-col items-center gap-8 py-6">
+    // no-print (KTD6) : l'arbre écran entier disparaît à l'impression — seule
+    // la fiche `.printable-story` (montée en frère, hors de ce wrapper caché)
+    // sort sur le papier.
+    <div className="no-print mx-auto flex min-h-[80vh] w-full max-w-3xl flex-col items-center gap-8 py-6">
       {onReposer ? (
         <div className="w-full">
           <Button
