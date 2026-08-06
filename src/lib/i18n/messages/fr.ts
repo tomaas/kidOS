@@ -78,6 +78,7 @@ export const fr = {
       bibliotheque: "Bibliothèque",
       calculs: "Calculs",
       histoires: "Histoires",
+      sudoku: "Sudoku",
     },
     entrer: "Entrer",
     fermerFenetre: "Fermer la fenêtre",
@@ -291,6 +292,11 @@ export const fr = {
             "Clés, modèles, images et voix — la configuration de l'atelier.",
           titre: "Les réglages",
         },
+        sudoku: {
+          description:
+            "Les tailles de grille proposées, l'ouverture de chacune et les grilles à imprimer.",
+          titre: "Le sudoku",
+        },
       },
     },
     langue: {
@@ -377,6 +383,65 @@ export const fr = {
       },
       titre: "Les réglages",
     },
+    // La page /parents/sudoku — même grammaire que parents.calcul : le parent
+    // prépare l'étagère (tailles activées + ouverture de chacune), l'enfant
+    // choisit son plateau. L'« ouverture » décrit la GRILLE (combien de
+    // chiffres sont déjà posés), jamais l'enfant — aucune échelle de niveau.
+    sudoku: {
+      changerGenerosite: "Changer l'ouverture range la grille en cours.",
+      derniereTaille: "Au moins une taille reste sur l'étagère.",
+      enregistrement: "Enregistrement…",
+      enregistrer: "Enregistrer",
+      generosite: "Ouverture de la grille",
+      // Libellés des trois ouvertures (Generosite 1 → 3) — descriptifs de la
+      // grille, jamais évaluatifs.
+      generosites: {
+        1: "Grille très ouverte — beaucoup de chiffres déjà posés",
+        2: "Grille ouverte — une bonne part des chiffres déjà posés",
+        3: "Grille plus dense — peu de chiffres déjà posés",
+      },
+      imprimerFiche: "Imprimer une grille",
+      intro:
+        "Prépare l'étagère — comme pour les calculs, c'est toi qui choisis les tailles de grille disponibles et l'ouverture de chacune. L'enfant choisit son plateau ; rien de tout cela ne lui est montré.",
+      nApparaitPas:
+        "N'apparaît pas sur l'étagère. Désactiver oublie l'ouverture choisie.",
+      rechargementEchoue:
+        "Enregistré — le rechargement a échoué, recharge la page pour vérifier.",
+      reglagesIndisponibles:
+        "Réglages indisponibles pour le moment — recharge la page dans un instant.",
+      // Titres des cartes par taille — les mêmes noms de taille que côté
+      // enfant (sudoku.tailles), capitalisés pour la carte.
+      tailles: {
+        4: "Petite grille (4 par 4)",
+        6: "Moyenne grille (6 par 6)",
+        9: "Grande grille (9 par 9)",
+      },
+      titre: "Le sudoku",
+    },
+  },
+  // La mini-app sudoku côté enfant — même grammaire que `calcul` : l'étagère
+  // de plateaux, la grille qui se range, jamais de niveau visible.
+  sudoku: {
+    ariaCellule: {
+      donnee: "Ligne {ligne}, colonne {colonne} — chiffre déjà posé",
+      vide: "Ligne {ligne}, colonne {colonne} — case à compléter",
+    },
+    ariaEffacer: "Effacer",
+    ariaReposerPlateau: "Reposer le plateau",
+    comparer: "Je compare avec la grille terminée",
+    grilleEnCours: " — grille en cours",
+    imprimer: "Imprimer la grille",
+    prendrePlateau: "Prendre le plateau {taille}",
+    rangeMoment: "La grille est rangée.",
+    ranger: "Je range la grille",
+    retourGrille: "Je reviens à ma grille",
+    // Noms des tailles — des mots de TAILLE, jamais de niveau ni d'aptitude.
+    tailles: {
+      4: "petite grille (4 par 4)",
+      6: "moyenne grille (6 par 6)",
+      9: "grande grille (9 par 9)",
+    },
+    titreFiche: "Une grille à compléter",
   },
 };
 

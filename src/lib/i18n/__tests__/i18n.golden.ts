@@ -213,6 +213,7 @@ const CHEMIN_LIBELLE: Record<EntreePaletteId, string> = {
   imageModel: "parents.index.sections.imageModel.titre",
   lieux: "parents.index.sections.lieux.titre",
   reglages: "parents.index.sections.reglages.titre",
+  sudoku: "parents.index.sections.sudoku.titre",
 };
 
 for (const entree of ENTREES_PALETTE) {

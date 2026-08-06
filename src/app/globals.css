@@ -47,6 +47,12 @@
   --muted-foreground: oklch(0.52 0.03 55);
   --accent: oklch(0.9 0.05 150);
   --accent-foreground: oklch(0.35 0.05 150);
+  /* Quatrième teinte de la palette calme — un bleu-gris brumeux pour la tuile
+     Sudoku du bureau (sauge, sable et terracotta sont déjà pris par les trois
+     autres icônes). Exposée à Tailwind par le bloc @theme plus bas : theme.css
+     ne connaît pas ce jeton. */
+  --tertiary: oklch(0.9 0.045 240);
+  --tertiary-foreground: oklch(0.37 0.05 240);
   --border: oklch(0.9 0.025 80);
   --input: oklch(0.92 0.025 80);
   --ring: oklch(0.78 0.09 50);
@@ -67,6 +73,13 @@
   --sidebar-accent-foreground: oklch(0.4 0.04 50);
   --sidebar-border: oklch(0.9 0.025 80);
   --sidebar-ring: oklch(0.78 0.09 50);
+}
+
+/* Le jeton --tertiary (ci-dessus) n'existe pas dans theme.css : on le mappe
+   ici pour que Tailwind génère bg/text/border-tertiary(-foreground). */
+@theme inline {
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
 }
 
 /* Liste sans ascenseur visible (la liste de la palette ⌘K, classe attendue par

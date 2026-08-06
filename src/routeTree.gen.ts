@@ -13,6 +13,7 @@ import { Route as ParentsRouteRouteImport } from './app/parents/route'
 import { Route as BureauRouteRouteImport } from './app/_bureau/route'
 import { Route as IndexRouteImport } from './app/index'
 import { Route as ParentsIndexRouteImport } from './app/parents/index'
+import { Route as ParentsSudokuRouteImport } from './app/parents/sudoku'
 import { Route as ParentsReglagesRouteImport } from './app/parents/reglages'
 import { Route as ParentsLieuxRouteImport } from './app/parents/lieux'
 import { Route as ParentsImageModelRouteImport } from './app/parents/image-model'
@@ -21,6 +22,7 @@ import { Route as ParentsElementsRouteImport } from './app/parents/elements'
 import { Route as ParentsDoudousRouteImport } from './app/parents/doudous'
 import { Route as ParentsCalculRouteImport } from './app/parents/calcul'
 import { Route as DataSplatRouteImport } from './app/data.$'
+import { Route as BureauSudokuRouteImport } from './app/_bureau/sudoku'
 import { Route as BureauBibliothequeRouteImport } from './app/_bureau/bibliotheque'
 import { Route as BureauCalculIndexRouteImport } from './app/_bureau/calcul/index'
 import { Route as BureauAventureIndexRouteImport } from './app/_bureau/aventure/index'
@@ -43,6 +45,11 @@ const IndexRoute = IndexRouteImport.update({
 const ParentsIndexRoute = ParentsIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => ParentsRouteRoute,
+} as any)
+const ParentsSudokuRoute = ParentsSudokuRouteImport.update({
+  id: '/sudoku',
+  path: '/sudoku',
   getParentRoute: () => ParentsRouteRoute,
 } as any)
 const ParentsReglagesRoute = ParentsReglagesRouteImport.update({
@@ -85,6 +92,11 @@ const DataSplatRoute = DataSplatRouteImport.update({
   path: '/data/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BureauSudokuRoute = BureauSudokuRouteImport.update({
+  id: '/sudoku',
+  path: '/sudoku',
+  getParentRoute: () => BureauRouteRoute,
+} as any)
 const BureauBibliothequeRoute = BureauBibliothequeRouteImport.update({
   id: '/bibliotheque',
   path: '/bibliotheque',
@@ -110,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/parents': typeof ParentsRouteRouteWithChildren
   '/bibliotheque': typeof BureauBibliothequeRoute
+  '/sudoku': typeof BureauSudokuRoute
   '/data/$': typeof DataSplatRoute
   '/parents/calcul': typeof ParentsCalculRoute
   '/parents/doudous': typeof ParentsDoudousRoute
@@ -118,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/parents/image-model': typeof ParentsImageModelRoute
   '/parents/lieux': typeof ParentsLieuxRoute
   '/parents/reglages': typeof ParentsReglagesRoute
+  '/parents/sudoku': typeof ParentsSudokuRoute
   '/parents/': typeof ParentsIndexRoute
   '/aventure/$id': typeof BureauAventureIdRoute
   '/aventure/': typeof BureauAventureIndexRoute
@@ -126,6 +140,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bibliotheque': typeof BureauBibliothequeRoute
+  '/sudoku': typeof BureauSudokuRoute
   '/data/$': typeof DataSplatRoute
   '/parents/calcul': typeof ParentsCalculRoute
   '/parents/doudous': typeof ParentsDoudousRoute
@@ -134,6 +149,7 @@ export interface FileRoutesByTo {
   '/parents/image-model': typeof ParentsImageModelRoute
   '/parents/lieux': typeof ParentsLieuxRoute
   '/parents/reglages': typeof ParentsReglagesRoute
+  '/parents/sudoku': typeof ParentsSudokuRoute
   '/parents': typeof ParentsIndexRoute
   '/aventure/$id': typeof BureauAventureIdRoute
   '/aventure': typeof BureauAventureIndexRoute
@@ -145,6 +161,7 @@ export interface FileRoutesById {
   '/_bureau': typeof BureauRouteRouteWithChildren
   '/parents': typeof ParentsRouteRouteWithChildren
   '/_bureau/bibliotheque': typeof BureauBibliothequeRoute
+  '/_bureau/sudoku': typeof BureauSudokuRoute
   '/data/$': typeof DataSplatRoute
   '/parents/calcul': typeof ParentsCalculRoute
   '/parents/doudous': typeof ParentsDoudousRoute
@@ -153,6 +170,7 @@ export interface FileRoutesById {
   '/parents/image-model': typeof ParentsImageModelRoute
   '/parents/lieux': typeof ParentsLieuxRoute
   '/parents/reglages': typeof ParentsReglagesRoute
+  '/parents/sudoku': typeof ParentsSudokuRoute
   '/parents/': typeof ParentsIndexRoute
   '/_bureau/aventure/$id': typeof BureauAventureIdRoute
   '/_bureau/aventure/': typeof BureauAventureIndexRoute
@@ -164,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/parents'
     | '/bibliotheque'
+    | '/sudoku'
     | '/data/$'
     | '/parents/calcul'
     | '/parents/doudous'
@@ -172,6 +191,7 @@ export interface FileRouteTypes {
     | '/parents/image-model'
     | '/parents/lieux'
     | '/parents/reglages'
+    | '/parents/sudoku'
     | '/parents/'
     | '/aventure/$id'
     | '/aventure/'
@@ -180,6 +200,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/bibliotheque'
+    | '/sudoku'
     | '/data/$'
     | '/parents/calcul'
     | '/parents/doudous'
@@ -188,6 +209,7 @@ export interface FileRouteTypes {
     | '/parents/image-model'
     | '/parents/lieux'
     | '/parents/reglages'
+    | '/parents/sudoku'
     | '/parents'
     | '/aventure/$id'
     | '/aventure'
@@ -198,6 +220,7 @@ export interface FileRouteTypes {
     | '/_bureau'
     | '/parents'
     | '/_bureau/bibliotheque'
+    | '/_bureau/sudoku'
     | '/data/$'
     | '/parents/calcul'
     | '/parents/doudous'
@@ -206,6 +229,7 @@ export interface FileRouteTypes {
     | '/parents/image-model'
     | '/parents/lieux'
     | '/parents/reglages'
+    | '/parents/sudoku'
     | '/parents/'
     | '/_bureau/aventure/$id'
     | '/_bureau/aventure/'
@@ -247,6 +271,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/parents/'
       preLoaderRoute: typeof ParentsIndexRouteImport
+      parentRoute: typeof ParentsRouteRoute
+    }
+    '/parents/sudoku': {
+      id: '/parents/sudoku'
+      path: '/sudoku'
+      fullPath: '/parents/sudoku'
+      preLoaderRoute: typeof ParentsSudokuRouteImport
       parentRoute: typeof ParentsRouteRoute
     }
     '/parents/reglages': {
@@ -305,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DataSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_bureau/sudoku': {
+      id: '/_bureau/sudoku'
+      path: '/sudoku'
+      fullPath: '/sudoku'
+      preLoaderRoute: typeof BureauSudokuRouteImport
+      parentRoute: typeof BureauRouteRoute
+    }
     '/_bureau/bibliotheque': {
       id: '/_bureau/bibliotheque'
       path: '/bibliotheque'
@@ -338,6 +376,7 @@ declare module '@tanstack/react-router' {
 
 interface BureauRouteRouteChildren {
   BureauBibliothequeRoute: typeof BureauBibliothequeRoute
+  BureauSudokuRoute: typeof BureauSudokuRoute
   BureauAventureIdRoute: typeof BureauAventureIdRoute
   BureauAventureIndexRoute: typeof BureauAventureIndexRoute
   BureauCalculIndexRoute: typeof BureauCalculIndexRoute
@@ -345,6 +384,7 @@ interface BureauRouteRouteChildren {
 
 const BureauRouteRouteChildren: BureauRouteRouteChildren = {
   BureauBibliothequeRoute: BureauBibliothequeRoute,
+  BureauSudokuRoute: BureauSudokuRoute,
   BureauAventureIdRoute: BureauAventureIdRoute,
   BureauAventureIndexRoute: BureauAventureIndexRoute,
   BureauCalculIndexRoute: BureauCalculIndexRoute,
@@ -362,6 +402,7 @@ interface ParentsRouteRouteChildren {
   ParentsImageModelRoute: typeof ParentsImageModelRoute
   ParentsLieuxRoute: typeof ParentsLieuxRoute
   ParentsReglagesRoute: typeof ParentsReglagesRoute
+  ParentsSudokuRoute: typeof ParentsSudokuRoute
   ParentsIndexRoute: typeof ParentsIndexRoute
 }
 
@@ -373,6 +414,7 @@ const ParentsRouteRouteChildren: ParentsRouteRouteChildren = {
   ParentsImageModelRoute: ParentsImageModelRoute,
   ParentsLieuxRoute: ParentsLieuxRoute,
   ParentsReglagesRoute: ParentsReglagesRoute,
+  ParentsSudokuRoute: ParentsSudokuRoute,
   ParentsIndexRoute: ParentsIndexRoute,
 }
 

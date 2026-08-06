@@ -193,13 +193,13 @@ check(
   idsSections.join(", ")
 );
 
-// L'ensemble canonique des SEPT sections — sans cette pin, un registre vidé
+// L'ensemble canonique des HUIT sections — sans cette pin, un registre vidé
 // ou amputé rendrait la boucle d'URLs ci-dessus vacante (zéro itération,
 // zéro échec) et l'unicité trivialement vraie.
 const IDS_SECTIONS_ATTENDUS =
-  "calcul, doudous, elements, heroes, imageModel, lieux, reglages";
+  "calcul, doudous, elements, heroes, imageModel, lieux, reglages, sudoku";
 check(
-  "sections parents : l'ensemble canonique des 7 ids",
+  "sections parents : l'ensemble canonique des 8 ids",
   [...idsSections].sort().join(", ") === IDS_SECTIONS_ATTENDUS,
   idsSections.join(", ")
 );
@@ -208,7 +208,7 @@ check(
 // enfants (7 sections + l'index de redirection) — l'empreinte textuelle est
 // `parentRoute: typeof ParentsRouteRoute` dans le bloc declare module.
 check("la layout /parents existe (id)", routeTree.includes("id: '/parents'"));
-const ENFANTS_PARENTS_ATTENDUS = 8;
+const ENFANTS_PARENTS_ATTENDUS = 9;
 const enfantsParents = routeTree.match(
   /parentRoute: typeof ParentsRouteRoute\b/g
 );

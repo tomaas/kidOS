@@ -38,6 +38,7 @@ export const SECTIONS_PARENTS: readonly SectionParents[] = [
   { id: "elements", to: "/parents/elements" },
   { id: "doudous", to: "/parents/doudous" },
   { id: "calcul", to: "/parents/calcul" },
+  { id: "sudoku", to: "/parents/sudoku" },
   { id: "imageModel", to: "/parents/image-model" },
   { id: "reglages", to: "/parents/reglages" },
 ];
