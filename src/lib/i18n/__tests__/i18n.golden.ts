@@ -23,7 +23,7 @@
  *    sur "en", repli "fr" pour tout le reste (y compris "ru" et "EN").
  */
 
-import { buildBranding } from "~/lib/i18n/branding";
+import { buildBranding, buildSudokuLabel } from "~/lib/i18n/branding";
 import { formatMessage } from "~/lib/i18n/format";
 import { normalizeLocale } from "~/lib/i18n/locale";
 import { en } from "~/lib/i18n/messages/en";
@@ -244,6 +244,11 @@ const brandingPins: readonly [string, string, string][] = [
     buildBranding("fr", "Léa").storyLabel,
     "Une histoire de Léa",
   ],
+  [
+    "fr sudokuLabel élidé",
+    buildSudokuLabel("fr", "Arsène"),
+    "Un sudoku d'Arsène",
+  ],
   ["fr repli sans prénom", buildBranding("fr", "").name, "Le petit atelier"],
   [
     "fr repli storyLabel",
@@ -261,6 +266,7 @@ const brandingPins: readonly [string, string, string][] = [
     buildBranding("en", "Arsène").storyLabel,
     "A story by Arsène",
   ],
+  ["en sudokuLabel", buildSudokuLabel("en", "Arsène"), "A sudoku by Arsène"],
   ["en repli sans prénom", buildBranding("en", "").name, "The little workshop"],
   ["en repli storyLabel", buildBranding("en", "").storyLabel, "A little story"],
   [

@@ -4,7 +4,7 @@
  * `stories.lang` (langue d'une histoire) et DEFAULT_LANG (défaut serveur).
  */
 
-export { type Branding, buildBranding } from "./branding";
+export { type Branding, buildBranding, buildSudokuLabel } from "./branding";
 export { LocaleProvider, MESSAGES, useLocale, useMessages } from "./context";
 export { formatMessage } from "./format";
 export {

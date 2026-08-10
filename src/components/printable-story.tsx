@@ -4,6 +4,7 @@ import {
   GENERATED_IMAGE_HEIGHT,
   GENERATED_IMAGE_WIDTH,
 } from "~/lib/generated-image";
+import { buildSudokuLabel } from "~/lib/i18n";
 import type { ReadingAidsFlags } from "~/lib/use-reading-aids";
 import type { StorySegment } from "~/server/db/schema";
 import { isRenderableImagePath } from "~/server/providers/types";
@@ -21,17 +22,30 @@ const rootRoute = getRouteApi("__root__");
  * d'opérations. La source de marque vient du loader racine (réglage parent
  * en base, VITE_* en secours).
  */
-export function Colophon({ lang }: { lang: string }) {
+export function Colophon({
+  kind = "story",
+  lang,
+}: {
+  kind?: "story" | "sudoku";
+  lang: string;
+}) {
   const { brandingSource } = rootRoute.useLoaderData();
   // stories.lang est une colonne non typée — une valeur inconnue retombe sur
   // la marque française historique, jamais une erreur.
   const brandingLang = lang === "en" || lang === "ru" ? lang : "fr";
+  const label =
+    kind === "sudoku"
+      ? buildSudokuLabel(
+          brandingLang === "en" ? "en" : "fr",
+          brandingSource.childName.trim()
+        )
+      : composeBranding(brandingLang, brandingSource).storyLabel;
   return (
     <p
       className="mt-16 text-center italic"
       style={{ fontSize: "12pt", opacity: 0.6 }}
     >
-      {composeBranding(brandingLang, brandingSource).storyLabel}
+      {label}
     </p>
   );
 }

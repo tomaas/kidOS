@@ -99,7 +99,7 @@ export function PrintableSudoku({
           })}
         </div>
       </div>
-      <Colophon lang={locale} />
+      <Colophon kind="sudoku" lang={locale} />
     </article>
   );
 }

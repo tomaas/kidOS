@@ -19,6 +19,13 @@ function withDe(name: string): string {
   return ELIDING_INITIAL.test(name) ? `d'${name}` : `de ${name}`;
 }
 
+export function buildSudokuLabel(locale: Locale, childName: string): string {
+  if (locale === "en") {
+    return childName ? `A sudoku by ${childName}` : "A little sudoku";
+  }
+  return childName ? `Un sudoku ${withDe(childName)}` : "Un petit sudoku";
+}
+
 export interface Branding {
   /** One-line description (meta description tag). */
   description: string;
