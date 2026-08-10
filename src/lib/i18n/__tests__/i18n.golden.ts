@@ -233,16 +233,16 @@ for (const entree of ENTREES_PALETTE) {
 
 const brandingPins: readonly [string, string, string][] = [
   // [description du check, valeur calculée, attendu]
-  [
-    "fr élision voyelle",
-    buildBranding("fr", "Arsène").name,
-    "L'atelier d'Arsène",
-  ],
-  ["fr sans élision", buildBranding("fr", "Léa").name, "L'atelier de Léa"],
+  ["fr nom OS", buildBranding("fr", "Arsène").name, "ArsèneOS"],
   [
     "fr storyLabel élidé",
     buildBranding("fr", "Arsène").storyLabel,
     "Une histoire d'Arsène",
+  ],
+  [
+    "fr storyLabel sans élision",
+    buildBranding("fr", "Léa").storyLabel,
+    "Une histoire de Léa",
   ],
   ["fr repli sans prénom", buildBranding("fr", "").name, "Le petit atelier"],
   [
@@ -255,7 +255,7 @@ const brandingPins: readonly [string, string, string][] = [
     buildBranding("fr", "").description,
     "Un endroit calme pour lire, inventer et calculer.",
   ],
-  ["en possessif", buildBranding("en", "Léa").name, "Léa's workshop"],
+  ["en nom OS", buildBranding("en", "Léa").name, "LéaOS"],
   [
     "en storyLabel",
     buildBranding("en", "Arsène").storyLabel,
