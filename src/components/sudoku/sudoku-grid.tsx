@@ -43,9 +43,9 @@ export function isSudokuCellRef(value: unknown): value is SudokuCellRef {
  * interpolation).
  */
 const CELL_SIZE_CLASS: Record<Taille, string> = {
-  4: "size-14 text-2xl sm:size-16 sm:text-3xl",
-  6: "size-11 text-xl sm:size-14 sm:text-2xl",
-  9: "size-8 text-base sm:size-11 sm:text-xl",
+  4: "size-16 text-3xl sm:size-18 sm:text-4xl",
+  6: "size-12 text-2xl sm:size-16 sm:text-3xl",
+  9: "size-8 text-base sm:size-12 sm:text-2xl",
 };
 
 // Littéraux Tailwind par taille (même règle JIT que CELL_SIZE_CLASS).
