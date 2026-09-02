@@ -1,0 +1,19 @@
+refactor(settings): one AppConfig snapshot per operation, passed down to providers
+
+Chunk 2 — a signature refactor (not a find-replace):
+- every handler in functions.ts / dynamic-functions.ts takes ONE
+  getAppConfig() snapshot at its boundary and passes it down: image/TTS
+  gates, model/resolution, defaultLang and keys all come from the SAME
+  snapshot (never two config generations within one operation).
+- generateBeat/generateStoryArc, generateImage and getTtsProvider gain a
+  ProviderConfig parameter (import type only — the goldens' import graph
+  stays db-free); logTextGen receives the model as a parameter and stays
+  synchronous; the elevenlabs adapter becomes a key-injected factory.
+- keyless usage point: NO provider network call — the child keeps the
+  soft-fail "On réessaie ?", the parent playground a logged skip; the
+  "key not configured" status lives in app-config (features.*).
+- getPublicFlags becomes publicFlagsFromConfig(provider) in app-config.ts
+  (env.ts stays db-free): a toggle set in the database applies on the next
+  load, without a rebuild.
+
+Prompt/schema byte-pins intact (test:golden + test:coherence green).

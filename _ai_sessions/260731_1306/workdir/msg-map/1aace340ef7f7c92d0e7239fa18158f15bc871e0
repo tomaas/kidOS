@@ -1,0 +1,6 @@
+style(settings): unfold nested ternaries (feature statuses, key state)
+
+Back to the pre-feature lint warning level (12 pre-existing
+noArrayIndexKey/complexity warnings, nothing added).
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

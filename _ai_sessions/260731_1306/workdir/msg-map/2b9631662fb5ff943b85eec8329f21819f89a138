@@ -1,0 +1,3 @@
+Merge pull request #26 from tomaas/settings-ui-integration
+
+feat: settings move from env to the database — /parents/reglages page (v0.6.0.0)

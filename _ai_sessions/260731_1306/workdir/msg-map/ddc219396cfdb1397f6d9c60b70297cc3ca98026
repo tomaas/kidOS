@@ -1,0 +1,30 @@
+test(settings): boundaries proven at real runtime (codex diff-review) + fix PRAGMA order
+
+The 4 findings from the codex diff-review:
+1. REAL server-fn boundary: the golden starts an ephemeral dev server
+   (free port 3960+, throwaway DATA_DIR, planted env secret), resolves the
+   REAL functionIds from the vite-transformed client module, calls
+   getAppSettingsStatusFn (GET RPC), saveAppSettingsFn (POST RPC, seroval
+   body — serverFnFetcher's exact encoding) and the SSR page
+   /parents/reglages, then scans the BYTES ON THE WIRE: no planted secret
+   (db + env + just-set), masked hints present. (Compiled createServerFn
+   handlers don't run outside the Start runtime — the HTTP path is the
+   only honest boundary.)
+2. REAL concurrency: two bun processes (two libsql clients on the same
+   file), interleaved disjoint patches × 25 — SQLite locks exercised, the
+   last write of EACH writer survives.
+3. REAL rollback inside db.batch: NOT NULL violation injected on a LATER
+   statement (valid key, out-of-type null value) → the earlier statement
+   of the same batch is rolled back (libsql atomicity proven, no longer
+   just the pre-validation, which keeps its own renamed pin).
+4. features.* rendered: calm line "Sans clé configurée, cette fonction
+   reste en pause pour le moment." (fr/en) at the top of the
+   Stories/Images/Voices sections when the code is missing-key — no more
+   dead API.
+
+FOUND BY TEST 2 then fixed (src/server/db/index.ts): busy_timeout must
+precede journal_mode=WAL — the WAL switch takes a lock and, without a
+timeout already set, a SECOND process booting during a write crashed with
+SQLITE_BUSY. test:settings stable across 3 runs.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

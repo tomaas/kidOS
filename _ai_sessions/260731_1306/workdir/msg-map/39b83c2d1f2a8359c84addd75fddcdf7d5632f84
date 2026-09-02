@@ -1,0 +1,19 @@
+feat(settings): central app-config service (env → DB, precedence db>env>default)
+
+Chunk 1 of the env-to-db-settings plan:
+- new src/server/app-config.ts: single choke-point for settings
+  (canonical app_settings keys, frozen typed AppConfig shape =
+  ProviderConfig + BrandingConfig, cache-less getAppConfig, never-throw,
+  invalid-means-fallback parsing, hintFor, masked status for /parents,
+  central writers setSetting/deleteSetting/applySettingsPatch in one
+  db.batch transaction); ~/server/db imported LAZILY only (the coherence
+  goldens stay db-free).
+- src/env.ts: INFRA-ONLY boot validation — the ANTHROPIC/GEMINI/ELEVENLABS
+  requirements and the image/TTS gates leave boot (a key may live only in
+  the database); DATABASE_URL stays fatal.
+  test:db pin added DELIBERATELY: boot with no key at all passes, including
+  IMAGE_ENABLED=true without GEMINI_API_KEY (previously a fatal case).
+- saveUiLocaleFn goes through the central writer.
+- new test:settings (app-config.golden.ts) added to the test chain:
+  precedence, the four secret operations, boundary scan, subprocess
+  import-graph, transactional patch, never-throw.

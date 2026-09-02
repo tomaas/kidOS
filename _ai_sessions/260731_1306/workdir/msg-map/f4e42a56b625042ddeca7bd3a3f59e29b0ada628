@@ -1,0 +1,27 @@
+feat(settings): branding becomes a runtime setting (VITE_* → DB) + "First name & workshop" section
+
+Chunk 4:
+- src/config/app.ts keeps only the PURE composition (composeBranding:
+  per-language buildBranding derivation + full-text overrides); the
+  build-time constants childName/brandingFor/appConfig disappear.
+- the root loader becomes getShellContextFn → {locale, branding,
+  brandingSource}: tab title/meta (head) and the portrait screen (first
+  name + branding) read the loader — renaming the child applies on reload,
+  without a rebuild. VITE_* remain the FALLBACK (runtime process.env, then
+  the baked import.meta.env value — an existing deployment keeps its
+  branding).
+- STORY language for content (codex #5): the printed colophon (Colophon
+  gains a lang prop; PrintableDynamicStory passes stories.lang, the
+  operations sheet passes the workshop locale) and the fallback story
+  title (composeBranding(lang, config.branding) from the SAME snapshot) —
+  an English story printed under a French UI keeps its English branding.
+- /parents/reglages: "First name & workshop" section (4 fields + live
+  preview derived by the pure composeBranding), fr/en i18n.
+- Dockerfile: VITE_* ARGs marked legacy-optional + re-exposed as runtime
+  ENV (the process.env fallback works in Docker).
+- buildBranding and matchesChildName unchanged (i18n/bureau goldens green).
+- Live proof (dev :3011): branding:child-name row set → <title>
+  "L'atelier de Léa" without a rebuild; /parents/reglages SSR payload
+  free of the planted secret, hint "…345" only.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

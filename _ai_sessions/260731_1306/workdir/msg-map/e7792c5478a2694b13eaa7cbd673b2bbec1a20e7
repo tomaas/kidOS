@@ -1,0 +1,19 @@
+feat(settings): /parents/reglages page — keys, models, images and voices stored in the database
+
+Chunk 3:
+- getAppSettingsStatusFn (status WITHOUT the secret: {configured, hint,
+  source} + per-feature status codes) and saveAppSettingsFn (field-level
+  PATCH, zod, one transaction via the central writer; a cleared non-secret
+  text becomes a delete — the badge always tells the truth; codes, never
+  sentences) in settings-functions.ts.
+- new route src/app/parents/reglages.tsx: Stories / Images / Voices cards
+  in the parent-space grammar — secret field (set / "Effacer" = explicit
+  mask / "Revenir au réglage du déploiement" = delete, "deployment
+  setting" badge), calm binary choices, per-section patches (disjoint
+  sections → tabs that don't overwrite each other), router.invalidate()
+  after save (the other tab converges on reload — documented boundary).
+  No branding inputs here (chunk 4).
+- parents.reglages.* i18n catalog + 🔧 card on the parent index, fr AND en
+  (parity + calm-wording scan green); arias composed via formatMessage.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>

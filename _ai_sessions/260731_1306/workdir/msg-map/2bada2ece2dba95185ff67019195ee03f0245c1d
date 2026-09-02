@@ -1,0 +1,15 @@
+docs(release): in-app settings — docs, infra-first .env.example, v0.6.0.0
+
+Chunk 5:
+- .env.example rewritten: "almost everything is configured in the app" —
+  infra section (env only) + optional deployment defaults + legacy VITE_*.
+- README: first boot without a key (paste the key at /parents/reglages),
+  env tables = deployment defaults vs infra, backup note (app.db contains
+  keys), slimmed-down deployment section.
+- CLAUDE.md: "Settings service (env → DB)" bullet, runtime branding,
+  infra-only boot validation, test:settings in the suite list, secrets via
+  the masked form.
+- CHANGELOG 0.6.0.0 (Keep a Changelog) + VERSION + package.json.
+- TODOS: drop the legacy VITE_* fallback in a later release.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
