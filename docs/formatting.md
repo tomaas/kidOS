@@ -6,6 +6,7 @@ kidOS lints and formats with [Ultracite](https://www.ultracite.ai/) on the Oxlin
 
 - `bun run lint` runs `ultracite check`: `oxlint` (type-aware, through `oxlint-tsgolint`) then `oxfmt --check`. It fails on any lint error or on a file that is not formatted; warnings are reported but do not fail it.
 - `bun run lint:fix` runs `ultracite fix`: `oxlint --fix` (safe fixes only) then `oxfmt --write`. Review the diff: a safe fix is still a code change.
+- The pre-commit hook runs the same formatter and linter (plus React Doctor) on the staged files: [pre-commit.md](pre-commit.md).
 
 Configuration:
 
