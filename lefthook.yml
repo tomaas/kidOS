@@ -1,0 +1,49 @@
+# Pre-commit hook from agent-core's templates/pre-commit (v1.6.0, the agent-board pilot).
+# What runs, how it installs and how to skip it: docs/pre-commit.md.
+# Staged files only and a few seconds at most: no typecheck, no tests, no build and no pre-push
+# section here. Those stay in `bun run check-types`, `bun run test` and `bun run build`.
+
+# Standard `**` globs: `**/*.ts` matches files at the repo root too, `src/app/**` only under src/app/.
+glob_matcher: doublestar
+
+pre-commit:
+  # One job after the other, in this order, and the first failure stops the commit.
+  piped: true
+  jobs:
+    # The pinned formatter (oxfmt with oxfmt.config.ts, not `bun fmt`); fixed files are staged
+    # again. --no-install: never fetch another formatter from the registry when node_modules lacks it.
+    # Glob: every extension oxfmt 0.71 handles, yml/yaml/html included (scripts/pre-commit.test.ts
+    # holds format and lint to it).
+    # WHY exclude: the paths oxlint.config.ts and oxfmt.config.ts ignore (plus the Ultracite core
+    # pattern a tracked file matches, **/*.gen.*). A commit that stages only ignored files would
+    # otherwise hand the linter nothing but ignored paths and fail on "no files found"
+    # (agent-board#482); format gets the same list so both jobs see the same files.
+    - name: format
+      glob: "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,json5,webmanifest,md,css,yml,yaml,html,toml}"
+      exclude: &ignored
+        - "src/routeTree.gen.ts"
+        - "**/*.gen.*"
+        - "**/.tanstack/**"
+        - "**/.nitro/**"
+        - "**/.gstack/**"
+        - "data/**"
+        - "_ai_sessions/**"
+        - ".claude/**"
+        - ".agents/**"
+        - "drizzle/**"
+      run: bun x --no-install oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+
+    # Ultracite on the staged files only: Oxlint (type-aware) then oxfmt --check, as `bun run lint`.
+    - name: lint
+      glob: "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,json5,webmanifest,md,css,yml,yaml,html,toml}"
+      exclude: *ignored
+      run: bun x --no-install ultracite check {staged_files}
+
+    # React Doctor on the staged UI files (staged paths, never --staged; it refuses two dirs, hence
+    # the file list). Unpinned on purpose: always the newest release; its registry check costs about
+    # 1 s at rest and 6 s on a loaded host per commit that touches UI files, accepted. Only an error
+    # blocks. --no-score and --no-supply-chain: no score upload, share URL or Socket.dev scan.
+    - name: react-doctor
+      glob: "src/{app,components}/**/*.{ts,tsx}"
+      run: npx -y react-doctor@latest --no-score --no-supply-chain --blocking error {staged_files}
