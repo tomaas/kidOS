@@ -1,4 +1,5 @@
 import { inArray } from "drizzle-orm";
+
 import { legacyHeroes } from "~/config/characters";
 import { db } from "~/server/db";
 import { heroes } from "~/server/db/schema";

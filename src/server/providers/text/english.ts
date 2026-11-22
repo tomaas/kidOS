@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import type {
   DoudouContext,
   DynamicBeat,
@@ -6,6 +7,7 @@ import type {
   GenerateBeatInput,
   HeroContext,
 } from "~/server/providers/types";
+
 import { MAX_WORDS_RETRY, MAX_WORDS_TARGET } from "./reading-level";
 
 /**

@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { IMAGE_MODELS } from "~/config/image-models";
 import {
@@ -56,7 +57,7 @@ function ResultCard({ entry }: { entry: ResultEntry }) {
           </p>
         </div>
       )}
-      <p className="px-4 py-3 text-muted-foreground text-sm">
+      <p className="px-4 py-3 text-sm text-muted-foreground">
         {entry.model}
         {entry.imageStatus === "ready" ? ` · ${entry.ms} ms` : ""}
       </p>
@@ -112,12 +113,12 @@ export function ImageTestPlayground({
   return (
     <section className="space-y-5 border-t pt-8">
       <div className="space-y-2">
-        <h2 className="font-bold text-2xl">{m.parents.playground.titre}</h2>
+        <h2 className="text-2xl font-bold">{m.parents.playground.titre}</h2>
         <p className="text-muted-foreground">{m.parents.playground.intro}</p>
       </div>
 
       <div className="space-y-2">
-        <label className="font-medium text-sm" htmlFor={promptId}>
+        <label className="text-sm font-medium" htmlFor={promptId}>
           {m.parents.playground.prompt}
         </label>
         <textarea
@@ -130,7 +131,7 @@ export function ImageTestPlayground({
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="space-y-2">
-          <label className="font-medium text-sm" htmlFor={modelId}>
+          <label className="text-sm font-medium" htmlFor={modelId}>
             {m.parents.playground.modele}
           </label>
           <select

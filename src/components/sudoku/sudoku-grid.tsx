@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+
 import { cn } from "~/lib/cn";
 import { formatMessage, useMessages } from "~/lib/i18n";
 import type { Grille, GrilleStateLike } from "~/lib/sudoku";

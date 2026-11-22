@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+
 import {
   type ImageResult,
   type ImageStatus,

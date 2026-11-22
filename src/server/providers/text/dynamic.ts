@@ -1,6 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
+
 import type { ProviderConfig } from "~/server/app-config";
 import type {
   DynamicBeat,
@@ -8,6 +9,7 @@ import type {
   GenerateBeatInput,
   StoryArcResult,
 } from "~/server/providers/types";
+
 import {
   CUSTOM_PROMPT_SYSTEM_CLAUSE,
   customPromptUserBlock,

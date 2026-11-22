@@ -13,6 +13,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import { ColumnGrid } from "~/components/calcul/column-grid";
 import {
   DIGIT_TILE_CLASSES,
@@ -365,7 +366,7 @@ function CalculWorkshopPage() {
         sensors={sensors}
       >
         {heroName ? (
-          <p className="max-w-md text-center text-muted-foreground text-xl leading-relaxed">
+          <p className="max-w-md text-center text-xl leading-relaxed text-muted-foreground">
             {enonceFor(
               operation,
               {
@@ -392,7 +393,7 @@ function CalculWorkshopPage() {
 
         {current.done ? (
           <Button
-            className="gap-2 text-muted-foreground text-xl"
+            className="gap-2 text-xl text-muted-foreground"
             onClick={nextTray}
             variant="ghost"
           >
@@ -404,7 +405,7 @@ function CalculWorkshopPage() {
           <>
             <SoftNumpad onDigit={writeDigit} onErase={erase} />
             <Button
-              className="gap-2 text-muted-foreground text-xl"
+              className="gap-2 text-xl text-muted-foreground"
               disabled={current.entries.result.every((d) => d === null)}
               onClick={() => {
                 setSerie((prev) => (prev ? finishCurrent(prev) : prev));

@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check } from "lucide-react";
+
 import { IMAGE_MODELS } from "~/config/image-models";
 import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
 import { getFlagsFn } from "~/server/functions";
+
 import { ImageTestPlayground } from "./components/-image-test-playground";
 
 export const Route = createFileRoute("/parents/image-model")({
@@ -32,7 +34,7 @@ function ParentsImageModelPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.imageModel.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.imageModel.titre}</h1>
         <p className="text-muted-foreground">{m.parents.imageModel.intro}</p>
       </div>
 
@@ -62,19 +64,19 @@ function ParentsImageModelPage() {
                 </span>
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold text-lg">{option.label}</p>
+                    <p className="text-lg font-semibold">{option.label}</p>
                     {isDefault ? (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs">
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                         {m.parents.imageModel.parDefaut}
                       </span>
                     ) : null}
                   </div>
                   {/* The exact Google model id, so the parent knows precisely
                       which model each option is. */}
-                  <p className="font-mono text-muted-foreground text-xs">
+                  <p className="font-mono text-xs text-muted-foreground">
                     {option.id}
                   </p>
-                  <p className="text-muted-foreground text-sm">{option.note}</p>
+                  <p className="text-sm text-muted-foreground">{option.note}</p>
                 </div>
               </button>
             </li>

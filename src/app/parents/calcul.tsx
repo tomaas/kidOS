@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { PrintableOperationsSheet } from "~/components/printable-operations";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
@@ -105,7 +106,7 @@ function SettingsUnavailable() {
   const m = useMessages();
   return (
     <>
-      <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
+      <h1 className="text-3xl font-bold">{m.parents.calcul.titre}</h1>
       <p className="text-muted-foreground">
         {m.parents.calcul.reglagesIndisponibles}
       </p>
@@ -219,7 +220,7 @@ function ParentsCalculForm({
   return (
     <>
       <div className="no-print space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.calcul.titre}</h1>
         <p className="text-muted-foreground">{m.parents.calcul.intro}</p>
       </div>
 
@@ -245,7 +246,7 @@ function ParentsCalculForm({
                     onChange={(e) => setCard(op, { active: e.target.checked })}
                     type="checkbox"
                   />
-                  <span className="font-semibold text-lg">
+                  <span className="text-lg font-semibold">
                     {familleLabel(m, op)}
                   </span>
                 </label>
@@ -262,7 +263,7 @@ function ParentsCalculForm({
                 ) : null}
               </div>
               {lastActive ? (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {m.parents.calcul.derniereFamille}
                 </p>
               ) : null}
@@ -284,12 +285,12 @@ function ParentsCalculForm({
                       </li>
                     ))}
                   </ul>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     {m.parents.calcul.changerPalier}
                   </p>
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {m.parents.calcul.nApparaitPas}
                 </p>
               )}
@@ -321,7 +322,7 @@ function ParentsCalculForm({
         </div>
         {/* Même transparence que pour le palier (adversarial #2) : la
             conséquence est dite AVANT le geste, pour toutes les familles. */}
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {m.parents.calcul.changerTaille}
         </p>
       </div>
@@ -335,7 +336,7 @@ function ParentsCalculForm({
         {saveError ? (
           // Distinct des textes d'aide passifs (design review F11) : un échec
           // d'enregistrement doit se voir — calme, mais pas camouflé.
-          <p className="font-medium text-foreground text-sm">{saveError}</p>
+          <p className="text-sm font-medium text-foreground">{saveError}</p>
         ) : null}
       </div>
 

@@ -48,6 +48,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+
 import { Button } from "~/components/ui/button";
 import {
   clampFenetrePosition,
@@ -256,10 +257,10 @@ function CadreFenetre({
           rond à droite (ocre doux, jamais rouge). La zone de drag couvre
           toute la barre SAUF la croix (posée au-dessus, z-10) : un doigt qui
           glisse sur la croix ne déplace rien. */}
-      <div className="no-print relative flex h-14 shrink-0 items-center border-border border-b bg-card pr-2">
+      <div className="no-print relative flex h-14 shrink-0 items-center border-b border-border bg-card pr-2">
         <div
           className={cn(
-            "absolute inset-0 flex touch-none select-none items-center pl-5",
+            "absolute inset-0 flex touch-none items-center pl-5 select-none",
             dragActif && "cursor-grab active:cursor-grabbing"
           )}
           ref={setNodeRef}
@@ -269,7 +270,7 @@ function CadreFenetre({
             {icone}
           </span>
         </div>
-        <span className="pointer-events-none absolute inset-x-16 truncate text-center font-semibold text-muted-foreground text-xl">
+        <span className="pointer-events-none absolute inset-x-16 truncate text-center text-xl font-semibold text-muted-foreground">
           {titre}
         </span>
         <Button

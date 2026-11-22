@@ -1,4 +1,5 @@
 import { getRouteApi } from "@tanstack/react-router";
+
 import { composeBranding } from "~/config/app";
 import {
   GENERATED_IMAGE_HEIGHT,
@@ -8,6 +9,7 @@ import { buildSudokuLabel } from "~/lib/i18n";
 import type { ReadingAidsFlags } from "~/lib/use-reading-aids";
 import type { StorySegment } from "~/server/db/schema";
 import { isRenderableImagePath } from "~/server/providers/types";
+
 import { HighlightableText } from "./highlightable-text";
 
 const rootRoute = getRouteApi("__root__");

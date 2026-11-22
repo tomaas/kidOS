@@ -19,7 +19,7 @@ export function WritingAnimation({ message }: { message?: string }) {
         🪶
       </span>
 
-      <p className="font-semibold text-3xl">
+      <p className="text-3xl font-semibold">
         {message ?? m.aventure.histoireSecrit}
       </p>
 

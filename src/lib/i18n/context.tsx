@@ -7,6 +7,7 @@
  */
 
 import { createContext, type ReactNode, useContext } from "react";
+
 import { DEFAULT_LOCALE, type Locale } from "./locale";
 import { en } from "./messages/en";
 import { fr, type Messages } from "./messages/fr";

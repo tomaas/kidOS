@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { composeBranding } from "~/config/app";
@@ -61,7 +62,7 @@ function ParentsReglagesPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.reglages.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.reglages.titre}</h1>
         <p className="text-muted-foreground">{m.parents.reglages.intro}</p>
       </div>
 
@@ -103,14 +104,14 @@ function MessageEtat({ etat }: { etat: EtatEnregistrement }) {
   const m = useMessages();
   if (etat === "enregistre") {
     return (
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         {m.parents.reglages.enregistre}
       </p>
     );
   }
   if (etat === "impossible") {
     return (
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         {m.parents.enregistrementImpossible}
       </p>
     );
@@ -132,7 +133,7 @@ function LigneStatutFonction({
     return null;
   }
   return (
-    <p className="text-muted-foreground text-sm">
+    <p className="text-sm text-muted-foreground">
       {m.parents.reglages.fonctionEnPause}
     </p>
   );
@@ -141,7 +142,7 @@ function LigneStatutFonction({
 function BadgeDefaut() {
   const m = useMessages();
   return (
-    <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs">
+    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
       {m.parents.reglages.badgeDefaut}
     </span>
   );
@@ -159,7 +160,7 @@ function LigneChamp({
   return (
     <div className="space-y-1.5">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-medium text-sm">{label}</span>
+        <span className="text-sm font-medium">{label}</span>
         {badge ? <BadgeDefaut /> : null}
       </div>
       {children}
@@ -199,7 +200,7 @@ function ChampSecret({
 
   return (
     <LigneChamp badge={secret.source === "default"} label={label}>
-      <p className="text-muted-foreground text-sm">{etatCle}</p>
+      <p className="text-sm text-muted-foreground">{etatCle}</p>
       <Input
         autoComplete="off"
         onChange={(event) => onChange(event.target.value)}
@@ -326,8 +327,8 @@ function CarteSection({
           {emoji}
         </span>
         <div className="min-w-0 flex-1">
-          <h2 className="font-semibold text-xl">{titre}</h2>
-          <p className="text-muted-foreground text-sm">{description}</p>
+          <h2 className="text-xl font-semibold">{titre}</h2>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </div>
       </div>
       {children}
@@ -385,12 +386,12 @@ function SectionLangue() {
           ))}
         </div>
         {etat === "enregistre" ? (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {m.parents.langue.enregistre}
           </p>
         ) : null}
         {etat === "impossible" ? (
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {m.parents.enregistrementImpossible}
           </p>
         ) : null}
@@ -487,13 +488,13 @@ function SectionAtelier({ status }: { status: AppSettingsStatus }) {
         />
       </LigneChamp>
       <div className="rounded-xl bg-muted/50 p-4">
-        <p className="font-medium text-muted-foreground text-xs">{t.apercu}</p>
+        <p className="text-xs font-medium text-muted-foreground">{t.apercu}</p>
         <p className="font-semibold">{apercu.name}</p>
-        <p className="text-muted-foreground text-sm italic">
+        <p className="text-sm text-muted-foreground italic">
           {apercu.storyLabel}
         </p>
       </div>
-      <p className="text-muted-foreground text-xs">
+      <p className="text-xs text-muted-foreground">
         {m.parents.reglages.champVide}
       </p>
       <div className="flex items-center gap-3">
@@ -553,7 +554,7 @@ function SectionHistoires({ status }: { status: AppSettingsStatus }) {
           onChange={(event) => setModele(event.target.value)}
           value={modele}
         />
-        <p className="text-muted-foreground text-xs">
+        <p className="text-xs text-muted-foreground">
           {m.parents.reglages.champVide}
         </p>
       </LigneChamp>
@@ -640,7 +641,7 @@ function SectionImages({ status }: { status: AppSettingsStatus }) {
           onChange={(event) => setModele(event.target.value)}
           value={modele}
         />
-        <p className="text-muted-foreground text-xs">
+        <p className="text-xs text-muted-foreground">
           {m.parents.reglages.champVide}
         </p>
       </LigneChamp>

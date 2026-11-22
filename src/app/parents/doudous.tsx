@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+
 import { DoudouForm } from "~/components/doudou-form";
 import { Button } from "~/components/ui/button";
 import { formatMessage, useMessages } from "~/lib/i18n";
@@ -66,7 +67,7 @@ function ParentsDoudousPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">
+        <h1 className="text-3xl font-bold">
           {m.parents.entites.doudous.titre}
         </h1>
         <p className="text-muted-foreground">
@@ -101,8 +102,8 @@ function ParentsDoudousPage() {
               {doudou.emoji || "🧸"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-lg">{doudou.label}</p>
-              <p className="truncate text-muted-foreground text-sm">
+              <p className="text-lg font-semibold">{doudou.label}</p>
+              <p className="truncate text-sm text-muted-foreground">
                 {doudou.promptHint}
               </p>
             </div>

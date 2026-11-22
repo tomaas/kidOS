@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { CustomPromptStep } from "~/components/custom-prompt-step";
 import { DoudouMultiStep } from "~/components/doudou-multi-step";
 import { MultiPickStep } from "~/components/multi-pick-step";
@@ -419,7 +420,7 @@ function AventurePage() {
         <p aria-hidden="true" className="text-6xl">
           🌧️
         </p>
-        <p className="font-semibold text-3xl">{m.aventure.onReessaie}</p>
+        <p className="text-3xl font-semibold">{m.aventure.onReessaie}</p>
         <Button
           className="h-14 rounded-2xl px-8 text-xl"
           onClick={() => setStep("extra")}

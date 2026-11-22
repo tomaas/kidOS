@@ -1,4 +1,5 @@
 import { Printer } from "lucide-react";
+
 import { SudokuGrid } from "~/components/sudoku/sudoku-grid";
 import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
@@ -39,21 +40,21 @@ export function Comparaison({
           (entrées, solution) ne peut atteindre le papier. */}
       <div className="flex flex-wrap items-center justify-center gap-4">
         <Button
-          className="gap-2 text-muted-foreground text-xl"
+          className="gap-2 text-xl text-muted-foreground"
           onClick={onRetourGrille}
           variant="ghost"
         >
           {m.sudoku.retourGrille}
         </Button>
         <Button
-          className="gap-2 text-muted-foreground text-xl"
+          className="gap-2 text-xl text-muted-foreground"
           onClick={onRanger}
           variant="ghost"
         >
           {m.sudoku.ranger}
         </Button>
         <Button
-          className="gap-2 text-muted-foreground text-xl"
+          className="gap-2 text-xl text-muted-foreground"
           onClick={() => window.print()}
           type="button"
           variant="ghost"

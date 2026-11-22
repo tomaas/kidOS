@@ -20,6 +20,7 @@
  */
 
 import type { LucideIcon } from "lucide-react";
+
 import type { EvenementIcone } from "~/lib/bureau/icone";
 import { cn } from "~/lib/cn";
 
@@ -77,7 +78,7 @@ export function IconeBureau({
             l'icône sélectionnée porte un cartouche sauge. */}
         <span
           className={cn(
-            "rounded-lg px-2.5 py-0.5 font-semibold text-xl leading-tight",
+            "rounded-lg px-2.5 py-0.5 text-xl leading-tight font-semibold",
             selectionnee && "bg-accent text-accent-foreground"
           )}
         >

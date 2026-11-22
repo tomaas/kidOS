@@ -13,6 +13,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import {
   DIGIT_TILE_CLASSES,
   SoftNumpad,
@@ -386,7 +387,7 @@ function SudokuWorkshopPage() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             {complete ? (
               <Button
-                className="gap-2 text-muted-foreground text-xl"
+                className="gap-2 text-xl text-muted-foreground"
                 onClick={() =>
                   setPhase({ kind: "comparaison", taille: grille.taille })
                 }
@@ -396,7 +397,7 @@ function SudokuWorkshopPage() {
               </Button>
             ) : null}
             <Button
-              className="gap-2 text-muted-foreground text-xl"
+              className="gap-2 text-xl text-muted-foreground"
               onClick={() => window.print()}
               type="button"
               variant="ghost"

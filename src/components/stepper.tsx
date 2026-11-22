@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
 import {
@@ -62,7 +63,7 @@ export function Stepper({ current, progress, onJump }: StepperProps) {
                 }`}
                 className={cn(
                   "flex min-w-[5rem] flex-col items-center gap-1 rounded-2xl border-2 px-3 py-2 text-center transition-all",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+                  "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none",
                   pillTone(isCurrent, completed),
                   tappable
                     ? "cursor-pointer hover:-translate-y-0.5 hover:border-primary/50"
@@ -83,14 +84,14 @@ export function Stepper({ current, progress, onJump }: StepperProps) {
                 </span>
                 <span
                   className={cn(
-                    "font-semibold text-sm leading-tight",
+                    "text-sm leading-tight font-semibold",
                     isCurrent ? "text-foreground" : "text-muted-foreground"
                   )}
                 >
                   {label}
                 </span>
                 {meta.required ? null : (
-                  <span className="text-[0.65rem] text-muted-foreground/70 leading-none">
+                  <span className="text-[0.65rem] leading-none text-muted-foreground/70">
                     {m.aventure.facultatif}
                   </span>
                 )}

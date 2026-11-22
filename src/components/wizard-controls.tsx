@@ -1,4 +1,5 @@
 import { ArrowLeft, RotateCcw } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
 
@@ -44,7 +45,7 @@ export function WizardControls({ onBack, onRestart }: WizardControlsProps) {
 
       <Button
         aria-label={m.aventure.recommencerAria}
-        className="gap-1.5 text-muted-foreground/70 text-sm hover:text-muted-foreground"
+        className="gap-1.5 text-sm text-muted-foreground/70 hover:text-muted-foreground"
         onClick={handleRestart}
         size="sm"
         type="button"

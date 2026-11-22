@@ -148,7 +148,7 @@ function Tray({
         // Le plateau ENTIER est la cible, ≥160px de haut ; même grammaire que
         // les portes de l'accueil : crème, bord encre doux, rounded-2xl.
         "flex min-h-40 w-[clamp(160px,28vw,240px)] shrink flex-col items-center justify-between gap-2 rounded-2xl border bg-card px-4 py-4",
-        "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
         "hover:shadow-sm",
         "transition duration-300 motion-reduce:transition-none",
         // « Sorti » : décalage + ombre douce UNIQUEMENT.

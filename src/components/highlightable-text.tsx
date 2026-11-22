@@ -16,6 +16,7 @@
  */
 
 import { useMemo } from "react";
+
 import {
   type AnnotatedToken,
   annotateParagraph,

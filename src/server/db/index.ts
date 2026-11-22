@@ -1,9 +1,12 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
+
 import { serverEnv } from "~/env";
+
 import * as schema from "./schema";
 
 // Local SQLite file (libSQL `file:` URL) under DATA_DIR — in Docker that is

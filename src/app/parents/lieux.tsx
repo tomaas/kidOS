@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+
 import { PlaceForm } from "~/components/place-form";
 import { Button } from "~/components/ui/button";
 import { formatMessage, useMessages } from "~/lib/i18n";
@@ -67,7 +68,7 @@ function ParentsLieuxPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.entites.lieux.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.entites.lieux.titre}</h1>
         <p className="text-muted-foreground">{m.parents.entites.lieux.intro}</p>
       </div>
 
@@ -98,8 +99,8 @@ function ParentsLieuxPage() {
               {place.emoji || "📍"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-lg">{place.label}</p>
-              <p className="truncate text-muted-foreground text-sm">
+              <p className="text-lg font-semibold">{place.label}</p>
+              <p className="truncate text-sm text-muted-foreground">
                 {place.promptHint}
               </p>
             </div>

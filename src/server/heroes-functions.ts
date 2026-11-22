@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
+
 import { db } from "~/server/db";
 import { type DbHero, heroes } from "~/server/db/schema";
 import { seedHeroesIfNeeded } from "~/server/heroes-store";

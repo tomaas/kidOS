@@ -1,7 +1,9 @@
 import { ArrowRight, Dices } from "lucide-react";
 import type { ReactNode } from "react";
+
 import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
+
 import { PickerGrid, type PickerItem } from "./picker-grid";
 
 interface MultiPickStepProps {
@@ -52,7 +54,7 @@ export function MultiPickStep({
   const continueDisabled = minOne === true && selectedIds.length === 0;
   return (
     <div className="space-y-8">
-      <h1 className="text-center font-bold text-4xl leading-tight">{title}</h1>
+      <h1 className="text-center text-4xl leading-tight font-bold">{title}</h1>
 
       <PickerGrid items={items} onSelect={onToggle} selectedIds={selectedIds} />
 

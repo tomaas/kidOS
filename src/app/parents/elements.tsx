@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+
 import { ElementForm } from "~/components/element-form";
 import { Button } from "~/components/ui/button";
 import { formatMessage, useMessages } from "~/lib/i18n";
@@ -65,7 +66,7 @@ function ParentsElementsPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">
+        <h1 className="text-3xl font-bold">
           {m.parents.entites.elements.titre}
         </h1>
         <p className="text-muted-foreground">
@@ -100,8 +101,8 @@ function ParentsElementsPage() {
               {element.emoji || "✨"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-lg">{element.label}</p>
-              <p className="truncate text-muted-foreground text-sm">
+              <p className="text-lg font-semibold">{element.label}</p>
+              <p className="truncate text-sm text-muted-foreground">
                 {element.promptHint}
               </p>
             </div>

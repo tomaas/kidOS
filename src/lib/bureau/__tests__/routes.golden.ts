@@ -29,6 +29,7 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+
 import { APPS_BUREAU } from "~/components/bureau/apps";
 import { ENTREES_PALETTE } from "~/lib/palette/entrees";
 import { SECTIONS_PARENTS } from "~/lib/parents/sections";

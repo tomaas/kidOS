@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { useMessages } from "~/lib/i18n";
@@ -25,10 +26,10 @@ export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-center font-bold text-4xl leading-tight">
+      <h1 className="text-center text-4xl leading-tight font-bold">
         {m.aventure.questionSaveur}
       </h1>
-      <p className="text-center text-muted-foreground text-xl">
+      <p className="text-center text-xl text-muted-foreground">
         {m.aventure.facultatifParenthese}
       </p>
 

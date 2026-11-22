@@ -15,6 +15,7 @@
 
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
 import { matchesChildName } from "~/lib/bureau/identite";
 import { useMessages } from "~/lib/i18n";
 import { listHeroesFn } from "~/server/heroes-functions";
@@ -82,8 +83,8 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
             </span>
           )}
         </span>
-        <span className="font-bold text-4xl">{childName || branding.name}</span>
-        <span className="text-muted-foreground text-xl">{m.bureau.entrer}</span>
+        <span className="text-4xl font-bold">{childName || branding.name}</span>
+        <span className="text-xl text-muted-foreground">{m.bureau.entrer}</span>
       </button>
     </div>
   );

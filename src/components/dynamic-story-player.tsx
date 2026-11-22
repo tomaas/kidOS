@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Printer, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
@@ -17,6 +18,7 @@ import {
   type ImageStatus,
   resolveStoredImagePath,
 } from "~/server/providers/types";
+
 import { HighlightableText } from "./highlightable-text";
 import { ImageSlot } from "./image-slot";
 import { PrintableDynamicStory } from "./printable-story";
@@ -60,7 +62,7 @@ function ChoiceButtons({
     <div className="grid grid-cols-1 gap-5 pt-2 sm:grid-cols-2">
       {choices.map((choice) => (
         <button
-          className="flex min-h-28 items-center justify-center rounded-3xl border-2 border-border bg-card p-6 text-center font-semibold text-2xl leading-snug transition-all hover:-translate-y-0.5 hover:border-primary/50 disabled:opacity-60"
+          className="flex min-h-28 items-center justify-center rounded-3xl border-2 border-border bg-card p-6 text-center text-2xl leading-snug font-semibold transition-all hover:-translate-y-0.5 hover:border-primary/50 disabled:opacity-60"
           disabled={disabled}
           key={choice.id}
           onClick={() => onChoose(choice.id)}
@@ -485,7 +487,7 @@ export function DynamicStoryPlayer({
         <p aria-hidden="true" className="text-6xl">
           🌧️
         </p>
-        <p className="font-semibold text-3xl">{m.aventure.histoireReprend}</p>
+        <p className="text-3xl font-semibold">{m.aventure.histoireReprend}</p>
         <Button
           className="h-14 rounded-2xl px-8 text-xl"
           onClick={retry}
@@ -503,7 +505,7 @@ export function DynamicStoryPlayer({
     return (
       <div className="space-y-8">
         <div className="no-print space-y-12">
-          <h1 className="text-center font-bold text-4xl leading-tight">
+          <h1 className="text-center text-4xl leading-tight font-bold">
             {title}
           </h1>
           {completeSegments.map((segment) => (

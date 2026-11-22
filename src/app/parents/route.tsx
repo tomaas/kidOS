@@ -5,6 +5,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { Home } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
 import {
   Sidebar,
@@ -95,7 +96,7 @@ function SidebarParents() {
       variant="sidebar"
     >
       <SidebarHeader>
-        <p className="px-2 pt-2 font-semibold text-lg">
+        <p className="px-2 pt-2 text-lg font-semibold">
           {m.parents.espaceParent}
         </p>
       </SidebarHeader>
@@ -134,7 +135,7 @@ function SidebarParents() {
         </Button>
         {/* Le rappel du raccourci ⌘K vit dans l'espace parent, jamais côté
             enfant — même règle que la palette elle-même. */}
-        <p className="px-2 pb-1 text-muted-foreground text-sm">
+        <p className="px-2 pb-1 text-sm text-muted-foreground">
           {m.palette.indice}
         </p>
       </SidebarFooter>

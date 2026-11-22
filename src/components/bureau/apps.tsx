@@ -17,6 +17,7 @@ import {
   Leaf,
   type LucideIcon,
 } from "lucide-react";
+
 import type { TeinteIcone } from "~/components/bureau/icone";
 
 /** Les ids du registre = les clés de `bureau.apps` du catalogue (Messages). */
