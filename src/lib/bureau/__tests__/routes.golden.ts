@@ -29,6 +29,7 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+
 import { APPS_BUREAU } from "~/components/bureau/apps";
 import { ENTREES_PALETTE } from "~/lib/palette/entrees";
 import { SECTIONS_PARENTS } from "~/lib/parents/sections";
@@ -43,7 +44,7 @@ function check(name: string, ok: boolean, detail?: string) {
   }
 }
 
-const routeTree = readFileSync("src/routeTree.gen.ts", "utf8");
+const routeTree = readFileSync("src/routeTree.gen.ts", "utf-8");
 
 /* --------------------- Les URLs publiques, inchangées --------------------- */
 
@@ -102,7 +103,7 @@ function listeFichiers(dir: string): string[] {
 
 const sources = listeFichiers("src/app")
   .filter((p) => p.endsWith(".tsx") || p.endsWith(".ts"))
-  .map((p) => ({ contenu: readFileSync(p, "utf8"), path: p }));
+  .map((p) => ({ contenu: readFileSync(p, "utf-8"), path: p }));
 
 for (const ancien of ANCIENS_IDS) {
   const restes = sources.filter((s) => s.contenu.includes(ancien));
@@ -217,7 +218,9 @@ check(
 const BLOCS_COMMENTAIRES = /\/\*[\s\S]*?\*\//g;
 const LIGNES_COMMENTAIRES = /\/\/[^\n]*/g;
 function sansCommentaires(code: string): string {
-  return code.replace(BLOCS_COMMENTAIRES, "").replace(LIGNES_COMMENTAIRES, "");
+  return code
+    .replaceAll(BLOCS_COMMENTAIRES, "")
+    .replaceAll(LIGNES_COMMENTAIRES, "");
 }
 
 // Le registre pur des sections (lib/parents/sections.ts) nourrit la sidebar :
@@ -277,7 +280,7 @@ check(
 
 // L'ancien hub est une REDIRECTION : /parents/ atterrit sur les réglages, et
 // la cible est bien une URL servie (une réécriture de la cible casse ici).
-const indexParents = readFileSync("src/app/parents/index.tsx", "utf8");
+const indexParents = readFileSync("src/app/parents/index.tsx", "utf-8");
 check(
   "/parents/ redirige vers /parents/reglages",
   // Commentaires retirés d'abord : un `redirect(...)` commenté ne compte pas.

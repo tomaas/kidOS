@@ -20,6 +20,7 @@
  */
 
 import type { LucideIcon } from "lucide-react";
+
 import type { EvenementIcone } from "~/lib/bureau/icone";
 import { cn } from "~/lib/cn";
 
@@ -50,8 +51,12 @@ export function IconeBureau({
     <div className="flex w-44 flex-col items-center" data-icone-bureau>
       <button
         className="group flex cursor-pointer flex-col items-center gap-2.5 rounded-2xl p-3 outline-none focus-visible:ring-4 focus-visible:ring-ring"
-        onClick={() => onEvenement("click")}
-        onDoubleClick={() => onEvenement("dblclick")}
+        onClick={() => {
+          onEvenement("click");
+        }}
+        onDoubleClick={() => {
+          onEvenement("dblclick");
+        }}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             // Sans preventDefault, le navigateur synthétise un click derrière
@@ -77,7 +82,7 @@ export function IconeBureau({
             l'icône sélectionnée porte un cartouche sauge. */}
         <span
           className={cn(
-            "rounded-lg px-2.5 py-0.5 font-semibold text-xl leading-tight",
+            "rounded-lg px-2.5 py-0.5 text-xl leading-tight font-semibold",
             selectionnee && "bg-accent text-accent-foreground"
           )}
         >

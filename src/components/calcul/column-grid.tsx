@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+
 import { cn } from "~/lib/cn";
 import type {
   CellRef,
@@ -186,11 +187,11 @@ function CarryCell({
           working down the column. */}
       <span
         className={cn(
-          "flex h-7 w-9 items-center justify-center rounded-lg border border-muted-foreground/30 border-dashed text-base",
+          "flex h-7 w-9 items-center justify-center rounded-lg border border-dashed border-muted-foreground/30 text-base",
           value
             ? "bg-primary/10 font-semibold text-foreground"
             : "text-muted-foreground",
-          (selected || isOver) && "border-2 border-primary border-solid"
+          (selected || isOver) && "border-2 border-solid border-primary"
         )}
       >
         {value}

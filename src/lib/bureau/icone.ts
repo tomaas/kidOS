@@ -25,15 +25,19 @@ export function transitionIcone(
     return "ouverte";
   }
   switch (evenement) {
-    case "click":
+    case "click": {
       // repos → sélectionnée ; sélectionnée → sélectionnée (jamais perdue).
       return "selectionnee";
+    }
     case "dblclick":
-    case "enter":
+    case "enter": {
       return "ouverte";
-    case "clickAilleurs":
+    }
+    case "clickAilleurs": {
       return "repos";
-    default:
+    }
+    default: {
       return etat;
+    }
   }
 }

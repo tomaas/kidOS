@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { useMessages } from "~/lib/i18n";
@@ -25,17 +26,19 @@ export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-center font-bold text-4xl leading-tight">
+      <h1 className="text-center text-4xl leading-tight font-bold">
         {m.aventure.questionSaveur}
       </h1>
-      <p className="text-center text-muted-foreground text-xl">
+      <p className="text-center text-xl text-muted-foreground">
         {m.aventure.facultatifParenthese}
       </p>
 
       <Textarea
         className="min-h-32 rounded-3xl border-2 p-5 text-2xl leading-relaxed md:text-2xl"
         maxLength={MAX_LENGTH}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          setText(e.target.value);
+        }}
         placeholder={m.aventure.placeholderSaveur}
         value={text}
       />
@@ -43,7 +46,9 @@ export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
       <div className="flex flex-col items-center gap-4 pt-2">
         <Button
           className="h-16 gap-2 rounded-2xl px-10 text-xl"
-          onClick={() => onContinue(text)}
+          onClick={() => {
+            onContinue(text);
+          }}
           size="lg"
           type="button"
         >
@@ -52,7 +57,9 @@ export function CustomPromptStep({ onContinue }: CustomPromptStepProps) {
         </Button>
         <Button
           className="h-14 rounded-2xl px-8 text-lg text-muted-foreground"
-          onClick={() => onContinue("")}
+          onClick={() => {
+            onContinue("");
+          }}
           type="button"
           variant="ghost"
         >

@@ -257,7 +257,7 @@ flowchart TB
 ## Verification Contract
 
 | Gate | Command | Proves |
-|---|---|---|
+| --- | --- | --- |
 | Types | `bun run check-types` | New components and route typings compile |
 | Lint | `bun run lint` | Vendored files meet biome/ultracite; documented ignores only |
 | Goldens | `bun run test` | All 11 suites incl. extended `test:routes` / `test:i18n` |

@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -45,7 +46,7 @@ export function HeroForm({ initial, onSubmit, onCancel }: HeroFormProps) {
     promptHint.trim().length > 0 &&
     imageHint.trim().length > 0;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit || submitting) {
       return;
@@ -76,7 +77,9 @@ export function HeroForm({ initial, onSubmit, onCancel }: HeroFormProps) {
         <Input
           className={FIELD_CLASS}
           id="hero-label"
-          onChange={(e) => setLabel(e.target.value)}
+          onChange={(e) => {
+            setLabel(e.target.value);
+          }}
           placeholder={m.parents.formulaires.placeholders.hero.prenom}
           value={label}
         />
@@ -90,7 +93,9 @@ export function HeroForm({ initial, onSubmit, onCancel }: HeroFormProps) {
           className={`w-24 ${FIELD_CLASS}`}
           id="hero-emoji"
           maxLength={8}
-          onChange={(e) => setEmoji(e.target.value)}
+          onChange={(e) => {
+            setEmoji(e.target.value);
+          }}
           placeholder="🐻"
           value={emoji}
         />
@@ -103,7 +108,9 @@ export function HeroForm({ initial, onSubmit, onCancel }: HeroFormProps) {
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="hero-hint"
-          onChange={(e) => setPromptHint(e.target.value)}
+          onChange={(e) => {
+            setPromptHint(e.target.value);
+          }}
           placeholder={
             m.parents.formulaires.placeholders.hero.descriptionHistoire
           }
@@ -118,7 +125,9 @@ export function HeroForm({ initial, onSubmit, onCancel }: HeroFormProps) {
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="hero-image-hint"
-          onChange={(e) => setImageHint(e.target.value)}
+          onChange={(e) => {
+            setImageHint(e.target.value);
+          }}
           placeholder={
             m.parents.formulaires.placeholders.hero.descriptionIllustration
           }
@@ -133,7 +142,9 @@ export function HeroForm({ initial, onSubmit, onCancel }: HeroFormProps) {
         <Input
           className={FIELD_CLASS}
           id="hero-image"
-          onChange={(e) => setImagePath(e.target.value)}
+          onChange={(e) => {
+            setImagePath(e.target.value);
+          }}
           placeholder={m.parents.formulaires.placeholders.vide}
           value={imagePath}
         />

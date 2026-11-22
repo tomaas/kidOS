@@ -10,13 +10,9 @@
  * /parents n'y figure JAMAIS : hors de l'OS, hors de la grammaire enfant.
  */
 
-import {
-  BookHeart,
-  Grid2x2,
-  Grid3x3,
-  Leaf,
-  type LucideIcon,
-} from "lucide-react";
+import { BookHeart, Grid2x2, Grid3x3, Leaf } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 import type { TeinteIcone } from "~/components/bureau/icone";
 
 /** Les ids du registre = les clés de `bureau.apps` du catalogue (Messages). */

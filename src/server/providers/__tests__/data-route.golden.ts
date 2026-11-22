@@ -41,7 +41,6 @@ check(
   "the /data/$ route exposes a GET server handler",
   typeof get === "function"
 );
-// biome-ignore lint/suspicious/noUnnecessaryConditions: garde d'exécution volontaire — le type vient d'un cast `as`, le runtime peut différer.
 if (!get) {
   console.error(
     "\nDATA-ROUTE FAILED: no GET handler — nothing serves stored media."

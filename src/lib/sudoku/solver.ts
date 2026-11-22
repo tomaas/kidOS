@@ -13,12 +13,8 @@
  *    pour prouver qu'une grille creusée reste à solution unique.
  */
 
-import {
-  type Grille,
-  regionIndex,
-  type Taille,
-  type TechniqueTier,
-} from "~/lib/sudoku/types";
+import { regionIndex } from "~/lib/sudoku/types";
+import type { Grille, Taille, TechniqueTier } from "~/lib/sudoku/types";
 
 /* ------------------------------ Géométrie ------------------------------ */
 
@@ -276,7 +272,7 @@ export function solveWithTier(
   tier: TechniqueTier
 ): Grille | null {
   const geo = geometrie(taille);
-  const work = grid.slice();
+  const work = [...grid];
   const cands = initialCandidates(taille, geo, work);
   for (;;) {
     if (isComplete(work)) {
@@ -333,7 +329,7 @@ export function countSolutions(
   limit = 2
 ): number {
   const geo = geometrie(taille);
-  const work = grid.slice();
+  const work = [...grid];
   const compte = (): number => {
     let best = -1;
     let bestCands: number[] | null = null;

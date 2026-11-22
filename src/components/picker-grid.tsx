@@ -42,7 +42,9 @@ export function PickerGrid({
               : "border-border"
           )}
           key={item.id}
-          onClick={() => onSelect(item.id)}
+          onClick={() => {
+            onSelect(item.id);
+          }}
           type="button"
         >
           {/* A small check ribbon on a selected tile so multi-select reads
@@ -50,7 +52,7 @@ export function PickerGrid({
           {selectedIds && isSelected(item.id) ? (
             <span
               aria-hidden="true"
-              className="absolute -top-2 -right-2 flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm shadow-sm"
+              className="absolute -top-2 -right-2 flex size-7 items-center justify-center rounded-full bg-primary text-sm text-primary-foreground shadow-sm"
             >
               ✓
             </span>
@@ -58,7 +60,7 @@ export function PickerGrid({
           <span aria-hidden="true" className="text-6xl">
             {item.emoji}
           </span>
-          <span className="font-semibold text-2xl leading-tight">
+          <span className="text-2xl leading-tight font-semibold">
             {item.label}
           </span>
         </button>

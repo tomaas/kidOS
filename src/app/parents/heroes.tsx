@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+
 import { HeroForm } from "~/components/hero-form";
 import { Button } from "~/components/ui/button";
 import { formatMessage, useMessages } from "~/lib/i18n";
@@ -38,7 +39,7 @@ function ParentsHeroesPage() {
 
   async function handleDelete(id: string) {
     if (
-      // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
+      // oxlint-disable-next-line no-alert -- confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
       !window.confirm(m.parents.entites.heroes.confirmRetrait)
     ) {
       return;
@@ -66,7 +67,7 @@ function ParentsHeroesPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.entites.heroes.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.entites.heroes.titre}</h1>
         <p className="text-muted-foreground">
           {m.parents.entites.heroes.intro}
         </p>
@@ -75,13 +76,17 @@ function ParentsHeroesPage() {
       {editing ? (
         <HeroForm
           initial={editing === "new" ? undefined : editing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+          }}
           onSubmit={handleSubmit}
         />
       ) : (
         <Button
           className="gap-2"
-          onClick={() => setEditing("new")}
+          onClick={() => {
+            setEditing("new");
+          }}
           type="button"
         >
           <Plus className="size-5" />
@@ -99,8 +104,8 @@ function ParentsHeroesPage() {
               {hero.emoji || "🧒"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-lg">{hero.label}</p>
-              <p className="truncate text-muted-foreground text-sm">
+              <p className="text-lg font-semibold">{hero.label}</p>
+              <p className="truncate text-sm text-muted-foreground">
                 {hero.promptHint}
               </p>
             </div>
@@ -109,7 +114,9 @@ function ParentsHeroesPage() {
                 aria-label={formatMessage(m.parents.entites.ariaModifier, {
                   label: hero.label,
                 })}
-                onClick={() => setEditing(hero)}
+                onClick={() => {
+                  setEditing(hero);
+                }}
                 size="icon"
                 type="button"
                 variant="ghost"

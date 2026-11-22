@@ -30,7 +30,9 @@ function lireMediaQuery(): MediaQueryList {
 function subscribeMobile(onChange: () => void) {
   const media = lireMediaQuery();
   media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
+  return () => {
+    media.removeEventListener("change", onChange);
+  };
 }
 
 export function useIsMobile(): boolean {

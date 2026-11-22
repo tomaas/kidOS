@@ -24,11 +24,8 @@
  */
 
 import { clampFenetrePosition, reclampCommitted } from "~/lib/bureau/clamp";
-import {
-  type EtatIcone,
-  type EvenementIcone,
-  transitionIcone,
-} from "~/lib/bureau/icone";
+import { transitionIcone } from "~/lib/bureau/icone";
+import type { EtatIcone, EvenementIcone } from "~/lib/bureau/icone";
 import { matchesChildName } from "~/lib/bureau/identite";
 import {
   estSessionOuverte,
@@ -309,6 +306,7 @@ for (const [etat, evenement, attendu] of transitions) {
 // La séquence du double-clic RÉEL (click, click, dblclick du système) finit
 // ouverte en passant par sélectionnée — jamais par repos.
 const seq: EvenementIcone[] = ["click", "click", "dblclick"];
+// oxlint-disable-next-line unicorn/no-array-reduce -- le pli des transitions EST la séquence testée.
 const final = seq.reduce<EtatIcone>(
   (e, evt) => transitionIcone(e, evt),
   "repos"

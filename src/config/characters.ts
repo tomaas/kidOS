@@ -83,13 +83,13 @@ export const DEFAULT_HERO_IMAGE_HINT =
  * or deleting a hero never alters an already-created story. Config heroes with
  * no `imageHint` get the gentle generic default.
  */
-export const legacyHeroes: Array<{
+export const legacyHeroes: {
   id: string;
   label: string;
   emoji: string;
   promptHint: string;
   imageHint: string;
-}> = characters.map((c) => ({
+}[] = characters.map((c) => ({
   emoji: c.emoji,
   id: c.id,
   imageHint: c.imageHint ?? DEFAULT_HERO_IMAGE_HINT,

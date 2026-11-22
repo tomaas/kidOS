@@ -61,12 +61,12 @@ export function findElement(id: string): StoryElement | undefined {
  * story's frozen snapshot falls back to it by id so editing/deleting an element
  * never alters an already-created story.
  */
-export const legacyElements: Array<{
+export const legacyElements: {
   id: string;
   label: string;
   emoji: string;
   promptHint: string;
-}> = elements.map((e) => ({
+}[] = elements.map((e) => ({
   emoji: e.emoji,
   id: e.id,
   label: e.label,

@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+
 import { places as legacyPlaces } from "~/config/places";
 import { db } from "~/server/db";
 import { places } from "~/server/db/schema";

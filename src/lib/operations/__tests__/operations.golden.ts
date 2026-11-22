@@ -107,8 +107,8 @@ const quotaHolds = matchesQuota;
   let threw = false;
   try {
     countBorrows(1, 2);
-  } catch (e) {
-    threw = e instanceof RangeError;
+  } catch (error) {
+    threw = error instanceof RangeError;
   }
   check("countBorrows(1, 2) → RangeError (précondition a ≥ b gardée)", threw);
 }
@@ -204,8 +204,8 @@ for (const palier of PALIERS) {
       },
       7
     );
-  } catch (e) {
-    impossibleThrew = e instanceof UnsatisfiableConstraintError;
+  } catch (error) {
+    impossibleThrew = error instanceof UnsatisfiableConstraintError;
   }
   check(
     "contrainte insatisfaisable (emprunt sur 1 chiffre) → UnsatisfiableConstraintError",
@@ -584,7 +584,7 @@ const CONTENANTS_PIN = ["paniers", "boîtes", "corbeilles", "sacs", "bols"];
     échappés : un futur objet sous-chaîne d'un gabarit (« os » dans « pose »)
     ou porteur d'un métacaractère ne peut pas fausser la normalisation. */
 function motsRegex(mots: readonly string[]): RegExp {
-  const escaped = mots.map((m) => m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const escaped = mots.map((m) => m.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   return new RegExp(`\\b(?:${escaped.join("|")})\\b`, "g");
 }
 function gabaritOf(phrase: string): string {

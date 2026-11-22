@@ -15,6 +15,7 @@
 
 import { getRouteApi } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
 import { matchesChildName } from "~/lib/bureau/identite";
 import { useMessages } from "~/lib/i18n";
 import { listHeroesFn } from "~/server/heroes-functions";
@@ -68,12 +69,13 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
       >
         <span className="flex size-44 items-center justify-center overflow-hidden rounded-full border-4 border-border bg-card shadow-lg transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none">
           {imageUtilisable && portrait.imagePath ? (
-            // biome-ignore lint/a11y/noNoninteractiveElementInteractions: onError n'est pas une interaction — c'est le repli D10-A (image cassée → emoji, jamais de glyphe cassé au boot).
             <img
               alt=""
               className="size-full object-cover"
               height={176}
-              onError={() => setImageCassee(true)}
+              onError={() => {
+                setImageCassee(true);
+              }}
               src={portrait.imagePath}
               width={176}
             />
@@ -83,8 +85,8 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
             </span>
           )}
         </span>
-        <span className="font-bold text-4xl">{childName || branding.name}</span>
-        <span className="text-muted-foreground text-xl">{m.bureau.entrer}</span>
+        <span className="text-4xl font-bold">{childName || branding.name}</span>
+        <span className="text-xl text-muted-foreground">{m.bureau.entrer}</span>
       </button>
     </div>
   );

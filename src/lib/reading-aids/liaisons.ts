@@ -25,9 +25,7 @@ import type { WordInfo } from "./word-info";
 const LIAISON_FINALS = new Set(["s", "x", "z", "t", "d", "n"]);
 
 /** Vowel LETTERS (not sounds) — shared with the contextual `plus` rule. */
-export const VOWELS: ReadonlySet<string> = new Set([
-  ..."aàâäeéèêëiîïoôöuùûüœæ",
-]);
+export const VOWELS: ReadonlySet<string> = new Set("aàâäeéèêëiîïoôöuùûüœæ");
 
 /** Can a liaison LAND on this word? (vowel sound start, no blockers) */
 function acceptsLiaison(w2: WordInfo): boolean {

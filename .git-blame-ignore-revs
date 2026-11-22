@@ -1,0 +1,5 @@
+# Mechanical codemods: `git config blame.ignoreRevsFile .git-blame-ignore-revs` skips them in git blame.
+# #thread-1213: oxfmt at Ultracite's width 80 over the repo (formatter output only)
+5ad78ac79253c956b0addb5358ba8de029bb7d2b
+# #thread-1213: oxlint safe fixes via ultracite fix (fix output only)
+6ae3a92c1cdee67f0d7c14ee1f8b427cb847bd05

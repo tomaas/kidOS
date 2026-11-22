@@ -12,7 +12,6 @@
 import {
   Grid2x2,
   Grid3x3,
-  type LucideIcon,
   MapPin,
   Palette,
   Rabbit,
@@ -20,6 +19,7 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import type { SectionParentsId } from "~/lib/parents/sections";
 

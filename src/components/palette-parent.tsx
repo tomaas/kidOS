@@ -1,6 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Home, LayoutGrid, type LucideIcon } from "lucide-react";
+import { Home, LayoutGrid } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import {
   Command,
   CommandDialog,
@@ -11,12 +13,10 @@ import {
   CommandList,
   CommandSeparator,
 } from "~/components/ui/command";
-import { type Messages, useMessages } from "~/lib/i18n";
-import {
-  type EntreePalette,
-  type EntreePaletteId,
-  entreesDuGroupe,
-} from "~/lib/palette/entrees";
+import { useMessages } from "~/lib/i18n";
+import type { Messages } from "~/lib/i18n";
+import { entreesDuGroupe } from "~/lib/palette/entrees";
+import type { EntreePalette, EntreePaletteId } from "~/lib/palette/entrees";
 import { PICTOGRAMMES_SECTIONS } from "~/lib/parents/pictogrammes";
 
 /**
@@ -87,7 +87,9 @@ export function PaletteParent() {
       }
     }
     document.addEventListener("keydown", surTouche);
-    return () => document.removeEventListener("keydown", surTouche);
+    return () => {
+      document.removeEventListener("keydown", surTouche);
+    };
   }, []);
 
   if (!ouverte) {
@@ -114,7 +116,7 @@ export function PaletteParent() {
                 key={entree.id}
                 onChoisie={() => {
                   setOuverte(false);
-                  navigate({ to: entree.to });
+                  void navigate({ to: entree.to });
                 }}
               />
             ))}
@@ -127,7 +129,7 @@ export function PaletteParent() {
                 key={entree.id}
                 onChoisie={() => {
                   setOuverte(false);
-                  navigate({ to: entree.to });
+                  void navigate({ to: entree.to });
                 }}
               />
             ))}

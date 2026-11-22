@@ -1,5 +1,6 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
+
 import { generateId } from "~/lib/id-generator";
 import type { ProviderConfig } from "~/server/app-config";
 import { saveMedia } from "~/server/providers/media-store";
@@ -119,5 +120,5 @@ export async function generateImage(
 
   const ext = imageFile.mediaType === "image/jpeg" ? "jpg" : "png";
   const filename = `${generateId("img")}.${ext}`;
-  return saveMedia(filename, imageFile.uint8Array);
+  return await saveMedia(filename, imageFile.uint8Array);
 }

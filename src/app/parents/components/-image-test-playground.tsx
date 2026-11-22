@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { IMAGE_MODELS } from "~/config/image-models";
 import {
@@ -6,7 +7,8 @@ import {
   GENERATED_IMAGE_WIDTH,
 } from "~/lib/generated-image";
 import { useMessages } from "~/lib/i18n";
-import { generateTestImageFn, type TestImageResult } from "~/server/functions";
+import { generateTestImageFn } from "~/server/functions";
+import type { TestImageResult } from "~/server/functions";
 
 /**
  * Parent-only test playground (lives under the /parents/image-model chooser):
@@ -56,7 +58,7 @@ function ResultCard({ entry }: { entry: ResultEntry }) {
           </p>
         </div>
       )}
-      <p className="px-4 py-3 text-muted-foreground text-sm">
+      <p className="px-4 py-3 text-sm text-muted-foreground">
         {entry.model}
         {entry.imageStatus === "ready" ? ` · ${entry.ms} ms` : ""}
       </p>
@@ -92,8 +94,8 @@ export function ImageTestPlayground({
       });
       // Prepend so the newest sits on top; prior outputs stay for comparison.
       setResults((prev) => [{ ...result, key: Date.now() }, ...prev]);
-    } catch (err) {
-      console.error("[stories] test image request failed:", err);
+    } catch (error) {
+      console.error("[stories] test image request failed:", error);
       setResults((prev) => [
         {
           imagePath: null,
@@ -112,31 +114,35 @@ export function ImageTestPlayground({
   return (
     <section className="space-y-5 border-t pt-8">
       <div className="space-y-2">
-        <h2 className="font-bold text-2xl">{m.parents.playground.titre}</h2>
+        <h2 className="text-2xl font-bold">{m.parents.playground.titre}</h2>
         <p className="text-muted-foreground">{m.parents.playground.intro}</p>
       </div>
 
       <div className="space-y-2">
-        <label className="font-medium text-sm" htmlFor={promptId}>
+        <label className="text-sm font-medium" htmlFor={promptId}>
           {m.parents.playground.prompt}
         </label>
         <textarea
           className="min-h-32 w-full rounded-2xl border bg-card p-4 text-base leading-relaxed"
           id={promptId}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={(e) => {
+            setPrompt(e.target.value);
+          }}
           value={prompt}
         />
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="space-y-2">
-          <label className="font-medium text-sm" htmlFor={modelId}>
+          <label className="text-sm font-medium" htmlFor={modelId}>
             {m.parents.playground.modele}
           </label>
           <select
             className="block rounded-2xl border bg-card p-3 text-base"
             id={modelId}
-            onChange={(e) => setTestModel(e.target.value)}
+            onChange={(e) => {
+              setTestModel(e.target.value);
+            }}
             value={testModel}
           >
             {IMAGE_MODELS.map((option) => (

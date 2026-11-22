@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+
 import { PlaceForm } from "~/components/place-form";
 import { Button } from "~/components/ui/button";
 import { formatMessage, useMessages } from "~/lib/i18n";
@@ -40,7 +41,7 @@ function ParentsLieuxPage() {
 
   async function handleDelete(id: string) {
     if (
-      // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
+      // oxlint-disable-next-line no-alert -- confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
       !window.confirm(m.parents.entites.lieux.confirmRetrait)
     ) {
       return;
@@ -67,20 +68,24 @@ function ParentsLieuxPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.entites.lieux.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.entites.lieux.titre}</h1>
         <p className="text-muted-foreground">{m.parents.entites.lieux.intro}</p>
       </div>
 
       {editing ? (
         <PlaceForm
           initial={editing === "new" ? undefined : editing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+          }}
           onSubmit={handleSubmit}
         />
       ) : (
         <Button
           className="gap-2"
-          onClick={() => setEditing("new")}
+          onClick={() => {
+            setEditing("new");
+          }}
           type="button"
         >
           <Plus className="size-5" />
@@ -98,8 +103,8 @@ function ParentsLieuxPage() {
               {place.emoji || "📍"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="font-semibold text-lg">{place.label}</p>
-              <p className="truncate text-muted-foreground text-sm">
+              <p className="text-lg font-semibold">{place.label}</p>
+              <p className="truncate text-sm text-muted-foreground">
                 {place.promptHint}
               </p>
             </div>
@@ -108,7 +113,9 @@ function ParentsLieuxPage() {
                 aria-label={formatMessage(m.parents.entites.ariaModifier, {
                   label: place.label,
                 })}
-                onClick={() => setEditing(place)}
+                onClick={() => {
+                  setEditing(place);
+                }}
                 size="icon"
                 type="button"
                 variant="ghost"

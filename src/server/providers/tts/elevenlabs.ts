@@ -37,7 +37,7 @@ export function elevenLabsTtsProvider(apiKey: string): TtsProvider {
       }
 
       const bytes = new Uint8Array(await res.arrayBuffer());
-      return saveMedia(`${generateId("audio")}.mp3`, bytes);
+      return await saveMedia(`${generateId("audio")}.mp3`, bytes);
     },
   };
 }

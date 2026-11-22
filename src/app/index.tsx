@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
 import { Bureau } from "~/components/bureau/bureau";
 import { EcranPortrait } from "~/components/bureau/portrait";
 import {

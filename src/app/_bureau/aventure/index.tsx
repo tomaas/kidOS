@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { CustomPromptStep } from "~/components/custom-prompt-step";
 import { DoudouMultiStep } from "~/components/doudou-multi-step";
 import { MultiPickStep } from "~/components/multi-pick-step";
@@ -18,7 +19,8 @@ import { pickRandomElementIds, toElementItems } from "~/lib/element-items";
 import { pickRandomHeroIds, toHeroItems } from "~/lib/hero-items";
 import { useLocale, useMessages } from "~/lib/i18n";
 import { toPlaceItems } from "~/lib/place-items";
-import { previousStep, type WizardStep } from "~/lib/wizard-steps";
+import { previousStep } from "~/lib/wizard-steps";
+import type { WizardStep } from "~/lib/wizard-steps";
 import { listDoudousFn } from "~/server/doudous-functions";
 import { startDynamicStoryFn } from "~/server/dynamic-functions";
 import { listElementsFn } from "~/server/elements-functions";
@@ -399,7 +401,7 @@ function AventurePage() {
         },
       });
       if (result.success) {
-        navigate({ params: { id: result.storyId }, to: "/aventure/$id" });
+        void navigate({ params: { id: result.storyId }, to: "/aventure/$id" });
         return;
       }
     } catch {
@@ -419,10 +421,12 @@ function AventurePage() {
         <p aria-hidden="true" className="text-6xl">
           🌧️
         </p>
-        <p className="font-semibold text-3xl">{m.aventure.onReessaie}</p>
+        <p className="text-3xl font-semibold">{m.aventure.onReessaie}</p>
         <Button
           className="h-14 rounded-2xl px-8 text-xl"
-          onClick={() => setStep("extra")}
+          onClick={() => {
+            setStep("extra");
+          }}
           size="lg"
           type="button"
         >
@@ -463,7 +467,9 @@ function AventurePage() {
           items={heroItems}
           minOne
           onContinue={goToPlace}
-          onRandom={() => setHeroesPersisted(pickRandomHeroIds(heroItems))}
+          onRandom={() => {
+            setHeroesPersisted(pickRandomHeroIds(heroItems));
+          }}
           onToggle={toggleHero}
           selectedIds={heroIds}
           title={m.aventure.titreHero}
@@ -484,9 +490,9 @@ function AventurePage() {
           items={elementItems}
           minOne
           onContinue={goToDoudou}
-          onRandom={() =>
-            setElementsPersisted(pickRandomElementIds(elementItems))
-          }
+          onRandom={() => {
+            setElementsPersisted(pickRandomElementIds(elementItems));
+          }}
           onToggle={toggleElement}
           selectedIds={elementIds}
           title={m.aventure.titreElement}
@@ -496,9 +502,15 @@ function AventurePage() {
       {step === "doudou" ? (
         <DoudouMultiStep
           items={doudouItems}
-          onContinue={() => goToExtra(doudouIds)}
-          onRandom={() => setDoudousPersisted(pickRandomDoudouIds(doudouItems))}
-          onSkip={() => goToExtra([])}
+          onContinue={() => {
+            goToExtra(doudouIds);
+          }}
+          onRandom={() => {
+            setDoudousPersisted(pickRandomDoudouIds(doudouItems));
+          }}
+          onSkip={() => {
+            goToExtra([]);
+          }}
           onToggle={toggleDoudou}
           selectedIds={doudouIds}
         />

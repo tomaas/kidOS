@@ -19,7 +19,6 @@ import type { SerieStorage } from "~/lib/operations";
 import {
   defaultSudokuSettings,
   eraseCell,
-  type GrilleStateLike,
   generateSudoku,
   grilleStorageKeyOf,
   isGrilleComplete,
@@ -28,7 +27,6 @@ import {
   putAway,
   readResumableGrille,
   SUDOKU_SETTINGS_CACHE_KEY,
-  type SudokuSettings,
   saveGrille,
   settingsFromRows,
   shelfTrays,
@@ -36,6 +34,7 @@ import {
   takeTray,
   writeCell,
 } from "~/lib/sudoku";
+import type { GrilleStateLike, SudokuSettings } from "~/lib/sudoku";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {

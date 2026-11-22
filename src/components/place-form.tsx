@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -40,7 +41,7 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
 
   const canSubmit = label.trim().length > 0 && promptHint.trim().length > 0;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit || submitting) {
       return;
@@ -70,7 +71,9 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
         <Input
           className={FIELD_CLASS}
           id="place-label"
-          onChange={(e) => setLabel(e.target.value)}
+          onChange={(e) => {
+            setLabel(e.target.value);
+          }}
           placeholder={m.parents.formulaires.placeholders.lieu.nom}
           value={label}
         />
@@ -84,7 +87,9 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
           className={`w-24 ${FIELD_CLASS}`}
           id="place-emoji"
           maxLength={8}
-          onChange={(e) => setEmoji(e.target.value)}
+          onChange={(e) => {
+            setEmoji(e.target.value);
+          }}
           placeholder="🌻"
           value={emoji}
         />
@@ -97,7 +102,9 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="place-hint"
-          onChange={(e) => setPromptHint(e.target.value)}
+          onChange={(e) => {
+            setPromptHint(e.target.value);
+          }}
           placeholder={
             m.parents.formulaires.placeholders.lieu.descriptionHistoire
           }
@@ -112,7 +119,9 @@ export function PlaceForm({ initial, onSubmit, onCancel }: PlaceFormProps) {
         <Input
           className={FIELD_CLASS}
           id="place-image"
-          onChange={(e) => setImagePath(e.target.value)}
+          onChange={(e) => {
+            setImagePath(e.target.value);
+          }}
           placeholder={m.parents.formulaires.placeholders.vide}
           value={imagePath}
         />

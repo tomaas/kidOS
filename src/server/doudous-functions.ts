@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
+
 import { db } from "~/server/db";
-import { type DbDoudou, doudous } from "~/server/db/schema";
+import { doudous } from "~/server/db/schema";
+import type { DbDoudou } from "~/server/db/schema";
 import { seedDoudousIfNeeded } from "~/server/doudous-store";
 
 /**
@@ -13,7 +15,7 @@ import { seedDoudousIfNeeded } from "~/server/doudous-store";
 export const listDoudousFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<DbDoudou[]> => {
     await seedDoudousIfNeeded();
-    return db
+    return await db
       .select()
       .from(doudous)
       .where(isNull(doudous.deletedAt))

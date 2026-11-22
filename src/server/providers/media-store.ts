@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve, sep } from "node:path";
+
 import { serverEnv } from "~/env";
 
 /**
@@ -65,18 +66,19 @@ function withTimeout<T>(
   label: string
 ): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error(`${label} timed out after ${ms}ms`)),
-      ms
-    );
+    const timer = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${ms}ms`));
+    }, ms);
+    // oxlint-disable-next-line promise/catch-or-return, promise/prefer-catch -- then(onFulfilled, onRejected) on purpose: the rejection handler must not also catch a throw from the fulfilment handler.
     promise.then(
       (value) => {
         clearTimeout(timer);
         resolve(value);
       },
-      (err) => {
+      (error: unknown) => {
         clearTimeout(timer);
-        reject(err);
+        // oxlint-disable-next-line typescript/prefer-promise-reject-errors -- forwards the original rejection reason unchanged.
+        reject(error);
       }
     );
   });

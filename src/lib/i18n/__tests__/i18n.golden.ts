@@ -29,7 +29,8 @@ import { normalizeLocale } from "~/lib/i18n/locale";
 import { en } from "~/lib/i18n/messages/en";
 import { fr } from "~/lib/i18n/messages/fr";
 import { FAMILLE_NOMS, FAMILLES, PALIERS } from "~/lib/operations";
-import { ENTREES_PALETTE, type EntreePaletteId } from "~/lib/palette/entrees";
+import { ENTREES_PALETTE } from "~/lib/palette/entrees";
+import type { EntreePaletteId } from "~/lib/palette/entrees";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {
@@ -62,8 +63,8 @@ function feuilles(arbre: Arbre, prefixe = ""): Map<string, string> {
   return resultat;
 }
 
-const feuillesFr = feuilles(fr as unknown as Arbre);
-const feuillesEn = feuilles(en as unknown as Arbre);
+const feuillesFr = feuilles(fr);
+const feuillesEn = feuilles(en);
 
 check(
   "parité : mêmes chemins de clés fr↔en",

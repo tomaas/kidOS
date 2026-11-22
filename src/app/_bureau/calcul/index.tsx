@@ -1,48 +1,54 @@
 import {
-  type CollisionDetection,
   DndContext,
-  type DragEndEvent,
   DragOverlay,
-  type DragStartEvent,
   PointerSensor,
   pointerWithin,
   rectIntersection,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import type {
+  CollisionDetection,
+  DragEndEvent,
+  DragStartEvent,
+} from "@dnd-kit/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import { ColumnGrid } from "~/components/calcul/column-grid";
 import {
   DIGIT_TILE_CLASSES,
   SoftNumpad,
 } from "~/components/calcul/soft-numpad";
-import { type TrayInfo, TrayShelf } from "~/components/calcul/tray-shelf";
+import { TrayShelf } from "~/components/calcul/tray-shelf";
+import type { TrayInfo } from "~/components/calcul/tray-shelf";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
 import { useLocale, useMessages } from "~/lib/i18n";
 import {
   advanceSerie,
   browserSerieStorage,
-  type CellRef,
   clearSerie,
   enonceFor,
-  type FamilySettings,
   finishCurrent,
   isCellRef,
   isSerieFinished,
   layoutOperation,
   loadSession,
-  type Operation,
   pencilAdvance,
   resolvePalierForFamille,
-  type SerieStateLike,
   safeGenerateSerie,
   saveSerie,
   shelfTrays,
   takeTray,
   writeCell,
+} from "~/lib/operations";
+import type {
+  CellRef,
+  FamilySettings,
+  Operation,
+  SerieStateLike,
 } from "~/lib/operations";
 import { listDoudousFn } from "~/server/doudous-functions";
 import { listHeroesFn } from "~/server/heroes-functions";
@@ -56,7 +62,11 @@ function withTimeout<T>(
 ): Promise<T> {
   return Promise.race([
     promise.catch(() => fallback),
-    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+    new Promise<T>((resolve) => {
+      setTimeout(() => {
+        resolve(fallback);
+      }, ms);
+    }),
   ]);
 }
 
@@ -184,7 +194,9 @@ function CalculWorkshopPage() {
       setSerie(null);
       setPhase({ kind: "shelf" });
     }, TIDIED_MOMENT_MS);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [phase]);
 
   const palier = serie
@@ -365,7 +377,7 @@ function CalculWorkshopPage() {
         sensors={sensors}
       >
         {heroName ? (
-          <p className="max-w-md text-center text-muted-foreground text-xl leading-relaxed">
+          <p className="max-w-md text-center text-xl leading-relaxed text-muted-foreground">
             {enonceFor(
               operation,
               {
@@ -392,7 +404,7 @@ function CalculWorkshopPage() {
 
         {current.done ? (
           <Button
-            className="gap-2 text-muted-foreground text-xl"
+            className="gap-2 text-xl text-muted-foreground"
             onClick={nextTray}
             variant="ghost"
           >
@@ -404,7 +416,7 @@ function CalculWorkshopPage() {
           <>
             <SoftNumpad onDigit={writeDigit} onErase={erase} />
             <Button
-              className="gap-2 text-muted-foreground text-xl"
+              className="gap-2 text-xl text-muted-foreground"
               disabled={current.entries.result.every((d) => d === null)}
               onClick={() => {
                 setSerie((prev) => (prev ? finishCurrent(prev) : prev));

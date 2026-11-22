@@ -1,9 +1,12 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
+
 import { serverEnv } from "~/env";
+
 import * as schema from "./schema";
 
 // Local SQLite file (libSQL `file:` URL) under DATA_DIR — in Docker that is
@@ -58,7 +61,7 @@ if (!process.env.SKIP_ENV_VALIDATION) {
       // load) — treat as "everything pending" and snapshot it.
     }
     const journal = JSON.parse(
-      readFileSync(join("drizzle", "meta", "_journal.json"), "utf8")
+      readFileSync(join("drizzle", "meta", "_journal.json"), "utf-8")
     ) as { entries: unknown[] };
     if (journal.entries.length > applied) {
       copyFileSync(dbFilePath, `${dbFilePath}.pre-migrate`);

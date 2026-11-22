@@ -33,8 +33,7 @@ import {
   rmSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 
 // ── Child modes (run in a separate bun process with a controlled env) ────────
 
@@ -69,7 +68,7 @@ if (mode === "child:db") {
 
 // src/server/db/__tests__ → repo root (migrationsFolder "drizzle" is resolved
 // from the CWD, exactly like the real server process).
-const testsDir = dirname(fileURLToPath(import.meta.url));
+const testsDir = import.meta.dirname;
 const repoRoot = join(testsDir, "..", "..", "..", "..");
 const thisFile = join(testsDir, "local-sqlite.golden.ts");
 
@@ -88,12 +87,13 @@ function runChild(
     "IMAGE_ENABLED",
     "TTS_ENABLED",
   ]) {
+    // oxlint-disable-next-line typescript/no-dynamic-delete -- removes an explicit list of inherited variables from the child's env copy.
     delete childEnv[key];
   }
   Object.assign(childEnv, env);
   const result = spawnSync("bun", [thisFile, childMode], {
     cwd: repoRoot,
-    encoding: "utf8",
+    encoding: "utf-8",
     env: childEnv,
   });
   return {
@@ -342,7 +342,7 @@ const freshDataDir = join(dbSandbox, "fresh-volume");
 // that drops the COPY would pass every other check and only crash-loop the
 // container at startup.
 {
-  const dockerfile = readFileSync(join(repoRoot, "Dockerfile"), "utf8");
+  const dockerfile = readFileSync(join(repoRoot, "Dockerfile"), "utf-8");
   check(
     "Dockerfile ships drizzle/ into the runtime image (COPY --from=build /app/drizzle ./drizzle)",
     dockerfile.includes("COPY --from=build /app/drizzle ./drizzle"),
@@ -350,7 +350,7 @@ const freshDataDir = join(dbSandbox, "fresh-volume");
   );
 
   const journal = JSON.parse(
-    readFileSync(join(repoRoot, "drizzle", "meta", "_journal.json"), "utf8")
+    readFileSync(join(repoRoot, "drizzle", "meta", "_journal.json"), "utf-8")
   ) as { entries: unknown[] };
   const sqlFiles = readdirSync(join(repoRoot, "drizzle")).filter((f) =>
     f.endsWith(".sql")

@@ -30,8 +30,9 @@
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+
+import type { AppConfig } from "~/server/app-config";
 
 // Secrets PLANTÉS pour le scan de frontière — improbables dans tout autre
 // contenu sérialisé.
@@ -73,7 +74,10 @@ if (mode === "child:roundtrip") {
     setSetting,
   } = await import("~/server/app-config");
 
-  const read = async () => (await getAppConfig()).provider;
+  const read = async () => {
+    const config = await getAppConfig();
+    return config.provider;
+  };
 
   const blank = await read();
   const afterSet = await (async () => {
@@ -178,7 +182,7 @@ if (mode === "child:writer") {
   const keys = (keysCsv ?? "").split(",");
   const iterations = Number(iterationsRaw ?? "0");
   for (let i = 1; i <= iterations; i += 1) {
-    // biome-ignore lint/performance/noAwaitInLoops: écritures SÉQUENTIELLES par processus, la concurrence vient des DEUX processus.
+    // oxlint-disable-next-line no-await-in-loop -- écritures SÉQUENTIELLES par processus, la concurrence vient des DEUX processus.
     await applySettingsPatch(
       keys.map((key) => ({ key, op: "set" as const, value: `${prefix}-${i}` }))
     );
@@ -208,7 +212,7 @@ if (mode === "child:db-fails") {
 
 // ── Parent ────────────────────────────────────────────────────────────────────
 
-const testsDir = dirname(fileURLToPath(import.meta.url));
+const testsDir = import.meta.dirname;
 const repoRoot = join(testsDir, "..", "..", "..");
 const thisFile = join(testsDir, "app-config.golden.ts");
 
@@ -233,12 +237,13 @@ function runChild(childMode: string, env: Record<string, string>) {
     "VITE_APP_DESCRIPTION",
     "VITE_STORY_LABEL",
   ]) {
+    // oxlint-disable-next-line typescript/no-dynamic-delete -- retire de la copie d'env de l'enfant une liste explicite de variables héritées.
     delete childEnv[key];
   }
   Object.assign(childEnv, env);
   const result = spawnSync("bun", [thisFile, childMode], {
     cwd: repoRoot,
-    encoding: "utf8",
+    encoding: "utf-8",
     env: childEnv,
   });
   return {
@@ -269,7 +274,7 @@ function check(name: string, ok: boolean, detail?: string) {
 // prouvé par les cas subprocess ci-dessous).
 const { configFromRows, hintFor, SETTING_KEYS, settingsStatusFromRows } =
   await import("~/server/app-config");
-type AppConfigT = import("~/server/app-config").AppConfig;
+type AppConfigT = AppConfig;
 
 // ── 1. Liste canonique gelée ─────────────────────────────────────────────────
 
@@ -516,7 +521,7 @@ check(
 {
   const source = readFileSync(
     join(repoRoot, "src", "server", "app-config.ts"),
-    "utf8"
+    "utf-8"
   );
   const topLevelDbImport = /^import[^;]*from\s+["']~\/server\/db["']/m.test(
     source
@@ -629,17 +634,17 @@ async function bodyOf(response: Response): Promise<string> {
       return false;
     }
   };
-  // biome-ignore lint/performance/noAwaitInLoops: sondage séquentiel de ports par nature.
+  // oxlint-disable-next-line no-await-in-loop -- sondage séquentiel de ports par nature.
   while ((await portTaken(port)) && port < 3980) {
     port += 1;
   }
 
-  const serverEnv: NodeJS.ProcessEnv = { ...process.env };
-  serverEnv.DATABASE_URL = undefined;
-  Object.assign(serverEnv, {
+  const serverEnv: NodeJS.ProcessEnv = {
+    ...process.env,
+    DATABASE_URL: undefined,
     ANTHROPIC_API_KEY: PLANTED.anthropic,
     DATA_DIR: httpSandbox,
-  });
+  };
   const server = spawn("bun", ["run", "dev", "--port", String(port)], {
     cwd: repoRoot,
     env: serverEnv,
@@ -649,14 +654,17 @@ async function bodyOf(response: Response): Promise<string> {
   let up = false;
   for (let i = 0; i < 60 && !up; i += 1) {
     try {
-      // biome-ignore lint/performance/noAwaitInLoops: attente de démarrage.
+      // oxlint-disable-next-line no-await-in-loop -- attente de démarrage.
       const r = await fetch(`${base}/`, { signal: AbortSignal.timeout(2000) });
       up = r.ok;
     } catch {
       // pas encore prêt
     }
     if (!up) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // oxlint-disable-next-line no-await-in-loop -- attente de démarrage.
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
     }
   }
   check("http boundary: ephemeral dev server boots", up, `port=${port}`);
@@ -775,7 +783,9 @@ async function bodyOf(response: Response): Promise<string> {
   }
 
   server.kill();
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  await new Promise((resolve) => {
+    setTimeout(resolve, 300);
+  });
   rmSync(httpSandbox, { force: true, recursive: true });
 }
 
@@ -791,15 +801,19 @@ async function bodyOf(response: Response): Promise<string> {
   runChild("child:read-rows", env);
   const spawnWriter = (keysCsv: string, prefix: string) =>
     new Promise<number>((resolve) => {
-      const childEnv: NodeJS.ProcessEnv = { ...process.env };
-      childEnv.DATABASE_URL = undefined;
-      Object.assign(childEnv, env);
+      const childEnv: NodeJS.ProcessEnv = {
+        ...process.env,
+        DATABASE_URL: undefined,
+        ...env,
+      };
       const child = spawn(
         "bun",
         [thisFile, "child:writer", keysCsv, prefix, "25"],
         { cwd: repoRoot, env: childEnv, stdio: "ignore" }
       );
-      child.on("exit", (code) => resolve(code ?? 1));
+      child.on("exit", (code) => {
+        resolve(code ?? 1);
+      });
     });
   const [codeA, codeB] = await Promise.all([
     spawnWriter("text:story-model,image:model", "a"),

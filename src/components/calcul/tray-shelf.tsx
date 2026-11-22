@@ -36,10 +36,13 @@
  */
 
 import { useState } from "react";
+
 import { palette } from "~/config/style";
 import { cn } from "~/lib/cn";
-import { formatMessage, type Locale, useLocale, useMessages } from "~/lib/i18n";
-import { type Operation, varianteDuJour } from "~/lib/operations";
+import { formatMessage, useLocale, useMessages } from "~/lib/i18n";
+import type { Locale } from "~/lib/i18n";
+import { varianteDuJour } from "~/lib/operations";
+import type { Operation } from "~/lib/operations";
 
 export interface TrayInfo {
   op: Operation;
@@ -606,7 +609,7 @@ function Tray({
         // grammaire que les portes de l'accueil : crème, bord encre doux,
         // rounded-2xl, focus ring existant.
         "flex min-h-40 w-[clamp(160px,28vw,240px)] shrink flex-col items-center justify-between gap-2 rounded-2xl border bg-card px-4 py-4",
-        "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
         // Retour au pointeur (design review : la seule surface interactive
         // sans hover de l'app) — une ombre douce, pas une suggestion.
         "hover:shadow-sm",
@@ -614,7 +617,9 @@ function Tray({
         // « Sorti » : décalage + ombre douce UNIQUEMENT (D-1A/F3).
         tray.sorti && cn(SORTI_SHIFT_CLASS, "shadow-md")
       )}
-      onClick={() => onTake(tray.op)}
+      onClick={() => {
+        onTake(tray.op);
+      }}
       type="button"
     >
       {/* La scène ne se nomme pas à l'écran ; elle est muette pour ARIA. */}
@@ -628,7 +633,7 @@ function Tray({
       ) : null}
       <span
         aria-hidden="true"
-        className="flex size-11 items-center justify-center rounded-full border border-primary border-dashed text-2xl text-primary"
+        className="flex size-11 items-center justify-center rounded-full border border-dashed border-primary text-2xl text-primary"
       >
         {SIGNES[tray.op]}
       </span>

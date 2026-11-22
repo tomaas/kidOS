@@ -1,6 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
+
 import type { ProviderConfig } from "~/server/app-config";
 import type {
   DynamicBeat,
@@ -8,6 +9,7 @@ import type {
   GenerateBeatInput,
   StoryArcResult,
 } from "~/server/providers/types";
+
 import {
   CUSTOM_PROMPT_SYSTEM_CLAUSE,
   customPromptUserBlock,
@@ -81,8 +83,9 @@ function logTextGen(
         : null;
     console.log(
       `[text-gen] kind=${kind} model=${model} attempt=${attempt} ms=${ms} ` +
-        `tokens=${inTok ?? "?"}in/${outTok ?? "?"}out` +
-        (cost ? ` cost≈$${cost}` : " cost=unknown-model")
+        `tokens=${inTok ?? "?"}in/${outTok ?? "?"}out${
+          cost ? ` cost≈$${cost}` : " cost=unknown-model"
+        }`
     );
   } catch {
     // Never let cost logging break text generation.
@@ -99,7 +102,6 @@ function logTextGen(
  * only asked in the prompt.
  */
 function buildBeatSchema(landing: boolean) {
-  // biome-ignore assist/source/useSortedKeys: l'ordre des clés EST le schéma JSON envoyé au modèle (le récit d'abord : title → paragraphs → choices) — épinglé par test:coherence.
   return z.object({
     title: z
       .string()
@@ -527,6 +529,7 @@ async function generateOnce(
   const landingSchema =
     input.lang === "en" ? LANDING_BEAT_SCHEMA_EN : LANDING_BEAT_SCHEMA;
   const beatSchema = input.lang === "en" ? BEAT_SCHEMA_EN : BEAT_SCHEMA;
+  // oxlint-disable-next-line typescript/no-deprecated -- generateObject → generateText+output est une migration à part (schéma épinglé par test:coherence), pas un correctif de lint.
   const { object, usage } = await generateObject({
     model: anthropic(config.storyModel),
     prompt: buildPrompt(input, corrections, dropCustomPrompt),
@@ -605,7 +608,6 @@ export function coerceBeat(
 // ── Hidden story arc ("fil rouge") ──────────────────────────────────────────
 
 // Exporté pour le script d'assertions (test:coherence) uniquement.
-// biome-ignore assist/source/useSortedKeys: l'ordre des clés EST le schéma JSON envoyé au modèle — épinglé par test:coherence.
 export const ARC_SCHEMA = z.object({
   arc: z
     .string()
@@ -760,7 +762,7 @@ export async function generateStoryArc(
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const startedAt = Date.now();
     try {
-      // biome-ignore lint/performance/noAwaitInLoops: retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
+      // oxlint-disable-next-line no-await-in-loop, typescript/no-deprecated -- retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente ; generateObject → generateText+output est une migration à part (schéma épinglé par test:coherence).
       const { object, usage } = await generateObject({
         // The arc gates the child-facing opening beat: a hung call must never
         // hold the waiting screen. Per-attempt cap → worst case ~30s, then the
@@ -799,8 +801,8 @@ export async function generateStoryArc(
       dropReason = hit
         ? `arc text dropped by the safety scan (matched « ${hit} »)`
         : "arc or visual-world text was empty";
-    } catch (err) {
-      dropReason = `generation error/timeout (${err instanceof Error ? err.name : "unknown"})`;
+    } catch (error) {
+      dropReason = `generation error/timeout (${error instanceof Error ? error.name : "unknown"})`;
     }
   }
   console.warn(
@@ -852,7 +854,7 @@ export async function generateBeat(
     }
     let beat: DynamicBeat;
     try {
-      // biome-ignore lint/performance/noAwaitInLoops: retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
+      // oxlint-disable-next-line no-await-in-loop -- retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
       beat = await generateOnce(
         input,
         attempt + 1,
@@ -860,12 +862,12 @@ export async function generateBeat(
         attempt === 0 ? undefined : lastProblems,
         lastSafetyFailed
       );
-    } catch (genErr) {
+    } catch (error) {
       // A transient generation/parse failure (e.g. generateObject "response
       // did not match schema") on ONE attempt must not abort the whole beat —
       // retry. Record it so a final hard-fail explains what happened.
       lastProblems = [
-        genErr instanceof Error ? genErr.message : "génération échouée",
+        error instanceof Error ? error.message : "génération échouée",
       ];
       lastSafetyFailed = false;
       continue;

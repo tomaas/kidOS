@@ -8,6 +8,7 @@
  */
 
 import type * as React from "react";
+
 import { cn } from "~/lib/cn";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {

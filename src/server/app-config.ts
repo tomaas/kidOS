@@ -27,6 +27,7 @@
  */
 
 import { eq } from "drizzle-orm";
+
 import { serverEnv } from "~/env";
 // schema.ts est sans effet de bord (définitions Drizzle pures) — seul
 // ~/server/db (index) ouvre le client et migre ; lui reste en import lazy.
@@ -188,7 +189,7 @@ function enumRow<T extends string>(
 /** Chaîne non-secrète : une ligne vide ou absente → fallback. */
 function textRow(rows: Rows, key: SettingKey, fallback: string): string {
   const raw = rows.get(key);
-  return raw ? raw : fallback;
+  return raw || fallback;
 }
 
 /** Secret : la présence de la ligne gagne, MÊME vide (masque explicite). */
@@ -560,6 +561,7 @@ export async function applySettingsPatch(
       : db.delete(appSettings).where(eq(appSettings.key, operation.key))
   );
   const [first, ...rest] = statements;
+  // oxlint-disable-next-line typescript/no-misused-promises -- `first` is a drizzle query builder (a thenable) or undefined: this tests the array slot, it awaits nothing.
   if (!first) {
     return;
   }

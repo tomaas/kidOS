@@ -1,22 +1,26 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Printer } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { PrintableOperationsSheet } from "~/components/printable-operations";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
-import { type Messages, useMessages } from "~/lib/i18n";
+import { useMessages } from "~/lib/i18n";
+import type { Messages } from "~/lib/i18n";
 import {
   clampSerieSize,
   FAMILLES,
-  type FamilleSetting,
-  type GeneratedOperation,
   generateSerie,
   MAX_SERIE_SIZE,
   MIN_SERIE_SIZE,
   newSerieSeed,
-  type Operation,
   paliersByFamille,
   resolvePalierForFamille,
+} from "~/lib/operations";
+import type {
+  FamilleSetting,
+  GeneratedOperation,
+  Operation,
 } from "~/lib/operations";
 import { listDoudousFn } from "~/server/doudous-functions";
 import { listHeroesFn } from "~/server/heroes-functions";
@@ -105,7 +109,7 @@ function SettingsUnavailable() {
   const m = useMessages();
   return (
     <>
-      <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
+      <h1 className="text-3xl font-bold">{m.parents.calcul.titre}</h1>
       <p className="text-muted-foreground">
         {m.parents.calcul.reglagesIndisponibles}
       </p>
@@ -158,7 +162,9 @@ function ParentsCalculForm({
     }
     let raf2 = 0;
     const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => window.print());
+      raf2 = requestAnimationFrame(() => {
+        window.print();
+      });
     });
     return () => {
       cancelAnimationFrame(raf1);
@@ -219,7 +225,7 @@ function ParentsCalculForm({
   return (
     <>
       <div className="no-print space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.calcul.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.calcul.titre}</h1>
         <p className="text-muted-foreground">{m.parents.calcul.intro}</p>
       </div>
 
@@ -242,17 +248,21 @@ function ParentsCalculForm({
                     checked={card.active}
                     className="size-4 accent-primary"
                     disabled={lastActive}
-                    onChange={(e) => setCard(op, { active: e.target.checked })}
+                    onChange={(e) => {
+                      setCard(op, { active: e.target.checked });
+                    }}
                     type="checkbox"
                   />
-                  <span className="font-semibold text-lg">
+                  <span className="text-lg font-semibold">
                     {familleLabel(m, op)}
                   </span>
                 </label>
                 {card.active ? (
                   <Button
                     className="gap-2"
-                    onClick={() => printFiche(op)}
+                    onClick={() => {
+                      printFiche(op);
+                    }}
                     size="sm"
                     variant="outline"
                   >
@@ -262,7 +272,7 @@ function ParentsCalculForm({
                 ) : null}
               </div>
               {lastActive ? (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {m.parents.calcul.derniereFamille}
                 </p>
               ) : null}
@@ -276,7 +286,9 @@ function ParentsCalculForm({
                             checked={card.palier === palier.id}
                             className="size-4 accent-primary"
                             name={`palier-${op}`}
-                            onChange={() => setCard(op, { palier: palier.id })}
+                            onChange={() => {
+                              setCard(op, { palier: palier.id });
+                            }}
                             type="radio"
                           />
                           <span>{palierLabel(m, palier.id, palier.label)}</span>
@@ -284,12 +296,12 @@ function ParentsCalculForm({
                       </li>
                     ))}
                   </ul>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     {m.parents.calcul.changerPalier}
                   </p>
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {m.parents.calcul.nApparaitPas}
                 </p>
               )}
@@ -306,7 +318,9 @@ function ParentsCalculForm({
           <select
             className="rounded-xl border bg-card px-3 py-2 text-lg"
             id="serie-size"
-            onChange={(e) => setSerieSize(Number(e.target.value))}
+            onChange={(e) => {
+              setSerieSize(Number(e.target.value));
+            }}
             value={serieSize}
           >
             {Array.from(
@@ -321,7 +335,7 @@ function ParentsCalculForm({
         </div>
         {/* Même transparence que pour le palier (adversarial #2) : la
             conséquence est dite AVANT le geste, pour toutes les familles. */}
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {m.parents.calcul.changerTaille}
         </p>
       </div>
@@ -335,7 +349,7 @@ function ParentsCalculForm({
         {saveError ? (
           // Distinct des textes d'aide passifs (design review F11) : un échec
           // d'enregistrement doit se voir — calme, mais pas camouflé.
-          <p className="font-medium text-foreground text-sm">{saveError}</p>
+          <p className="text-sm font-medium text-foreground">{saveError}</p>
         ) : null}
       </div>
 

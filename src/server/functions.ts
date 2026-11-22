@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
+
 import { resolveImageModel } from "~/config/image-models";
 import { getAppConfig, publicFlagsFromConfig } from "~/server/app-config";
 import { db } from "~/server/db";
@@ -89,8 +90,9 @@ export const generateTestImageFn = createServerFn({ method: "POST" })
       // Non-silent: log the real reason (model + cause) so the operator sees a
       // Gemini billing/quota denial; the parent gets a calm inline message.
       console.error(
-        `[stories] test image generation FAILED (model=${model}, ms=${ms}): ` +
-          (error instanceof Error ? error.message : String(error))
+        `[stories] test image generation FAILED (model=${model}, ms=${ms}): ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
       return { imagePath: null, imageStatus: "failed", model, ms };
     }

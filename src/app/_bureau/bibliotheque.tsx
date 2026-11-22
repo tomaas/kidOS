@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Home, Leaf } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
 import {
   GENERATED_IMAGE_HEIGHT,
@@ -39,7 +40,7 @@ function LibraryPage() {
         </Button>
       </div>
 
-      <h1 className="text-center font-bold text-4xl">{m.bibliotheque.titre}</h1>
+      <h1 className="text-center text-4xl font-bold">{m.bibliotheque.titre}</h1>
 
       {stories.length === 0 ? (
         <div className="flex flex-col items-center gap-8 py-12 text-center">
@@ -84,7 +85,7 @@ function LibraryPage() {
                   </span>
                 )}
               </div>
-              <span className="font-semibold text-2xl leading-tight">
+              <span className="text-2xl leading-tight font-semibold">
                 {story.title}
               </span>
             </Link>

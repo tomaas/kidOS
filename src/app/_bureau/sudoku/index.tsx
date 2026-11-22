@@ -1,18 +1,21 @@
 import {
-  type CollisionDetection,
   DndContext,
-  type DragEndEvent,
   DragOverlay,
-  type DragStartEvent,
   PointerSensor,
   pointerWithin,
   rectIntersection,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import type {
+  CollisionDetection,
+  DragEndEvent,
+  DragStartEvent,
+} from "@dnd-kit/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, Printer } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import {
   DIGIT_TILE_CLASSES,
   SoftNumpad,
@@ -20,29 +23,25 @@ import {
 import { Comparaison } from "~/components/sudoku/comparaison";
 import { PrintableSudoku } from "~/components/sudoku/printable-sudoku";
 import { isSudokuCellRef, SudokuGrid } from "~/components/sudoku/sudoku-grid";
-import {
-  SudokuShelf,
-  type SudokuTrayInfo,
-} from "~/components/sudoku/sudoku-shelf";
+import { SudokuShelf } from "~/components/sudoku/sudoku-shelf";
+import type { SudokuTrayInfo } from "~/components/sudoku/sudoku-shelf";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
 import { browserSerieStorage } from "~/lib/operations";
 import {
   eraseCell,
-  type GrilleStateLike,
   generateSudoku,
   isGivenCell,
   isGrilleComplete,
   loadSession,
   putAway,
-  type SudokuSettings,
   saveGrille,
   shelfTrays,
-  type Taille,
   takeTray,
   writeCell,
 } from "~/lib/sudoku";
+import type { GrilleStateLike, SudokuSettings, Taille } from "~/lib/sudoku";
 import { getSudokuSettingsFn } from "~/server/sudoku-functions";
 
 /** 2A: a slow DB is treated like an unreachable one — short timeout, no error. */
@@ -53,7 +52,11 @@ function withTimeout<T>(
 ): Promise<T> {
   return Promise.race([
     promise.catch(() => fallback),
-    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+    new Promise<T>((resolve) => {
+      setTimeout(() => {
+        resolve(fallback);
+      }, ms);
+    }),
   ]);
 }
 
@@ -170,7 +173,9 @@ function SudokuWorkshopPage() {
       setGrille(null);
       setPhase({ kind: "etagere" });
     }, RANGE_MOMENT_MS);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [phase]);
 
   // La grille générée (givens + solution), régénérée déterministe depuis
@@ -260,12 +265,12 @@ function SudokuWorkshopPage() {
         <WorkshopShell onReposer={reposerPlateau}>
           <FadeIn>
             <Comparaison
-              onRanger={() =>
-                setPhase({ kind: "range", taille: grille.taille })
-              }
-              onRetourGrille={() =>
-                setPhase({ kind: "grille", taille: grille.taille })
-              }
+              onRanger={() => {
+                setPhase({ kind: "range", taille: grille.taille });
+              }}
+              onRetourGrille={() => {
+                setPhase({ kind: "grille", taille: grille.taille });
+              }}
               puzzle={puzzle}
               state={grille}
             />
@@ -366,7 +371,9 @@ function SudokuWorkshopPage() {
         >
           <SudokuGrid
             givens={puzzle.givens}
-            onSelect={(index) => setSelected(index)}
+            onSelect={(index) => {
+              setSelected(index);
+            }}
             selected={selected}
             state={grille}
             variant="libre"
@@ -386,18 +393,20 @@ function SudokuWorkshopPage() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             {complete ? (
               <Button
-                className="gap-2 text-muted-foreground text-xl"
-                onClick={() =>
-                  setPhase({ kind: "comparaison", taille: grille.taille })
-                }
+                className="gap-2 text-xl text-muted-foreground"
+                onClick={() => {
+                  setPhase({ kind: "comparaison", taille: grille.taille });
+                }}
                 variant="ghost"
               >
                 {m.sudoku.comparer}
               </Button>
             ) : null}
             <Button
-              className="gap-2 text-muted-foreground text-xl"
-              onClick={() => window.print()}
+              className="gap-2 text-xl text-muted-foreground"
+              onClick={() => {
+                window.print();
+              }}
               type="button"
               variant="ghost"
             >

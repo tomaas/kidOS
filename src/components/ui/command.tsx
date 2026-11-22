@@ -24,6 +24,7 @@
 import { Command as CommandPrimitive } from "cmdk";
 import { Check, Search } from "lucide-react";
 import type * as React from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -90,7 +91,7 @@ function CommandInput({
     <div className="p-1 pb-0" data-slot="command-input-wrapper">
       {/* L'équivalent inline de <InputGroup> du registre (voir l'en-tête). */}
       <div
-        className="group/input-group relative flex h-8 w-full min-w-0 items-center rounded-lg border border-input/30 bg-input/30 outline-none transition-colors has-[[data-slot=command-input]:focus-visible]:border-ring has-[[data-slot=command-input]:focus-visible]:ring-3 has-[[data-slot=command-input]:focus-visible]:ring-ring/50"
+        className="group/input-group relative flex h-8 w-full min-w-0 items-center rounded-lg border border-input/30 bg-input/30 transition-colors outline-none has-[[data-slot=command-input]:focus-visible]:border-ring has-[[data-slot=command-input]:focus-visible]:ring-3 has-[[data-slot=command-input]:focus-visible]:ring-ring/50"
         role="group"
       >
         <CommandPrimitive.Input
@@ -102,7 +103,7 @@ function CommandInput({
           {...props}
         />
         <div
-          className="order-first flex h-auto cursor-text select-none items-center justify-center gap-2 py-1.5 pl-2 font-medium text-muted-foreground text-sm"
+          className="order-first flex h-auto cursor-text items-center justify-center gap-2 py-1.5 pl-2 text-sm font-medium text-muted-foreground select-none"
           data-align="inline-start"
           data-slot="command-input-addon"
         >
@@ -120,7 +121,7 @@ function CommandList({
   return (
     <CommandPrimitive.List
       className={cn(
-        "no-scrollbar max-h-72 scroll-py-1 overflow-y-auto overflow-x-hidden outline-none",
+        "no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
         className
       )}
       data-slot="command-list"
@@ -149,7 +150,7 @@ function CommandGroup({
   return (
     <CommandPrimitive.Group
       className={cn(
-        "overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground **:[[cmdk-group-heading]]:text-xs",
+        "overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
         className
       )}
       data-slot="command-group"
@@ -179,7 +180,7 @@ function CommandItem({
   return (
     <CommandPrimitive.Item
       className={cn(
-        "group/command-item relative flex cursor-default select-none items-center gap-2 in-data-[slot=dialog-content]:rounded-lg! rounded-sm px-2 py-1.5 text-sm outline-hidden data-[disabled=true]:pointer-events-none data-[selected=true]:bg-muted data-[selected=true]:text-foreground data-[disabled=true]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[selected=true]:*:[svg]:text-foreground",
+        "group/command-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-muted data-[selected=true]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[selected=true]:*:[svg]:text-foreground",
         className
       )}
       data-slot="command-item"
@@ -198,7 +199,7 @@ function CommandShortcut({
   return (
     <span
       className={cn(
-        "ml-auto text-muted-foreground text-xs tracking-widest group-data-[selected=true]/command-item:text-foreground",
+        "ml-auto text-xs tracking-widest text-muted-foreground group-data-[selected=true]/command-item:text-foreground",
         className
       )}
       data-slot="command-shortcut"

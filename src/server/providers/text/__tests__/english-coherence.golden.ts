@@ -21,10 +21,8 @@
  *    référence), et le défaut sans lang qui reste français.
  */
 
-import {
-  buildSegmentImagePrompt,
-  type SegmentImagePromptContext,
-} from "~/server/providers/image/segment-prompt";
+import { buildSegmentImagePrompt } from "~/server/providers/image/segment-prompt";
+import type { SegmentImagePromptContext } from "~/server/providers/image/segment-prompt";
 import {
   ARC_SCHEMA,
   BEAT_SCHEMA,

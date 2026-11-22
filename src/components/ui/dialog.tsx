@@ -1,6 +1,6 @@
 /**
  * shadcn/ui `dialog` — variante BASE (registre `base-nova`, primitives
- * @base-ui/react), recopiée depuis le registre puis adaptée au projet :
+ * `@base-ui/react`), recopiée depuis le registre puis adaptée au projet :
  *  - `@/lib/utils` → `~/lib/cn`, `@/registry/…/ui/button` → `~/components/ui/button` ;
  *  - `IconPlaceholder` (artefact du site de docs, qui laisse choisir sa
  *    librairie d'icônes) → lucide-react, la librairie de ce projet ;
@@ -12,6 +12,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { X } from "lucide-react";
 import type * as React from "react";
+
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
 
@@ -38,7 +39,7 @@ function DialogOverlay({
   return (
     <DialogPrimitive.Backdrop
       className={cn(
-        "data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 isolate z-50 bg-black/10 duration-100 data-closed:animate-out data-open:animate-in supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 isolate z-50 bg-black/10 duration-100 data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 supports-backdrop-filter:backdrop-blur-xs",
         className
       )}
       data-slot="dialog-overlay"
@@ -60,7 +61,7 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Popup
         className={cn(
-          "data-closed:fade-out-0 data-closed:zoom-out-95 data-open:fade-in-0 data-open:zoom-in-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-popover-foreground text-sm outline-none ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in sm:max-w-sm",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 sm:max-w-sm",
           className
         )}
         data-slot="dialog-content"
@@ -129,7 +130,7 @@ function DialogFooter({
 function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
-      className={cn("font-medium text-base leading-none", className)}
+      className={cn("text-base leading-none font-medium", className)}
       data-slot="dialog-title"
       {...props}
     />
@@ -143,7 +144,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       className={cn(
-        "text-muted-foreground text-sm *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
         className
       )}
       data-slot="dialog-description"

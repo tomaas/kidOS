@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Delete } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
@@ -109,7 +110,9 @@ function DigitKey({
         "touch-none",
         isDragging && "opacity-40"
       )}
-      onClick={() => onDigit(digit)}
+      onClick={() => {
+        onDigit(digit);
+      }}
       ref={setNodeRef}
       variant="outline"
       {...listeners}

@@ -1,4 +1,5 @@
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
+
 import { generateId } from "~/lib/id-generator";
 import { saveMedia } from "~/server/providers/media-store";
 import type { Lang, TtsProvider } from "~/server/providers/types";
@@ -44,6 +45,6 @@ export const edgeTtsProvider: TtsProvider = {
       throw new Error("Aucune donnée audio reçue de msedge-tts.");
     }
 
-    return saveMedia(`${generateId("audio")}.mp3`, bytes);
+    return await saveMedia(`${generateId("audio")}.mp3`, bytes);
   },
 };

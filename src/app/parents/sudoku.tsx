@@ -1,14 +1,11 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
-import {
-  GENEROSITES,
-  type Generosite,
-  TAILLES,
-  type Taille,
-} from "~/lib/sudoku";
+import { GENEROSITES, TAILLES } from "~/lib/sudoku";
+import type { Generosite, Taille } from "~/lib/sudoku";
 import {
   getSudokuSettingsFn,
   saveSudokuSettingsFn,
@@ -72,7 +69,7 @@ function SettingsUnavailable() {
   const m = useMessages();
   return (
     <>
-      <h1 className="font-bold text-3xl">{m.parents.sudoku.titre}</h1>
+      <h1 className="text-3xl font-bold">{m.parents.sudoku.titre}</h1>
       <p className="text-muted-foreground">
         {m.parents.sudoku.reglagesIndisponibles}
       </p>
@@ -152,7 +149,7 @@ function ParentsSudokuForm({
   return (
     <>
       <div className="space-y-2">
-        <h1 className="font-bold text-3xl">{m.parents.sudoku.titre}</h1>
+        <h1 className="text-3xl font-bold">{m.parents.sudoku.titre}</h1>
         <p className="text-muted-foreground">{m.parents.sudoku.intro}</p>
       </div>
 
@@ -179,17 +176,17 @@ function ParentsSudokuForm({
                   checked={card.active}
                   className="size-4 accent-primary"
                   disabled={lastActive}
-                  onChange={(e) =>
-                    setCard(taille, { active: e.target.checked })
-                  }
+                  onChange={(e) => {
+                    setCard(taille, { active: e.target.checked });
+                  }}
                   type="checkbox"
                 />
-                <span className="font-semibold text-lg">
+                <span className="text-lg font-semibold">
                   {m.parents.sudoku.tailles[taille]}
                 </span>
               </label>
               {lastActive ? (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {m.parents.sudoku.derniereTaille}
                 </p>
               ) : null}
@@ -204,7 +201,9 @@ function ParentsSudokuForm({
                             checked={card.generosite === generosite}
                             className="size-4 accent-primary"
                             name={`generosite-${taille}`}
-                            onChange={() => setCard(taille, { generosite })}
+                            onChange={() => {
+                              setCard(taille, { generosite });
+                            }}
                             type="radio"
                           />
                           <span>
@@ -216,12 +215,12 @@ function ParentsSudokuForm({
                   </ul>
                   {/* Même transparence que pour le palier du calcul : la
                       conséquence est dite AVANT le geste. */}
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     {m.parents.sudoku.changerGenerosite}
                   </p>
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {m.parents.sudoku.nApparaitPas}
                 </p>
               )}
@@ -239,7 +238,7 @@ function ParentsSudokuForm({
         {saveError ? (
           // Distinct des textes d'aide passifs (convention calcul) : un échec
           // d'enregistrement doit se voir — calme, mais pas camouflé.
-          <p className="font-medium text-foreground text-sm">{saveError}</p>
+          <p className="text-sm font-medium text-foreground">{saveError}</p>
         ) : null}
       </div>
     </>

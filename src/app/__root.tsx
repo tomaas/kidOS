@@ -6,16 +6,18 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+
 import { PaletteParent } from "~/components/palette-parent";
 import { Toaster } from "~/components/ui/sonner";
 import {
   buildBranding,
-  type Locale,
   LocaleProvider,
   MESSAGES,
   normalizeLocale,
 } from "~/lib/i18n";
+import type { Locale } from "~/lib/i18n";
 import { getShellContextFn } from "~/server/settings-functions";
+
 import appCss from "./globals.css?url";
 
 /**
@@ -103,13 +105,13 @@ function EcranCalme({ variante }: { variante: "souci" | "introuvable" }) {
   return (
     <div className={CALM_SCREEN_CLASS}>
       <p className="text-4xl">{variante === "souci" ? "🌙" : "🐚"}</p>
-      <h1 className="font-bold text-3xl">
+      <h1 className="text-3xl font-bold">
         {variante === "souci"
           ? m.ecrans.soucisTitre
           : m.ecrans.pageIntrouvableTitre}
       </h1>
       {variante === "souci" ? (
-        <p className="text-muted-foreground text-xl">{m.ecrans.soucisTexte}</p>
+        <p className="text-xl text-muted-foreground">{m.ecrans.soucisTexte}</p>
       ) : null}
       <a className="text-2xl text-primary underline" href="/">
         {m.ecrans.revenirAccueil}

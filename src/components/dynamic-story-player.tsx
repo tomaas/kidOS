@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Printer, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
 import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
 import { useImageReveal } from "~/lib/use-image-reveal";
-import { type ReadingAidsFlags, useReadingAids } from "~/lib/use-reading-aids";
+import { useReadingAids } from "~/lib/use-reading-aids";
+import type { ReadingAidsFlags } from "~/lib/use-reading-aids";
 import { useReadingFont } from "~/lib/use-reading-font";
 import type { SegmentChoice, StorySegment } from "~/server/db/schema";
 import {
@@ -13,10 +15,9 @@ import {
   generateSegmentImageFn,
   retrySegmentImageFn,
 } from "~/server/dynamic-functions";
-import {
-  type ImageStatus,
-  resolveStoredImagePath,
-} from "~/server/providers/types";
+import { resolveStoredImagePath } from "~/server/providers/types";
+import type { ImageStatus } from "~/server/providers/types";
+
 import { HighlightableText } from "./highlightable-text";
 import { ImageSlot } from "./image-slot";
 import { PrintableDynamicStory } from "./printable-story";
@@ -60,10 +61,12 @@ function ChoiceButtons({
     <div className="grid grid-cols-1 gap-5 pt-2 sm:grid-cols-2">
       {choices.map((choice) => (
         <button
-          className="flex min-h-28 items-center justify-center rounded-3xl border-2 border-border bg-card p-6 text-center font-semibold text-2xl leading-snug transition-all hover:-translate-y-0.5 hover:border-primary/50 disabled:opacity-60"
+          className="flex min-h-28 items-center justify-center rounded-3xl border-2 border-border bg-card p-6 text-center text-2xl leading-snug font-semibold transition-all hover:-translate-y-0.5 hover:border-primary/50 disabled:opacity-60"
           disabled={disabled}
           key={choice.id}
-          onClick={() => onChoose(choice.id)}
+          onClick={() => {
+            onChoose(choice.id);
+          }}
           type="button"
         >
           {choice.label}
@@ -135,6 +138,7 @@ function ReplaySegmentImage({
       return;
     }
     let cancelled = false;
+    // oxlint-disable-next-line typescript/no-floating-promises, promise/catch-or-return -- fire-and-forget background image for a replayed beat; adding a catch would change today's failure handling (left for a follow-up).
     generateSegmentImageFn({
       data: { idx: segment.idx, imageModel, storyId },
     }).then((result) => {
@@ -431,7 +435,7 @@ export function DynamicStoryPlayer({
     }
     const resumeChoice = pendingSeg?.pendingChoiceId;
     if (resumeChoice) {
-      choose(resumeChoice);
+      void choose(resumeChoice);
     }
   }, []);
 
@@ -455,10 +459,10 @@ export function DynamicStoryPlayer({
         setPending(false);
         return;
       }
-    } catch (err) {
+    } catch (error) {
       console.error(
         "[stories] beat continuation failed, will soft-retry:",
-        err
+        error
       );
       // Fall through to the soft retry below.
     }
@@ -470,7 +474,7 @@ export function DynamicStoryPlayer({
   function retry() {
     const choiceId = lastChoiceRef.current;
     if (choiceId) {
-      choose(choiceId);
+      void choose(choiceId);
     }
   }
 
@@ -485,7 +489,7 @@ export function DynamicStoryPlayer({
         <p aria-hidden="true" className="text-6xl">
           🌧️
         </p>
-        <p className="font-semibold text-3xl">{m.aventure.histoireReprend}</p>
+        <p className="text-3xl font-semibold">{m.aventure.histoireReprend}</p>
         <Button
           className="h-14 rounded-2xl px-8 text-xl"
           onClick={retry}
@@ -503,7 +507,7 @@ export function DynamicStoryPlayer({
     return (
       <div className="space-y-8">
         <div className="no-print space-y-12">
-          <h1 className="text-center font-bold text-4xl leading-tight">
+          <h1 className="text-center text-4xl leading-tight font-bold">
             {title}
           </h1>
           {completeSegments.map((segment) => (
@@ -635,7 +639,9 @@ function ClosingActions({
 
       <Button
         className="h-14 gap-3 rounded-2xl px-6 text-xl"
-        onClick={() => window.print()}
+        onClick={() => {
+          window.print();
+        }}
         size="lg"
         type="button"
         variant="secondary"

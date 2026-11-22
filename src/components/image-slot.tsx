@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { cn } from "~/lib/cn";
 import {
   GENERATED_IMAGE_HEIGHT,
@@ -83,13 +84,13 @@ function FailedState({ onRetry }: { onRetry?: () => Promise<void> }) {
       <span aria-hidden="true" className="text-6xl opacity-70">
         🌙
       </span>
-      <p className="font-medium text-lg text-muted-foreground">
+      <p className="text-lg font-medium text-muted-foreground">
         {m.aventure.image.dodo}
       </p>
       {onRetry ? (
         <>
           <button
-            className="mt-1 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-5 py-2 font-medium text-base text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-primary/40 disabled:opacity-60"
+            className="mt-1 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-5 py-2 text-base font-medium text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-primary/40 disabled:opacity-60"
             disabled={retrying}
             onClick={handleRetry}
             type="button"
@@ -100,7 +101,7 @@ function FailedState({ onRetry }: { onRetry?: () => Promise<void> }) {
               : m.aventure.image.reessayer}
           </button>
           {retryFailed ? (
-            <p className="text-muted-foreground/70 text-sm">
+            <p className="text-sm text-muted-foreground/70">
               {m.aventure.image.pasMarche}
             </p>
           ) : null}

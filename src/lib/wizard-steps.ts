@@ -55,14 +55,18 @@ export function previousStep(step: WizardStep): WizardStep | null {
  */
 function isStepSatisfied(step: WizardStep, p: WizardProgress): boolean {
   switch (step) {
-    case "hero":
+    case "hero": {
       return p.heroIds.length > 0;
-    case "place":
+    }
+    case "place": {
       return Boolean(p.placeId);
-    case "element":
+    }
+    case "element": {
       return p.elementIds.length > 0;
-    default:
-      return true; // doudou, extra — optional, never block
+    }
+    default: {
+      return true;
+    } // doudou, extra — optional, never block
   }
 }
 
