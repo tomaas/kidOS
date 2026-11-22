@@ -401,7 +401,7 @@ function AventurePage() {
         },
       });
       if (result.success) {
-        navigate({ params: { id: result.storyId }, to: "/aventure/$id" });
+        void navigate({ params: { id: result.storyId }, to: "/aventure/$id" });
         return;
       }
     } catch {

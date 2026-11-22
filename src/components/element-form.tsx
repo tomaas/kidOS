@@ -41,7 +41,7 @@ export function ElementForm({ initial, onSubmit, onCancel }: ElementFormProps) {
 
   const canSubmit = label.trim().length > 0 && promptHint.trim().length > 0;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit || submitting) {
       return;

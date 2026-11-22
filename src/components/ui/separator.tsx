@@ -1,6 +1,6 @@
 /**
  * shadcn/ui `separator` — variante BASE (registre `base-nova`, primitive
- * @base-ui/react/separator), recopié via le CLI (alias réécrits en `~/…`
+ * `@base-ui/react/separator`), recopié via le CLI (alias réécrits en `~/…`
  * par components.json), sans autre adaptation :
  *  - audit des variantes `data-*` : `data-horizontal:`/`data-vertical:`
  *    sont des attributs présence-seule de Base UI (un seul des deux à la

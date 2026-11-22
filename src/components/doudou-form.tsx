@@ -46,7 +46,7 @@ export function DoudouForm({ initial, onSubmit, onCancel }: DoudouFormProps) {
     promptHint.trim().length > 0 &&
     imageHint.trim().length > 0;
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit || submitting) {
       return;

@@ -69,13 +69,15 @@ function withTimeout<T>(
     const timer = setTimeout(() => {
       reject(new Error(`${label} timed out after ${ms}ms`));
     }, ms);
+    // oxlint-disable-next-line promise/catch-or-return, promise/prefer-catch -- then(onFulfilled, onRejected) on purpose: the rejection handler must not also catch a throw from the fulfilment handler.
     promise.then(
       (value) => {
         clearTimeout(timer);
         resolve(value);
       },
-      (error) => {
+      (error: unknown) => {
         clearTimeout(timer);
+        // oxlint-disable-next-line typescript/prefer-promise-reject-errors -- forwards the original rejection reason unchanged.
         reject(error);
       }
     );

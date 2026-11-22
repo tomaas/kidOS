@@ -1,6 +1,6 @@
 /**
  * shadcn/ui `sheet` — variante BASE (registre `base-nova`, primitives
- * @base-ui/react/dialog), recopiée via le CLI (alias réécrits en `~/…` par
+ * `@base-ui/react/dialog`), recopiée via le CLI (alias réécrits en `~/…` par
  * components.json) puis adaptée au projet :
  *  - ternaire au lieu de `&&` pour le bouton de fermeture (règle
  *    noLeakedRender de Biome, même convention que dialog.tsx) ;

@@ -454,7 +454,7 @@ function SectionAtelier({ status }: { status: AppSettingsStatus }) {
         operations.push({ key, op: "set", value: valeur.trim() });
       }
     }
-    enregistrer(operations);
+    void enregistrer(operations);
   }
 
   return (

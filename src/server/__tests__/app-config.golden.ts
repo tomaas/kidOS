@@ -30,8 +30,9 @@
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+
+import type { AppConfig } from "~/server/app-config";
 
 // Secrets PLANTÉS pour le scan de frontière — improbables dans tout autre
 // contenu sérialisé.
@@ -73,7 +74,10 @@ if (mode === "child:roundtrip") {
     setSetting,
   } = await import("~/server/app-config");
 
-  const read = async () => (await getAppConfig()).provider;
+  const read = async () => {
+    const config = await getAppConfig();
+    return config.provider;
+  };
 
   const blank = await read();
   const afterSet = await (async () => {
@@ -233,6 +237,7 @@ function runChild(childMode: string, env: Record<string, string>) {
     "VITE_APP_DESCRIPTION",
     "VITE_STORY_LABEL",
   ]) {
+    // oxlint-disable-next-line typescript/no-dynamic-delete -- retire de la copie d'env de l'enfant une liste explicite de variables héritées.
     delete childEnv[key];
   }
   Object.assign(childEnv, env);
@@ -269,7 +274,7 @@ function check(name: string, ok: boolean, detail?: string) {
 // prouvé par les cas subprocess ci-dessous).
 const { configFromRows, hintFor, SETTING_KEYS, settingsStatusFromRows } =
   await import("~/server/app-config");
-type AppConfigT = import("~/server/app-config").AppConfig;
+type AppConfigT = AppConfig;
 
 // ── 1. Liste canonique gelée ─────────────────────────────────────────────────
 
@@ -634,12 +639,12 @@ async function bodyOf(response: Response): Promise<string> {
     port += 1;
   }
 
-  const serverEnv: NodeJS.ProcessEnv = { ...process.env };
-  serverEnv.DATABASE_URL = undefined;
-  Object.assign(serverEnv, {
+  const serverEnv: NodeJS.ProcessEnv = {
+    ...process.env,
+    DATABASE_URL: undefined,
     ANTHROPIC_API_KEY: PLANTED.anthropic,
     DATA_DIR: httpSandbox,
-  });
+  };
   const server = spawn("bun", ["run", "dev", "--port", String(port)], {
     cwd: repoRoot,
     env: serverEnv,
@@ -656,7 +661,10 @@ async function bodyOf(response: Response): Promise<string> {
       // pas encore prêt
     }
     if (!up) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // oxlint-disable-next-line no-await-in-loop -- attente de démarrage.
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
     }
   }
   check("http boundary: ephemeral dev server boots", up, `port=${port}`);
@@ -775,7 +783,9 @@ async function bodyOf(response: Response): Promise<string> {
   }
 
   server.kill();
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  await new Promise((resolve) => {
+    setTimeout(resolve, 300);
+  });
   rmSync(httpSandbox, { force: true, recursive: true });
 }
 
@@ -791,9 +801,11 @@ async function bodyOf(response: Response): Promise<string> {
   runChild("child:read-rows", env);
   const spawnWriter = (keysCsv: string, prefix: string) =>
     new Promise<number>((resolve) => {
-      const childEnv: NodeJS.ProcessEnv = { ...process.env };
-      childEnv.DATABASE_URL = undefined;
-      Object.assign(childEnv, env);
+      const childEnv: NodeJS.ProcessEnv = {
+        ...process.env,
+        DATABASE_URL: undefined,
+        ...env,
+      };
       const child = spawn(
         "bun",
         [thisFile, "child:writer", keysCsv, prefix, "25"],

@@ -33,8 +33,7 @@ import {
   rmSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 
 // ── Child modes (run in a separate bun process with a controlled env) ────────
 
@@ -88,6 +87,7 @@ function runChild(
     "IMAGE_ENABLED",
     "TTS_ENABLED",
   ]) {
+    // oxlint-disable-next-line typescript/no-dynamic-delete -- removes an explicit list of inherited variables from the child's env copy.
     delete childEnv[key];
   }
   Object.assign(childEnv, env);

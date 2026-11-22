@@ -116,7 +116,7 @@ export function PaletteParent() {
                 key={entree.id}
                 onChoisie={() => {
                   setOuverte(false);
-                  navigate({ to: entree.to });
+                  void navigate({ to: entree.to });
                 }}
               />
             ))}
@@ -129,7 +129,7 @@ export function PaletteParent() {
                 key={entree.id}
                 onChoisie={() => {
                   setOuverte(false);
-                  navigate({ to: entree.to });
+                  void navigate({ to: entree.to });
                 }}
               />
             ))}

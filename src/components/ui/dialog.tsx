@@ -1,6 +1,6 @@
 /**
  * shadcn/ui `dialog` — variante BASE (registre `base-nova`, primitives
- * @base-ui/react), recopiée depuis le registre puis adaptée au projet :
+ * `@base-ui/react`), recopiée depuis le registre puis adaptée au projet :
  *  - `@/lib/utils` → `~/lib/cn`, `@/registry/…/ui/button` → `~/components/ui/button` ;
  *  - `IconPlaceholder` (artefact du site de docs, qui laisse choisir sa
  *    librairie d'icônes) → lucide-react, la librairie de ce projet ;

@@ -28,9 +28,10 @@ export interface OperationLayout {
 }
 
 function padLeft(digits: string, width: number): string[] {
-  return Array.from({ length: width - digits.length }, () => "").concat(
-    digits.split("")
-  );
+  return [
+    ...Array.from({ length: width - digits.length }, () => ""),
+    ...digits.split(""),
+  ];
 }
 
 const SIGNS: Record<Operation, "+" | "−" | "×"> = {

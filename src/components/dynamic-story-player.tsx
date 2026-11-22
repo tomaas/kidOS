@@ -138,6 +138,7 @@ function ReplaySegmentImage({
       return;
     }
     let cancelled = false;
+    // oxlint-disable-next-line typescript/no-floating-promises, promise/catch-or-return -- fire-and-forget background image for a replayed beat; adding a catch would change today's failure handling (left for a follow-up).
     generateSegmentImageFn({
       data: { idx: segment.idx, imageModel, storyId },
     }).then((result) => {
@@ -434,7 +435,7 @@ export function DynamicStoryPlayer({
     }
     const resumeChoice = pendingSeg?.pendingChoiceId;
     if (resumeChoice) {
-      choose(resumeChoice);
+      void choose(resumeChoice);
     }
   }, []);
 
@@ -473,7 +474,7 @@ export function DynamicStoryPlayer({
   function retry() {
     const choiceId = lastChoiceRef.current;
     if (choiceId) {
-      choose(choiceId);
+      void choose(choiceId);
     }
   }
 

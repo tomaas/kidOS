@@ -529,6 +529,7 @@ async function generateOnce(
   const landingSchema =
     input.lang === "en" ? LANDING_BEAT_SCHEMA_EN : LANDING_BEAT_SCHEMA;
   const beatSchema = input.lang === "en" ? BEAT_SCHEMA_EN : BEAT_SCHEMA;
+  // oxlint-disable-next-line typescript/no-deprecated -- generateObject → generateText+output est une migration à part (schéma épinglé par test:coherence), pas un correctif de lint.
   const { object, usage } = await generateObject({
     model: anthropic(config.storyModel),
     prompt: buildPrompt(input, corrections, dropCustomPrompt),
@@ -761,7 +762,7 @@ export async function generateStoryArc(
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const startedAt = Date.now();
     try {
-      // oxlint-disable-next-line no-await-in-loop -- retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
+      // oxlint-disable-next-line no-await-in-loop, typescript/no-deprecated -- retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente ; generateObject → generateText+output est une migration à part (schéma épinglé par test:coherence).
       const { object, usage } = await generateObject({
         // The arc gates the child-facing opening beat: a hung call must never
         // hold the waiting screen. Per-attempt cap → worst case ~30s, then the

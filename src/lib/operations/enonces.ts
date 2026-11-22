@@ -255,6 +255,7 @@ export function varianteDuJour(
   let h = 0;
   for (let i = 0; i < graine.length; i += 1) {
     // Petit hachage polynomial sans bitwise (h reste < 2^32, exact en double).
+    // oxlint-disable-next-line unicorn/prefer-code-point -- le hachage porte sur les unités UTF-16 : codePointAt changerait l'énoncé tiré du jour (épinglé par test:operations).
     h = (h * 31 + graine.charCodeAt(i)) % 4_294_967_296;
   }
   return h % count;

@@ -1,6 +1,6 @@
 /**
  * shadcn/ui `sidebar` — variante BASE (registre `base-nova`, primitives
- * @base-ui/react : `use-render` + `merge-props`), recopiée via le CLI
+ * `@base-ui/react` : `use-render` + `merge-props`), recopiée via le CLI
  * (`bunx shadcn add sidebar`, alias réécrits en `~/…` par components.json)
  * puis adaptée au projet :
  *  - `"use client"` retiré : TanStack Start, pas de RSC (aucun fichier du
@@ -118,7 +118,11 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
+    if (isMobile) {
+      setOpenMobile((open) => !open);
+    } else {
+      setOpen((open) => !open);
+    }
   }, [isMobile, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
@@ -566,6 +570,7 @@ function SidebarMenuButton({
   }
 
   if (typeof tooltip === "string") {
+    // oxlint-disable-next-line no-param-reassign -- stock shadcn code, kept as the registry ships it.
     tooltip = {
       children: tooltip,
     };

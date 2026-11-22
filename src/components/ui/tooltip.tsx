@@ -1,6 +1,6 @@
 /**
  * shadcn/ui `tooltip` — variante BASE (registre `base-nova`, primitives
- * @base-ui/react/tooltip), recopiée via le CLI (alias réécrits en `~/…` par
+ * `@base-ui/react/tooltip`), recopiée via le CLI (alias réécrits en `~/…` par
  * components.json) puis adaptée au projet :
  *  - `"use client"` retiré : TanStack Start, pas de RSC ;
  *  - audit des variantes `data-*` : `data-open:`/`data-closed:` sont des

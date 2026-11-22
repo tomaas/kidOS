@@ -66,7 +66,11 @@ export function Stepper({ current, progress, onJump }: StepperProps) {
                   !(reachable || isCurrent) && "opacity-40"
                 )}
                 disabled={!tappable}
-                onClick={() => tappable && onJump(meta.step)}
+                onClick={() => {
+                  if (tappable) {
+                    onJump(meta.step);
+                  }
+                }}
                 type="button"
               >
                 <span aria-hidden="true" className="relative">

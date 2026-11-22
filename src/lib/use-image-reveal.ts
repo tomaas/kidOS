@@ -100,12 +100,12 @@ function preloadImage(src: string): Promise<void> {
     return img.decode();
   }
   return new Promise<void>((resolve, reject) => {
-    img.onload = () => {
+    img.addEventListener("load", () => {
       resolve();
-    };
-    img.onerror = () => {
+    });
+    img.addEventListener("error", () => {
       reject(new Error("image load failed"));
-    };
+    });
   });
 }
 
@@ -198,6 +198,7 @@ export function useImageReveal({
       console.log("[stories] client image fetch START", { resetKey });
       promise = fetchRef.current();
       inFlightFetches.set(dedupeKey, promise);
+      // oxlint-disable-next-line typescript/no-floating-promises, promise/catch-or-return -- dedupe-map cleanup only; the fetch's outcome is handled by the .then/.catch chain below.
       promise.finally(() => inFlightFetches.delete(dedupeKey));
     } else {
       // NON-OWNER: attach to the same promise — no second billed call.
@@ -253,7 +254,7 @@ export function useImageReveal({
           }
         }
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         console.error("[stories] image reveal failed (fetch/server):", error);
         if (!unmounted) {
           // The fetch itself rejected (network/server) → a real failure. (If the

@@ -2,13 +2,8 @@ import { useDroppable } from "@dnd-kit/core";
 
 import { cn } from "~/lib/cn";
 import { formatMessage, useMessages } from "~/lib/i18n";
-import {
-  type Grille,
-  type GrilleStateLike,
-  isGivenCell,
-  REGIONS,
-  type Taille,
-} from "~/lib/sudoku";
+import { isGivenCell, REGIONS } from "~/lib/sudoku";
+import type { Grille, GrilleStateLike, Taille } from "~/lib/sudoku";
 
 /**
  * La grille de sudoku à l'écran — même philosophie d'« écriture libre » que

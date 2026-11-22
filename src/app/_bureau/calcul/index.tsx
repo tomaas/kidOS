@@ -62,11 +62,11 @@ function withTimeout<T>(
 ): Promise<T> {
   return Promise.race([
     promise.catch(() => fallback),
-    new Promise<T>((resolve) =>
+    new Promise<T>((resolve) => {
       setTimeout(() => {
         resolve(fallback);
-      }, ms)
-    ),
+      }, ms);
+    }),
   ]);
 }
 

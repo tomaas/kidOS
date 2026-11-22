@@ -117,6 +117,73 @@ export default defineConfig({
     // WHY: adding the `u` flag changes regex semantics (escapes, character classes, `.` over surrogate pairs) in the
     // French text pipeline (reading aids, validators) that the golden tests pin.
     "require-unicode-regexp": "off",
+
+    // ── Oxlint-only rules left after the safe fixes: opted out rather than hand-fixed ──
+    // Each would need a behaviour change or churn many files for a style preference; a candidate for a follow-up.
+
+    // WHY: ~64 sites read untyped data (localStorage JSON, env strings, SQLite rows, test fixtures) through a cast;
+    // replacing each cast with runtime validation changes behaviour on malformed data. Biome had no equivalent.
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/no-unsafe-assignment": "off",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/no-unsafe-argument": "off",
+    "typescript/no-unsafe-return": "off",
+    "typescript/no-unsafe-call": "off",
+    // WHY: flags callbacks whose return value is discarded anyway (`.finally(() => map.delete(k))`,
+    // `onClick={() => ok && go()}`): 32 sites in 21 files, no behaviour at stake.
+    "typescript/strict-void-return": "off",
+    // WHY: React ignores an event handler's return value, so an async onClick/onSubmit handler is the idiom; the
+    // other checks (conditionals, spreads, arguments) stay on.
+    "typescript/no-misused-promises": [
+      "error",
+      { checksVoidReturn: { attributes: false } },
+    ],
+    // WHY: kidOS writes files top-down (component first, its helpers below); hoisted `function` declarations and
+    // reads inside function bodies are safe, and same-scope TDZ uses are still reported (tsc: TS2448).
+    "no-use-before-define": ["error", { functions: false, variables: false }],
+    // WHY: React Compiler diagnostics (kidOS does not use the compiler): resolving them means restructuring effects
+    // and state, a behaviour change; React findings on src/app + src/components are step 2 of #thread-1213.
+    "react/set-state-in-effect": "off",
+    "react/no-deriving-state-in-effects": "off",
+    "react/exhaustive-effect-dependencies": "off",
+    "react/refs": "off",
+    "react/invariant": "off",
+    "react/todo": "off",
+    // WHY: style-only (state naming / destructuring); 2 of the 4 hits are stock shadcn sidebar code kept verbatim.
+    "react/hook-use-state": "off",
+    // WHY: React effects return a cleanup only on the branch that set something up; that is the React contract.
+    "typescript/consistent-return": "off",
+    // WHY: a `default` branch is the deliberate fallback (e.g. optional wizard steps never block).
+    "typescript/switch-exhaustiveness-check": [
+      "error",
+      { considerDefaultExhaustiveForUnions: true },
+    ],
+    // WHY: its suggestion (`x!`) is forbidden by typescript/no-non-null-assertion: the two rules contradict.
+    "typescript/non-nullable-type-assertion-style": "off",
+    // WHY: `.sort()` / `.reverse()` run on local copies; the ES2023 `toSorted` / `toReversed` would only raise the
+    // browser floor of the family's devices.
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    // WHY: promisifying callback APIs (timers, Image load, child processes) needs `new Promise`.
+    "promise/avoid-new": "off",
+    // WHY: side-effect `.then` callbacks at the end of a chain return nothing on purpose.
+    "promise/always-return": "off",
+    // WHY: style-only (13 comments that sit on the line they explain).
+    "no-inline-comments": "off",
+    // WHY: style-only (helpers kept next to the component or test that uses them, e.g. the tray scenes' shapes).
+    "unicorn/consistent-function-scoping": "off",
+    // WHY: style-only (`import { join } from "node:path"` vs a default import).
+    "unicorn/import-style": "off",
+    // WHY: style-only (regexes of the pinned French text pipeline keep numbered groups).
+    "prefer-named-capture-group": "off",
+    // WHY: style-only (`.then(ok, fail)` / `.catch(cb)` where a callback is clearer).
+    "promise/prefer-await-to-callbacks": "off",
+    // WHY: style-only (`const [, , x] = argv` in tests).
+    "unicorn/no-unreadable-array-destructuring": "off",
+    // WHY: style-only (`forEach` in the prompt builders that the golden tests pin byte-for-byte).
+    "unicorn/no-array-for-each": "off",
+    // WHY: style-only (`new Array(n).fill(x)` in the sudoku grids and reading-aids masks).
+    "unicorn/no-new-array": "off",
   },
   overrides: [
     {

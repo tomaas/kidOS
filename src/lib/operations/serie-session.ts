@@ -77,6 +77,7 @@ function readRaw(storage: SerieStorage, key: string): string | null {
   }
 }
 
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- T names the shape the caller expects from the stored JSON (an unchecked cast, as before).
 function readJson<T>(storage: SerieStorage, key: string): T | null {
   try {
     const raw = storage.getItem(key);
