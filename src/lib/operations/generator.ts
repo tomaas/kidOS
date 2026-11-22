@@ -10,11 +10,11 @@
  *    un nombre borné d'essais — jamais de boucle infinie.
  */
 
-import {
-  type GeneratedOperation,
-  type GenerationConstraints,
-  MAX_RESULT,
-  type Quota,
+import { MAX_RESULT } from "~/lib/operations/types";
+import type {
+  GeneratedOperation,
+  GenerationConstraints,
+  Quota,
 } from "~/lib/operations/types";
 
 export class UnsatisfiableConstraintError extends Error {

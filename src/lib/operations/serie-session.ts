@@ -17,22 +17,25 @@
  */
 
 import { newSerieSeed } from "~/lib/operations/generator";
-import { layoutOperation, type OperationLayout } from "~/lib/operations/layout";
+import { layoutOperation } from "~/lib/operations/layout";
+import type { OperationLayout } from "~/lib/operations/layout";
 import {
   FAMILLES,
   resolvePalierForFamille,
 } from "~/lib/operations/progression";
 import {
   bridgeLegacySerie,
-  type FamilySettings,
   fingerprintOps,
   isResumableSerie,
   LEGACY_SERIE_STATE_KEY,
   normalizeFamilySettings,
-  type SerieEntriesLike,
-  type SerieStateLike,
   safeGenerateSerie,
   serieStorageKeyOf,
+} from "~/lib/operations/settings";
+import type {
+  FamilySettings,
+  SerieEntriesLike,
+  SerieStateLike,
 } from "~/lib/operations/settings";
 import type { Operation, Palier } from "~/lib/operations/types";
 
@@ -53,8 +56,12 @@ export interface SerieStorage {
 export function browserSerieStorage(): SerieStorage {
   return {
     getItem: (key) => window.localStorage.getItem(key),
-    removeItem: (key) => window.localStorage.removeItem(key),
-    setItem: (key, value) => window.localStorage.setItem(key, value),
+    removeItem: (key) => {
+      window.localStorage.removeItem(key);
+    },
+    setItem: (key, value) => {
+      window.localStorage.setItem(key, value);
+    },
   };
 }
 

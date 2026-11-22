@@ -1,6 +1,7 @@
 import { Colophon } from "~/components/printable-story";
 import { useLocale, useMessages } from "~/lib/i18n";
-import { type Grille, REGIONS, type Taille } from "~/lib/sudoku";
+import { REGIONS } from "~/lib/sudoku";
+import type { Grille, Taille } from "~/lib/sudoku";
 
 /**
  * Print-only A5 sheet of the currently open sudoku — the paper side of the

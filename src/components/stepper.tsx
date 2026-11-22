@@ -2,13 +2,8 @@ import { Check } from "lucide-react";
 
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
-import {
-  canJumpTo,
-  isStepCompleted,
-  WIZARD_STEPS,
-  type WizardProgress,
-  type WizardStep,
-} from "~/lib/wizard-steps";
+import { canJumpTo, isStepCompleted, WIZARD_STEPS } from "~/lib/wizard-steps";
+import type { WizardProgress, WizardStep } from "~/lib/wizard-steps";
 
 interface StepperProps {
   current: WizardStep;

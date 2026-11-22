@@ -1,9 +1,6 @@
 import { useLocale } from "~/lib/i18n";
-import {
-  type EnonceEntities,
-  enonceFor,
-  layoutOperation,
-} from "~/lib/operations";
+import { enonceFor, layoutOperation } from "~/lib/operations";
+import type { EnonceEntities } from "~/lib/operations";
 import type { GeneratedOperation } from "~/lib/operations/types";
 
 import { Colophon } from "./printable-story";

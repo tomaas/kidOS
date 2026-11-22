@@ -35,18 +35,15 @@ import {
   countSolutions,
   fingerprintGivens,
   GENEROSITES,
-  type Generosite,
   GIVENS_RANGES,
-  type Grille,
   generateSudoku,
-  type Puzzle,
   REGIONS,
   regionIndex,
   solveWithTier,
   TAILLES,
-  type Taille,
   TIER_BY_GENEROSITE,
 } from "~/lib/sudoku";
+import type { Generosite, Grille, Puzzle, Taille } from "~/lib/sudoku";
 
 let failures = 0;
 function check(name: string, ok: boolean, detail?: string) {

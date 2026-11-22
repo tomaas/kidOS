@@ -73,7 +73,9 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
               alt=""
               className="size-full object-cover"
               height={176}
-              onError={() => setImageCassee(true)}
+              onError={() => {
+                setImageCassee(true);
+              }}
               src={portrait.imagePath}
               width={176}
             />

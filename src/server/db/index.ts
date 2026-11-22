@@ -61,7 +61,7 @@ if (!process.env.SKIP_ENV_VALIDATION) {
       // load) — treat as "everything pending" and snapshot it.
     }
     const journal = JSON.parse(
-      readFileSync(join("drizzle", "meta", "_journal.json"), "utf8")
+      readFileSync(join("drizzle", "meta", "_journal.json"), "utf-8")
     ) as { entries: unknown[] };
     if (journal.entries.length > applied) {
       copyFileSync(dbFilePath, `${dbFilePath}.pre-migrate`);

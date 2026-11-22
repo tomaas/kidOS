@@ -6,11 +6,14 @@
  * jamais une exception.
  */
 
-import { createContext, type ReactNode, useContext } from "react";
+import { createContext, useContext } from "react";
+import type { ReactNode } from "react";
 
-import { DEFAULT_LOCALE, type Locale } from "./locale";
+import { DEFAULT_LOCALE } from "./locale";
+import type { Locale } from "./locale";
 import { en } from "./messages/en";
-import { fr, type Messages } from "./messages/fr";
+import { fr } from "./messages/fr";
+import type { Messages } from "./messages/fr";
 
 export const MESSAGES: Record<Locale, Messages> = { en, fr };
 

@@ -22,14 +22,8 @@ import {
   TIER_BY_GENEROSITE,
 } from "~/lib/sudoku/progression";
 import { countSolutions, solveWithTier } from "~/lib/sudoku/solver";
-import {
-  type Generosite,
-  type Grille,
-  type Puzzle,
-  REGIONS,
-  regionIndex,
-  type Taille,
-} from "~/lib/sudoku/types";
+import { REGIONS, regionIndex } from "~/lib/sudoku/types";
+import type { Generosite, Grille, Puzzle, Taille } from "~/lib/sudoku/types";
 
 /** Seed de grille fraîche — même horloge que les séries de calcul. */
 export function newSudokuSeed(): number {
@@ -136,7 +130,7 @@ function digHoles(
 ): Grille {
   const tier = TIER_BY_GENEROSITE[generosite];
   const { cible } = GIVENS_RANGES[taille][generosite];
-  const givens = solution.slice();
+  const givens = [...solution];
   let count = givens.length;
   const indices = Array.from({ length: givens.length }, (_, i) => i);
   for (let pass = 0; pass < DIG_PASSES; pass += 1) {
@@ -195,7 +189,7 @@ export function generateSudoku(
     return {
       fingerprint: fingerprintGivens(solution),
       generosite: g,
-      givens: solution.slice(),
+      givens: [...solution],
       seed,
       solution,
       taille,

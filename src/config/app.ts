@@ -16,7 +16,8 @@
  * pour le colophon imprimé et le titre de repli.
  */
 
-import { type Branding, buildBranding } from "~/lib/i18n";
+import { buildBranding } from "~/lib/i18n";
+import type { Branding } from "~/lib/i18n";
 
 /** La source de marque BRUTE ("" = non défini) — miroir structurel de
  * `BrandingConfig` (server/app-config.ts), défini localement pour qu'un

@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-import {
-  type ImageResult,
-  type ImageStatus,
-  resolveStoredImagePath,
-} from "~/server/providers/types";
+import { resolveStoredImagePath } from "~/server/providers/types";
+import type { ImageResult, ImageStatus } from "~/server/providers/types";
 
 /**
  * Wait for a beat/story's illustration before revealing its text + image
@@ -103,8 +100,12 @@ function preloadImage(src: string): Promise<void> {
     return img.decode();
   }
   return new Promise<void>((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error("image load failed"));
+    img.onload = () => {
+      resolve();
+    };
+    img.onerror = () => {
+      reject(new Error("image load failed"));
+    };
   });
 }
 
@@ -244,16 +245,16 @@ export function useImageReveal({
             setImageStatus("ready");
             setRevealed(true);
           }
-        } catch (err) {
-          console.error("[stories] image reveal failed (decode):", err);
+        } catch (error) {
+          console.error("[stories] image reveal failed (decode):", error);
           if (!unmounted) {
             setImageStatus("failed");
             setRevealed(true);
           }
         }
       })
-      .catch((err) => {
-        console.error("[stories] image reveal failed (fetch/server):", err);
+      .catch((error) => {
+        console.error("[stories] image reveal failed (fetch/server):", error);
         if (!unmounted) {
           // The fetch itself rejected (network/server) → a real failure. (If the
           // beat was already revealed by the timeout, this just settles its

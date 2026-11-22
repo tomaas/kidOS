@@ -110,7 +110,9 @@ function DigitKey({
         "touch-none",
         isDragging && "opacity-40"
       )}
-      onClick={() => onDigit(digit)}
+      onClick={() => {
+        onDigit(digit);
+      }}
       ref={setNodeRef}
       variant="outline"
       {...listeners}

@@ -17,11 +17,8 @@
 
 import { useMemo } from "react";
 
-import {
-  type AnnotatedToken,
-  annotateParagraph,
-  type WordToken,
-} from "~/lib/reading-aids";
+import { annotateParagraph } from "~/lib/reading-aids";
+import type { AnnotatedToken, WordToken } from "~/lib/reading-aids";
 
 // Split into alternating word / whitespace tokens, keeping separators.
 const WHITESPACE_SPLIT = /(\s+)/;

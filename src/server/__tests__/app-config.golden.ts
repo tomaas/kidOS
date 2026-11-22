@@ -208,7 +208,7 @@ if (mode === "child:db-fails") {
 
 // ── Parent ────────────────────────────────────────────────────────────────────
 
-const testsDir = dirname(fileURLToPath(import.meta.url));
+const testsDir = import.meta.dirname;
 const repoRoot = join(testsDir, "..", "..", "..");
 const thisFile = join(testsDir, "app-config.golden.ts");
 
@@ -238,7 +238,7 @@ function runChild(childMode: string, env: Record<string, string>) {
   Object.assign(childEnv, env);
   const result = spawnSync("bun", [thisFile, childMode], {
     cwd: repoRoot,
-    encoding: "utf8",
+    encoding: "utf-8",
     env: childEnv,
   });
   return {
@@ -516,7 +516,7 @@ check(
 {
   const source = readFileSync(
     join(repoRoot, "src", "server", "app-config.ts"),
-    "utf8"
+    "utf-8"
   );
   const topLevelDbImport = /^import[^;]*from\s+["']~\/server\/db["']/m.test(
     source
@@ -799,7 +799,9 @@ async function bodyOf(response: Response): Promise<string> {
         [thisFile, "child:writer", keysCsv, prefix, "25"],
         { cwd: repoRoot, env: childEnv, stdio: "ignore" }
       );
-      child.on("exit", (code) => resolve(code ?? 1));
+      child.on("exit", (code) => {
+        resolve(code ?? 1);
+      });
     });
   const [codeA, codeB] = await Promise.all([
     spawnWriter("text:story-model,image:model", "a"),

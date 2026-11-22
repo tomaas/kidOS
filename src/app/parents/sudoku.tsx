@@ -4,12 +4,8 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
-import {
-  GENEROSITES,
-  type Generosite,
-  TAILLES,
-  type Taille,
-} from "~/lib/sudoku";
+import { GENEROSITES, TAILLES } from "~/lib/sudoku";
+import type { Generosite, Taille } from "~/lib/sudoku";
 import {
   getSudokuSettingsFn,
   saveSudokuSettingsFn,
@@ -180,9 +176,9 @@ function ParentsSudokuForm({
                   checked={card.active}
                   className="size-4 accent-primary"
                   disabled={lastActive}
-                  onChange={(e) =>
-                    setCard(taille, { active: e.target.checked })
-                  }
+                  onChange={(e) => {
+                    setCard(taille, { active: e.target.checked });
+                  }}
                   type="checkbox"
                 />
                 <span className="text-lg font-semibold">
@@ -205,7 +201,9 @@ function ParentsSudokuForm({
                             checked={card.generosite === generosite}
                             className="size-4 accent-primary"
                             name={`generosite-${taille}`}
-                            onChange={() => setCard(taille, { generosite })}
+                            onChange={() => {
+                              setCard(taille, { generosite });
+                            }}
                             type="radio"
                           />
                           <span>

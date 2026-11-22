@@ -3,7 +3,8 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "~/server/db";
-import { type DbElement, dbElements } from "~/server/db/schema";
+import { dbElements } from "~/server/db/schema";
+import type { DbElement } from "~/server/db/schema";
 import { seedElementsIfNeeded } from "~/server/elements-store";
 
 /**
@@ -15,7 +16,7 @@ import { seedElementsIfNeeded } from "~/server/elements-store";
 export const listElementsFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<DbElement[]> => {
     await seedElementsIfNeeded();
-    return db
+    return await db
       .select()
       .from(dbElements)
       .where(isNull(dbElements.deletedAt))

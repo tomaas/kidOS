@@ -17,7 +17,8 @@
 import { palette } from "~/config/style";
 import { cn } from "~/lib/cn";
 import { formatMessage, useMessages } from "~/lib/i18n";
-import { REGIONS, type Taille } from "~/lib/sudoku";
+import { REGIONS } from "~/lib/sudoku";
+import type { Taille } from "~/lib/sudoku";
 
 export interface SudokuTrayInfo {
   /** Grille en cours reprenable (prédicat complet, jamais « la clé existe »). */
@@ -154,7 +155,9 @@ function Tray({
         // « Sorti » : décalage + ombre douce UNIQUEMENT.
         tray.sorti && cn(SORTI_SHIFT_CLASS, "shadow-md")
       )}
-      onClick={() => onTake(tray.taille)}
+      onClick={() => {
+        onTake(tray.taille);
+      }}
       type="button"
     >
       {/* La scène ne se nomme pas à l'écran ; elle est muette pour ARIA. */}

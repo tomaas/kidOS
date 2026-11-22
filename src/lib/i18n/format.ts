@@ -10,5 +10,5 @@ export function formatMessage(
   template: string,
   vars: Record<string, string>
 ): string {
-  return template.replace(/\{(\w+)\}/g, (_, nom: string) => vars[nom] ?? "");
+  return template.replaceAll(/\{(\w+)\}/g, (_, nom: string) => vars[nom] ?? "");
 }

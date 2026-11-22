@@ -77,13 +77,17 @@ function ParentsElementsPage() {
       {editing ? (
         <ElementForm
           initial={editing === "new" ? undefined : editing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+          }}
           onSubmit={handleSubmit}
         />
       ) : (
         <Button
           className="gap-2"
-          onClick={() => setEditing("new")}
+          onClick={() => {
+            setEditing("new");
+          }}
           type="button"
         >
           <Plus className="size-5" />
@@ -111,7 +115,9 @@ function ParentsElementsPage() {
                 aria-label={formatMessage(m.parents.entites.ariaModifier, {
                   label: element.label,
                 })}
-                onClick={() => setEditing(element)}
+                onClick={() => {
+                  setEditing(element);
+                }}
                 size="icon"
                 type="button"
                 variant="ghost"

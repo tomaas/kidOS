@@ -7,7 +7,8 @@ import {
   GENERATED_IMAGE_WIDTH,
 } from "~/lib/generated-image";
 import { useMessages } from "~/lib/i18n";
-import { generateTestImageFn, type TestImageResult } from "~/server/functions";
+import { generateTestImageFn } from "~/server/functions";
+import type { TestImageResult } from "~/server/functions";
 
 /**
  * Parent-only test playground (lives under the /parents/image-model chooser):
@@ -93,8 +94,8 @@ export function ImageTestPlayground({
       });
       // Prepend so the newest sits on top; prior outputs stay for comparison.
       setResults((prev) => [{ ...result, key: Date.now() }, ...prev]);
-    } catch (err) {
-      console.error("[stories] test image request failed:", err);
+    } catch (error) {
+      console.error("[stories] test image request failed:", error);
       setResults((prev) => [
         {
           imagePath: null,
@@ -124,7 +125,9 @@ export function ImageTestPlayground({
         <textarea
           className="min-h-32 w-full rounded-2xl border bg-card p-4 text-base leading-relaxed"
           id={promptId}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={(e) => {
+            setPrompt(e.target.value);
+          }}
           value={prompt}
         />
       </div>
@@ -137,7 +140,9 @@ export function ImageTestPlayground({
           <select
             className="block rounded-2xl border bg-card p-3 text-base"
             id={modelId}
-            onChange={(e) => setTestModel(e.target.value)}
+            onChange={(e) => {
+              setTestModel(e.target.value);
+            }}
             value={testModel}
           >
             {IMAGE_MODELS.map((option) => (

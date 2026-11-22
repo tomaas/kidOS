@@ -24,11 +24,8 @@
  */
 
 import { clampFenetrePosition, reclampCommitted } from "~/lib/bureau/clamp";
-import {
-  type EtatIcone,
-  type EvenementIcone,
-  transitionIcone,
-} from "~/lib/bureau/icone";
+import { transitionIcone } from "~/lib/bureau/icone";
+import type { EtatIcone, EvenementIcone } from "~/lib/bureau/icone";
 import { matchesChildName } from "~/lib/bureau/identite";
 import {
   estSessionOuverte,

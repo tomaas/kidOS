@@ -77,7 +77,9 @@ export function DoudouForm({ initial, onSubmit, onCancel }: DoudouFormProps) {
         <Input
           className={FIELD_CLASS}
           id="doudou-label"
-          onChange={(e) => setLabel(e.target.value)}
+          onChange={(e) => {
+            setLabel(e.target.value);
+          }}
           placeholder={m.parents.formulaires.placeholders.doudou.nom}
           value={label}
         />
@@ -91,7 +93,9 @@ export function DoudouForm({ initial, onSubmit, onCancel }: DoudouFormProps) {
           className={`w-24 ${FIELD_CLASS}`}
           id="doudou-emoji"
           maxLength={8}
-          onChange={(e) => setEmoji(e.target.value)}
+          onChange={(e) => {
+            setEmoji(e.target.value);
+          }}
           placeholder="🐰"
           value={emoji}
         />
@@ -104,7 +108,9 @@ export function DoudouForm({ initial, onSubmit, onCancel }: DoudouFormProps) {
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="doudou-hint"
-          onChange={(e) => setPromptHint(e.target.value)}
+          onChange={(e) => {
+            setPromptHint(e.target.value);
+          }}
           placeholder={
             m.parents.formulaires.placeholders.doudou.descriptionHistoire
           }
@@ -119,7 +125,9 @@ export function DoudouForm({ initial, onSubmit, onCancel }: DoudouFormProps) {
         <Textarea
           className={`min-h-24 ${FIELD_CLASS}`}
           id="doudou-image-hint"
-          onChange={(e) => setImageHint(e.target.value)}
+          onChange={(e) => {
+            setImageHint(e.target.value);
+          }}
           placeholder={
             m.parents.formulaires.placeholders.doudou.descriptionIllustration
           }
@@ -134,7 +142,9 @@ export function DoudouForm({ initial, onSubmit, onCancel }: DoudouFormProps) {
         <Input
           className={FIELD_CLASS}
           id="doudou-image"
-          onChange={(e) => setImagePath(e.target.value)}
+          onChange={(e) => {
+            setImagePath(e.target.value);
+          }}
           placeholder={m.parents.formulaires.placeholders.vide}
           value={imagePath}
         />

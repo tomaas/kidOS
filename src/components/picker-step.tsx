@@ -3,7 +3,8 @@ import { Dices } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
 
-import { PickerGrid, type PickerItem } from "./picker-grid";
+import { PickerGrid } from "./picker-grid";
+import type { PickerItem } from "./picker-grid";
 
 interface PickerStepProps {
   items: PickerItem[];

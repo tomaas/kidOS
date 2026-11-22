@@ -8,7 +8,8 @@
 import { decideLiaison } from "./liaisons";
 import { silentMask } from "./silent-letters";
 import type { AnnotatedToken, LetterRun } from "./types";
-import { endsSentence, parseWord, type WordInfo } from "./word-info";
+import { endsSentence, parseWord } from "./word-info";
+import type { WordInfo } from "./word-info";
 
 // Word / whitespace splitter that keeps the separators.
 const WHITESPACE_SPLIT = /(\s+)/;

@@ -78,13 +78,17 @@ function ParentsDoudousPage() {
       {editing ? (
         <DoudouForm
           initial={editing === "new" ? undefined : editing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+          }}
           onSubmit={handleSubmit}
         />
       ) : (
         <Button
           className="gap-2"
-          onClick={() => setEditing("new")}
+          onClick={() => {
+            setEditing("new");
+          }}
           type="button"
         >
           <Plus className="size-5" />
@@ -112,7 +116,9 @@ function ParentsDoudousPage() {
                 aria-label={formatMessage(m.parents.entites.ariaModifier, {
                   label: doudou.label,
                 })}
-                onClick={() => setEditing(doudou)}
+                onClick={() => {
+                  setEditing(doudou);
+                }}
                 size="icon"
                 type="button"
                 variant="ghost"

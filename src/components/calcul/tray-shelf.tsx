@@ -39,8 +39,10 @@ import { useState } from "react";
 
 import { palette } from "~/config/style";
 import { cn } from "~/lib/cn";
-import { formatMessage, type Locale, useLocale, useMessages } from "~/lib/i18n";
-import { type Operation, varianteDuJour } from "~/lib/operations";
+import { formatMessage, useLocale, useMessages } from "~/lib/i18n";
+import type { Locale } from "~/lib/i18n";
+import { varianteDuJour } from "~/lib/operations";
+import type { Operation } from "~/lib/operations";
 
 export interface TrayInfo {
   op: Operation;
@@ -615,7 +617,9 @@ function Tray({
         // « Sorti » : décalage + ombre douce UNIQUEMENT (D-1A/F3).
         tray.sorti && cn(SORTI_SHIFT_CLASS, "shadow-md")
       )}
-      onClick={() => onTake(tray.op)}
+      onClick={() => {
+        onTake(tray.op);
+      }}
       type="button"
     >
       {/* La scène ne se nomme pas à l'écran ; elle est muette pour ARIA. */}

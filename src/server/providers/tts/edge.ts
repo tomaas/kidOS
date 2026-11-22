@@ -45,6 +45,6 @@ export const edgeTtsProvider: TtsProvider = {
       throw new Error("Aucune donnée audio reçue de msedge-tts.");
     }
 
-    return saveMedia(`${generateId("audio")}.mp3`, bytes);
+    return await saveMedia(`${generateId("audio")}.mp3`, bytes);
   },
 };

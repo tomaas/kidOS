@@ -120,5 +120,5 @@ export async function generateImage(
 
   const ext = imageFile.mediaType === "image/jpeg" ? "jpg" : "png";
   const filename = `${generateId("img")}.${ext}`;
-  return saveMedia(filename, imageFile.uint8Array);
+  return await saveMedia(filename, imageFile.uint8Array);
 }

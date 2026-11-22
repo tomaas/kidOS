@@ -45,26 +45,34 @@ function finalConsonantSilent(seg: string): boolean {
   const last: string | undefined = seg.at(-1);
   const beforeLast = seg.at(-2);
   switch (last) {
-    case "s":
+    case "s": {
       return !S_NEVER_MARK.has(seg);
-    case "t":
+    }
+    case "t": {
       // -ct and -st finals are unpredictable (direct vs respect, ouest) —
       // never marked outside the lexicons.
       return !T_PRONOUNCED.has(seg) && beforeLast !== "c" && beforeLast !== "s";
-    case "d":
+    }
+    case "d": {
       return !D_PRONOUNCED.has(seg);
-    case "x":
+    }
+    case "x": {
       return !X_PRONOUNCED.has(seg);
-    case "z":
+    }
+    case "z": {
       return !Z_PRONOUNCED.has(seg);
-    case "p":
+    }
+    case "p": {
       // Inverted default: loanwords pronounce a final p (stop, cap), so
       // only the known-silent allowlist is grayed.
       return P_SILENT.has(seg);
-    case "g":
+    }
+    case "g": {
       return G_SILENT_PATTERN.test(seg);
-    default:
+    }
+    default: {
       return false;
+    }
   }
 }
 

@@ -16,12 +16,10 @@
 import {
   advanceSerie,
   browserSerieStorage,
-  type CellRef,
   clearSerie,
   DEFAULT_SERIE_SIZE,
   defaultFamilySettings,
   emptyEntries,
-  type FamilySettings,
   fingerprintOps,
   finishCurrent,
   isCellRef,
@@ -33,14 +31,18 @@ import {
   readResumableSerie,
   resolvePalierForFamille,
   SETTINGS_CACHE_KEY,
-  type SerieStateLike,
-  type SerieStorage,
   safeGenerateSerie,
   saveSerie,
   serieStorageKeyOf,
   shelfTrays,
   takeTray,
   writeCell,
+} from "~/lib/operations";
+import type {
+  CellRef,
+  FamilySettings,
+  SerieStateLike,
+  SerieStorage,
 } from "~/lib/operations";
 
 let failures = 0;

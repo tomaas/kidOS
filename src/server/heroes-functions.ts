@@ -3,7 +3,8 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "~/server/db";
-import { type DbHero, heroes } from "~/server/db/schema";
+import { heroes } from "~/server/db/schema";
+import type { DbHero } from "~/server/db/schema";
 import { seedHeroesIfNeeded } from "~/server/heroes-store";
 
 /**
@@ -15,7 +16,7 @@ import { seedHeroesIfNeeded } from "~/server/heroes-store";
 export const listHeroesFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<DbHero[]> => {
     await seedHeroesIfNeeded();
-    return db
+    return await db
       .select()
       .from(heroes)
       .where(isNull(heroes.deletedAt))

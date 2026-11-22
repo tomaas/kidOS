@@ -90,8 +90,9 @@ export const generateTestImageFn = createServerFn({ method: "POST" })
       // Non-silent: log the real reason (model + cause) so the operator sees a
       // Gemini billing/quota denial; the parent gets a calm inline message.
       console.error(
-        `[stories] test image generation FAILED (model=${model}, ms=${ms}): ` +
-          (error instanceof Error ? error.message : String(error))
+        `[stories] test image generation FAILED (model=${model}, ms=${ms}): ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
       return { imagePath: null, imageStatus: "failed", model, ms };
     }

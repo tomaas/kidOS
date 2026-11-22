@@ -6,7 +6,8 @@ import { Button } from "~/components/ui/button";
 import { useMessages } from "~/lib/i18n";
 import { useImageModel } from "~/lib/use-image-model";
 import { useImageReveal } from "~/lib/use-image-reveal";
-import { type ReadingAidsFlags, useReadingAids } from "~/lib/use-reading-aids";
+import { useReadingAids } from "~/lib/use-reading-aids";
+import type { ReadingAidsFlags } from "~/lib/use-reading-aids";
 import { useReadingFont } from "~/lib/use-reading-font";
 import type { SegmentChoice, StorySegment } from "~/server/db/schema";
 import {
@@ -14,10 +15,8 @@ import {
   generateSegmentImageFn,
   retrySegmentImageFn,
 } from "~/server/dynamic-functions";
-import {
-  type ImageStatus,
-  resolveStoredImagePath,
-} from "~/server/providers/types";
+import { resolveStoredImagePath } from "~/server/providers/types";
+import type { ImageStatus } from "~/server/providers/types";
 
 import { HighlightableText } from "./highlightable-text";
 import { ImageSlot } from "./image-slot";
@@ -65,7 +64,9 @@ function ChoiceButtons({
           className="flex min-h-28 items-center justify-center rounded-3xl border-2 border-border bg-card p-6 text-center text-2xl leading-snug font-semibold transition-all hover:-translate-y-0.5 hover:border-primary/50 disabled:opacity-60"
           disabled={disabled}
           key={choice.id}
-          onClick={() => onChoose(choice.id)}
+          onClick={() => {
+            onChoose(choice.id);
+          }}
           type="button"
         >
           {choice.label}
@@ -457,10 +458,10 @@ export function DynamicStoryPlayer({
         setPending(false);
         return;
       }
-    } catch (err) {
+    } catch (error) {
       console.error(
         "[stories] beat continuation failed, will soft-retry:",
-        err
+        error
       );
       // Fall through to the soft retry below.
     }
@@ -637,7 +638,9 @@ function ClosingActions({
 
       <Button
         className="h-14 gap-3 rounded-2xl px-6 text-xl"
-        onClick={() => window.print()}
+        onClick={() => {
+          window.print();
+        }}
         size="lg"
         type="button"
         variant="secondary"

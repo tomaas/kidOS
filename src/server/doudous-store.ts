@@ -51,7 +51,7 @@ export async function seedDoudousIfNeeded(): Promise<void> {
  */
 export async function resolveDoudousForCreation(
   doudouIds: string[]
-): Promise<Array<{ label: string; promptHint: string; imageHint: string }>> {
+): Promise<{ label: string; promptHint: string; imageHint: string }[]> {
   const uniqueIds = [...new Set(doudouIds)];
   if (uniqueIds.length === 0) {
     return [];
@@ -63,11 +63,11 @@ export async function resolveDoudousForCreation(
     .where(inArray(doudous.id, uniqueIds));
   const byId = new Map(rows.map((r) => [r.id, r]));
   const legacyById = new Map(legacyDoudous.map((d) => [d.id, d]));
-  const resolved: Array<{
+  const resolved: {
     label: string;
     promptHint: string;
     imageHint: string;
-  }> = [];
+  }[] = [];
   for (const id of uniqueIds) {
     const row = byId.get(id);
     if (row) {

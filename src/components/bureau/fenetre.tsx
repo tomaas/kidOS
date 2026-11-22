@@ -33,29 +33,20 @@
 
 import {
   DndContext,
-  type DragEndEvent,
   PointerSensor,
   useDraggable,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
-import {
-  type ReactNode,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import type { ReactNode } from "react";
 
 import { Button } from "~/components/ui/button";
-import {
-  clampFenetrePosition,
-  type Position,
-  reclampCommitted,
-  type Taille,
-} from "~/lib/bureau/clamp";
+import { clampFenetrePosition, reclampCommitted } from "~/lib/bureau/clamp";
+import type { Position, Taille } from "~/lib/bureau/clamp";
 import { cn } from "~/lib/cn";
 import { useMessages } from "~/lib/i18n";
 
@@ -78,7 +69,9 @@ function viewportActuel(): Taille {
 function subscribeDesktop(onChange: () => void) {
   const media = window.matchMedia(DESKTOP_QUERY);
   media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
+  return () => {
+    media.removeEventListener("change", onChange);
+  };
 }
 
 function useEstDesktop(): boolean {
@@ -135,7 +128,9 @@ export function Fenetre({ children, icone, titre }: FenetreProps) {
     // l'interlude <lg (rotation, restore) où l'écouteur était détaché.
     reclamp();
     window.addEventListener("resize", reclamp);
-    return () => window.removeEventListener("resize", reclamp);
+    return () => {
+      window.removeEventListener("resize", reclamp);
+    };
   }, [aUnePosition, estDesktop]);
 
   function handleDragStart() {

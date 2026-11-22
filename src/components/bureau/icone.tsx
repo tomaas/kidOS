@@ -51,8 +51,12 @@ export function IconeBureau({
     <div className="flex w-44 flex-col items-center" data-icone-bureau>
       <button
         className="group flex cursor-pointer flex-col items-center gap-2.5 rounded-2xl p-3 outline-none focus-visible:ring-4 focus-visible:ring-ring"
-        onClick={() => onEvenement("click")}
-        onDoubleClick={() => onEvenement("dblclick")}
+        onClick={() => {
+          onEvenement("click");
+        }}
+        onDoubleClick={() => {
+          onEvenement("dblclick");
+        }}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             // Sans preventDefault, le navigateur synthétise un click derrière

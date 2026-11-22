@@ -49,7 +49,9 @@ function ParentsImageModelPage() {
                 className={`flex w-full items-start gap-4 rounded-2xl border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/50 ${
                   selected ? "border-primary ring-2 ring-primary/40" : ""
                 }`}
-                onClick={() => setModel(option.id)}
+                onClick={() => {
+                  setModel(option.id);
+                }}
                 type="button"
               >
                 <span

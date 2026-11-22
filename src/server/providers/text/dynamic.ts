@@ -83,8 +83,9 @@ function logTextGen(
         : null;
     console.log(
       `[text-gen] kind=${kind} model=${model} attempt=${attempt} ms=${ms} ` +
-        `tokens=${inTok ?? "?"}in/${outTok ?? "?"}out` +
-        (cost ? ` cost≈$${cost}` : " cost=unknown-model")
+        `tokens=${inTok ?? "?"}in/${outTok ?? "?"}out${
+          cost ? ` cost≈$${cost}` : " cost=unknown-model"
+        }`
     );
   } catch {
     // Never let cost logging break text generation.
@@ -799,8 +800,8 @@ export async function generateStoryArc(
       dropReason = hit
         ? `arc text dropped by the safety scan (matched « ${hit} »)`
         : "arc or visual-world text was empty";
-    } catch (err) {
-      dropReason = `generation error/timeout (${err instanceof Error ? err.name : "unknown"})`;
+    } catch (error) {
+      dropReason = `generation error/timeout (${error instanceof Error ? error.name : "unknown"})`;
     }
   }
   console.warn(
@@ -860,12 +861,12 @@ export async function generateBeat(
         attempt === 0 ? undefined : lastProblems,
         lastSafetyFailed
       );
-    } catch (genErr) {
+    } catch (error) {
       // A transient generation/parse failure (e.g. generateObject "response
       // did not match schema") on ONE attempt must not abort the whole beat —
       // retry. Record it so a final hard-fail explains what happened.
       lastProblems = [
-        genErr instanceof Error ? genErr.message : "génération échouée",
+        error instanceof Error ? error.message : "génération échouée",
       ];
       lastSafetyFailed = false;
       continue;

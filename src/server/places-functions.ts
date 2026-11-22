@@ -3,7 +3,8 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "~/server/db";
-import { type DbPlace, places } from "~/server/db/schema";
+import { places } from "~/server/db/schema";
+import type { DbPlace } from "~/server/db/schema";
 import { seedPlacesIfNeeded } from "~/server/places-store";
 
 /**
@@ -14,7 +15,7 @@ import { seedPlacesIfNeeded } from "~/server/places-store";
 export const listPlacesFn = createServerFn({ method: "GET" }).handler(
   async (): Promise<DbPlace[]> => {
     await seedPlacesIfNeeded();
-    return db
+    return await db
       .select()
       .from(places)
       .where(isNull(places.deletedAt))

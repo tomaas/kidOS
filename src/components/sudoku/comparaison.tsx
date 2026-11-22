@@ -55,7 +55,9 @@ export function Comparaison({
         </Button>
         <Button
           className="gap-2 text-xl text-muted-foreground"
-          onClick={() => window.print()}
+          onClick={() => {
+            window.print();
+          }}
           type="button"
           variant="ghost"
         >

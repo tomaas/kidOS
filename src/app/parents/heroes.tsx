@@ -76,13 +76,17 @@ function ParentsHeroesPage() {
       {editing ? (
         <HeroForm
           initial={editing === "new" ? undefined : editing}
-          onCancel={() => setEditing(null)}
+          onCancel={() => {
+            setEditing(null);
+          }}
           onSubmit={handleSubmit}
         />
       ) : (
         <Button
           className="gap-2"
-          onClick={() => setEditing("new")}
+          onClick={() => {
+            setEditing("new");
+          }}
           type="button"
         >
           <Plus className="size-5" />
@@ -110,7 +114,9 @@ function ParentsHeroesPage() {
                 aria-label={formatMessage(m.parents.entites.ariaModifier, {
                   label: hero.label,
                 })}
-                onClick={() => setEditing(hero)}
+                onClick={() => {
+                  setEditing(hero);
+                }}
                 size="icon"
                 type="button"
                 variant="ghost"

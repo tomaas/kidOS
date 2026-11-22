@@ -9,10 +9,10 @@ import {
   formatMessage,
   LOCALE_LABELS,
   LOCALES,
-  type Locale,
   useLocale,
   useMessages,
 } from "~/lib/i18n";
+import type { Locale } from "~/lib/i18n";
 import type {
   AppSettingsStatus,
   SecretStatus,
@@ -203,7 +203,9 @@ function ChampSecret({
       <p className="text-sm text-muted-foreground">{etatCle}</p>
       <Input
         autoComplete="off"
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => {
+          onChange(event.target.value);
+        }}
         placeholder={m.parents.reglages.garderCle}
         type="password"
         value={value}
@@ -259,14 +261,18 @@ function ChoixBinaire({
     <LigneChamp badge={source === "default"} label={label}>
       <div className="flex gap-2">
         <Button
-          onClick={() => onChange(true)}
+          onClick={() => {
+            onChange(true);
+          }}
           size="sm"
           variant={value ? "default" : "outline"}
         >
           {labelActive}
         </Button>
         <Button
-          onClick={() => onChange(false)}
+          onClick={() => {
+            onChange(false);
+          }}
           size="sm"
           variant={value ? "outline" : "default"}
         >
@@ -297,7 +303,9 @@ function ChoixEnum<T extends string>({
         {options.map((option) => (
           <Button
             key={option.id}
-            onClick={() => onChange(option.id)}
+            onClick={() => {
+              onChange(option.id);
+            }}
             size="sm"
             variant={option.id === value ? "default" : "outline"}
           >
@@ -456,7 +464,9 @@ function SectionAtelier({ status }: { status: AppSettingsStatus }) {
         label={t.prenom}
       >
         <Input
-          onChange={(event) => setPrenom(event.target.value)}
+          onChange={(event) => {
+            setPrenom(event.target.value);
+          }}
           value={prenom}
         />
       </LigneChamp>
@@ -465,7 +475,9 @@ function SectionAtelier({ status }: { status: AppSettingsStatus }) {
         label={t.nomApp}
       >
         <Input
-          onChange={(event) => setNomApp(event.target.value)}
+          onChange={(event) => {
+            setNomApp(event.target.value);
+          }}
           value={nomApp}
         />
       </LigneChamp>
@@ -474,7 +486,9 @@ function SectionAtelier({ status }: { status: AppSettingsStatus }) {
         label={t.descriptionApp}
       >
         <Input
-          onChange={(event) => setDescriptionApp(event.target.value)}
+          onChange={(event) => {
+            setDescriptionApp(event.target.value);
+          }}
           value={descriptionApp}
         />
       </LigneChamp>
@@ -483,7 +497,9 @@ function SectionAtelier({ status }: { status: AppSettingsStatus }) {
         label={t.titreLivret}
       >
         <Input
-          onChange={(event) => setTitreLivret(event.target.value)}
+          onChange={(event) => {
+            setTitreLivret(event.target.value);
+          }}
           value={titreLivret}
         />
       </LigneChamp>
@@ -551,7 +567,9 @@ function SectionHistoires({ status }: { status: AppSettingsStatus }) {
         label={t.modele}
       >
         <Input
-          onChange={(event) => setModele(event.target.value)}
+          onChange={(event) => {
+            setModele(event.target.value);
+          }}
           value={modele}
         />
         <p className="text-xs text-muted-foreground">
@@ -638,7 +656,9 @@ function SectionImages({ status }: { status: AppSettingsStatus }) {
         label={t.modele}
       >
         <Input
-          onChange={(event) => setModele(event.target.value)}
+          onChange={(event) => {
+            setModele(event.target.value);
+          }}
           value={modele}
         />
         <p className="text-xs text-muted-foreground">

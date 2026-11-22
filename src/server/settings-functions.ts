@@ -4,24 +4,23 @@ import { z } from "zod";
 import type { BrandingSource } from "~/config/app";
 import { composeBranding } from "~/config/app";
 import type { Branding } from "~/lib/i18n";
+import { DEFAULT_LOCALE, normalizeLocale } from "~/lib/i18n/locale";
+import type { Locale } from "~/lib/i18n/locale";
 import {
-  DEFAULT_LOCALE,
-  type Locale,
-  normalizeLocale,
-} from "~/lib/i18n/locale";
-import {
-  type AppSettingsStatus,
   applySettingsPatch,
   configFromRows,
   envFallbackConfig,
   getSettingRows,
   isSecretSettingKey,
   SETTING_KEYS,
-  type SettingKey,
-  type SettingPatchOp,
   setSetting,
   settingsStatusFromRows,
   UI_LANGUAGE_KEY,
+} from "~/server/app-config";
+import type {
+  AppSettingsStatus,
+  SettingKey,
+  SettingPatchOp,
 } from "~/server/app-config";
 
 /**
@@ -110,16 +109,21 @@ const settingKeyValues = SETTING_KEYS as readonly [SettingKey, ...SettingKey[]];
 function valeurEcrivable(key: SettingKey, value: string): boolean {
   switch (key) {
     case "image:enabled":
-    case "tts:enabled":
+    case "tts:enabled": {
       return value === "true" || value === "false";
-    case "image:resolution":
+    }
+    case "image:resolution": {
       return ["512", "1K", "2K", "4K"].includes(value);
-    case "tts:provider":
+    }
+    case "tts:provider": {
       return value === "edge" || value === "elevenlabs";
-    case "story:default-lang":
+    }
+    case "story:default-lang": {
       return ["fr", "ru", "en"].includes(value);
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }
 

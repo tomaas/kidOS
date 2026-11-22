@@ -346,7 +346,7 @@ check(
     const iBeat = p.indexOf("Bout 1 :");
     const iScene = p.indexOf(`  → scène : « ${SCENE} »`);
     const iChoices = p.indexOf("  → choix proposés :");
-    return iBeat >= 0 && iScene > iBeat && iChoices > iScene;
+    return iBeat !== -1 && iScene > iBeat && iChoices > iScene;
   })()
 );
 check(

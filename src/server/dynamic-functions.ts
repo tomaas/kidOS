@@ -4,15 +4,11 @@ import { z } from "zod";
 
 import { composeBranding } from "~/config/app";
 import { resolveImageModel } from "~/config/image-models";
-import { getAppConfig, type ProviderConfig } from "~/server/app-config";
+import { getAppConfig } from "~/server/app-config";
+import type { ProviderConfig } from "~/server/app-config";
 import { db } from "~/server/db";
-import {
-  type SegmentChoice,
-  type Story,
-  type StorySegment,
-  stories,
-  storySegments,
-} from "~/server/db/schema";
+import { stories, storySegments } from "~/server/db/schema";
+import type { SegmentChoice, Story, StorySegment } from "~/server/db/schema";
 import { resolveDoudousForCreation } from "~/server/doudous-store";
 import { resolveElementsForCreation } from "~/server/elements-store";
 import { resolveHeroesForCreation } from "~/server/heroes-store";
@@ -26,11 +22,13 @@ import {
   generateStoryArc,
 } from "~/server/providers/text/dynamic";
 import {
-  type BeatHistoryEntry,
-  type DynamicBeat,
   IMAGE_FAILED_SENTINEL,
-  type ImageResult,
   resolveStoredImagePath,
+} from "~/server/providers/types";
+import type {
+  BeatHistoryEntry,
+  DynamicBeat,
+  ImageResult,
 } from "~/server/providers/types";
 import { getFrozenStoryPromptContext } from "~/server/story-context";
 
@@ -455,7 +453,7 @@ export const continueDynamicStoryFn = createServerFn({ method: "POST" })
         },
         provider
       );
-    } catch (err) {
+    } catch (error) {
       // The provider already logged the per-attempt problems.
       console.error("[stories] beat gen FAILED", {
         idx: nextIdx,
@@ -467,7 +465,7 @@ export const continueDynamicStoryFn = createServerFn({ method: "POST" })
       await db
         .update(storySegments)
         .set({
-          error: err instanceof Error ? err.message : "génération échouée",
+          error: error instanceof Error ? error.message : "génération échouée",
           status: "error",
         })
         .where(eq(storySegments.id, placeholder.id))
@@ -565,7 +563,7 @@ export const generateSegmentImageFn = createServerFn({ method: "POST" })
       console.warn("[stories] image gen deduped (already in-flight, server)", {
         key,
       });
-      return existing;
+      return await existing;
     }
     const run = generateSegmentImage(
       data.storyId,
@@ -626,7 +624,7 @@ export const retrySegmentImageFn = createServerFn({ method: "POST" })
           key,
         }
       );
-      return existing;
+      return await existing;
     }
     const run = generateSegmentImage(
       data.storyId,
@@ -785,8 +783,9 @@ async function generateSegmentImage(
     console.error(
       `[stories] segment image generation FAILED for story ${storyId} ` +
         `segment idx=${idx} (model=${model}, ` +
-        `ms=${Date.now() - startedAt}): ` +
-        (error instanceof Error ? error.message : String(error))
+        `ms=${Date.now() - startedAt}): ${
+          error instanceof Error ? error.message : String(error)
+        }`
     );
     // Persist the TERMINAL failure sentinel so this beat's image is settled:
     // future remounts / HMR reloads / reopens read it back as "failed" and never

@@ -15,11 +15,8 @@ import { useEffect, useRef, useState } from "react";
 import { APPS_BUREAU } from "~/components/bureau/apps";
 import { IconeBureau } from "~/components/bureau/icone";
 import { Button } from "~/components/ui/button";
-import {
-  type EtatIcone,
-  type EvenementIcone,
-  transitionIcone,
-} from "~/lib/bureau/icone";
+import { transitionIcone } from "~/lib/bureau/icone";
+import type { EtatIcone, EvenementIcone } from "~/lib/bureau/icone";
 import { useMessages } from "~/lib/i18n";
 
 export function Bureau({ onRanger }: { onRanger: () => void }) {
@@ -55,7 +52,9 @@ export function Bureau({ onRanger }: { onRanger: () => void }) {
       }
     }
     document.addEventListener("pointerdown", surPointeur);
-    return () => document.removeEventListener("pointerdown", surPointeur);
+    return () => {
+      document.removeEventListener("pointerdown", surPointeur);
+    };
   }, [ouverte]);
 
   function surEvenement(
@@ -76,8 +75,12 @@ export function Bureau({ onRanger }: { onRanger: () => void }) {
       // de suite ; pendaison → ré-armé après un délai généreux (filet
       // TECHNIQUE, jamais visible — si la navigation aboutit, le bureau est
       // démonté et le timer ne change plus rien).
-      reArmeRef.current = setTimeout(() => setOuverte(false), 8000);
-      navigate({ to }).catch(() => setOuverte(false));
+      reArmeRef.current = setTimeout(() => {
+        setOuverte(false);
+      }, 8000);
+      navigate({ to }).catch(() => {
+        setOuverte(false);
+      });
       return;
     }
     if (suivant === "selectionnee") {
@@ -95,7 +98,9 @@ export function Bureau({ onRanger }: { onRanger: () => void }) {
             icone={app.icone}
             key={app.id}
             libelle={m.bureau.apps[app.id]}
-            onEvenement={(evenement) => surEvenement(app.id, app.to, evenement)}
+            onEvenement={(evenement) => {
+              surEvenement(app.id, app.to, evenement);
+            }}
             selectionnee={selection === app.id}
             teinte={app.teinte}
           />

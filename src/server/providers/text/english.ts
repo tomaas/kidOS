@@ -97,7 +97,7 @@ export const STAKES_TERMS_EN = [
 ];
 
 function escapeTerm(term: string): string {
-  return term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return term.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /** Word-anchored matcher (voir l'en-tête) — renvoie les termes touchés. */

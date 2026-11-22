@@ -11,11 +11,11 @@ import { PaletteParent } from "~/components/palette-parent";
 import { Toaster } from "~/components/ui/sonner";
 import {
   buildBranding,
-  type Locale,
   LocaleProvider,
   MESSAGES,
   normalizeLocale,
 } from "~/lib/i18n";
+import type { Locale } from "~/lib/i18n";
 import { getShellContextFn } from "~/server/settings-functions";
 
 import appCss from "./globals.css?url";

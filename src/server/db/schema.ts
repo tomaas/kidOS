@@ -45,7 +45,7 @@ export const stories = sqliteTable("stories", {
   doudouLabel: text("doudou_label"),
   doudouPromptHint: text("doudou_prompt_hint"),
   doudouSnapshots: text("doudou_snapshots", { mode: "json" }).$type<
-    Array<{ label: string; promptHint: string; imageHint: string }>
+    { label: string; promptHint: string; imageHint: string }[]
   >(),
   elementId: text("element_id").notNull(),
   // ── Element snapshot (frozen at creation, all nullable) ─────────────────────
@@ -55,7 +55,7 @@ export const stories = sqliteTable("stories", {
   // as a one-element array. The NOT NULL `elementId` column mirrors the FIRST
   // element for that fallback.
   elementSnapshots: text("element_snapshots", { mode: "json" }).$type<
-    Array<{ label: string; promptHint: string }>
+    { label: string; promptHint: string }[]
   >(),
   heroId: text("hero_id").notNull(),
   // ── Hero snapshot (frozen at creation, all nullable) ────────────────────────
@@ -71,7 +71,7 @@ export const stories = sqliteTable("stories", {
   // identically. The existing NOT NULL `heroId` column still mirrors the FIRST
   // hero for back-compat readers + that config fallback.
   heroSnapshots: text("hero_snapshots", { mode: "json" }).$type<
-    Array<{ label: string; promptHint: string; imageHint: string }>
+    { label: string; promptHint: string; imageHint: string }[]
   >(),
   id: text("id")
     .primaryKey()

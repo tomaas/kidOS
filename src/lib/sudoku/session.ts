@@ -25,14 +25,13 @@ import type { SerieStorage } from "~/lib/operations";
 import { generateSudoku, newSudokuSeed } from "~/lib/sudoku/generator";
 import {
   DEFAULT_SETTING_GENEROSITE,
-  type GrilleStateLike,
   grilleStorageKeyOf,
   isGivenCell,
   isResumableGrille,
   normalizeSudokuSettings,
   SUDOKU_SETTINGS_CACHE_KEY,
-  type SudokuSettings,
 } from "~/lib/sudoku/settings";
+import type { GrilleStateLike, SudokuSettings } from "~/lib/sudoku/settings";
 import type { Generosite, Taille } from "~/lib/sudoku/types";
 
 /* ---------------------- Enveloppes de stockage calmes ---------------------- */

@@ -42,7 +42,9 @@ export function PickerGrid({
               : "border-border"
           )}
           key={item.id}
-          onClick={() => onSelect(item.id)}
+          onClick={() => {
+            onSelect(item.id);
+          }}
           type="button"
         >
           {/* A small check ribbon on a selected tile so multi-select reads
