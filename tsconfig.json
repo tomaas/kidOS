@@ -19,5 +19,5 @@
     "types": ["vite/client", "node"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
-  "exclude": ["node_modules", "vite.config.mts"]
+  "exclude": ["node_modules", "vite.config.mts", "scripts/pre-commit.test.ts"]
 }
