@@ -42,7 +42,6 @@ const ttsProvider = (process.env.TTS_PROVIDER ?? "edge") as
 // location, but it must stay a `file:` URL.
 const dataDir = process.env.DATA_DIR ?? "./data";
 
-// biome-ignore assist/source/useSortedKeys: groupement SÉMANTIQUE (requis vs optionnel, par fonctionnalité) — les commentaires de section documentent chaque groupe.
 export const serverEnv = {
   // Text generation (required).
   anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",

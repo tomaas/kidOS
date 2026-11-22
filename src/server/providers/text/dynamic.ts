@@ -99,7 +99,6 @@ function logTextGen(
  * only asked in the prompt.
  */
 function buildBeatSchema(landing: boolean) {
-  // biome-ignore assist/source/useSortedKeys: l'ordre des clés EST le schéma JSON envoyé au modèle (le récit d'abord : title → paragraphs → choices) — épinglé par test:coherence.
   return z.object({
     title: z
       .string()
@@ -605,7 +604,6 @@ export function coerceBeat(
 // ── Hidden story arc ("fil rouge") ──────────────────────────────────────────
 
 // Exporté pour le script d'assertions (test:coherence) uniquement.
-// biome-ignore assist/source/useSortedKeys: l'ordre des clés EST le schéma JSON envoyé au modèle — épinglé par test:coherence.
 export const ARC_SCHEMA = z.object({
   arc: z
     .string()
@@ -760,7 +758,7 @@ export async function generateStoryArc(
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const startedAt = Date.now();
     try {
-      // biome-ignore lint/performance/noAwaitInLoops: retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
+      // oxlint-disable-next-line no-await-in-loop -- retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
       const { object, usage } = await generateObject({
         // The arc gates the child-facing opening beat: a hung call must never
         // hold the waiting screen. Per-attempt cap → worst case ~30s, then the
@@ -852,7 +850,7 @@ export async function generateBeat(
     }
     let beat: DynamicBeat;
     try {
-      // biome-ignore lint/performance/noAwaitInLoops: retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
+      // oxlint-disable-next-line no-await-in-loop -- retries correctifs SÉQUENTIELS par design — chaque tentative dépend des problèmes de la précédente.
       beat = await generateOnce(
         input,
         attempt + 1,

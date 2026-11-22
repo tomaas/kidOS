@@ -178,7 +178,7 @@ if (mode === "child:writer") {
   const keys = (keysCsv ?? "").split(",");
   const iterations = Number(iterationsRaw ?? "0");
   for (let i = 1; i <= iterations; i += 1) {
-    // biome-ignore lint/performance/noAwaitInLoops: écritures SÉQUENTIELLES par processus, la concurrence vient des DEUX processus.
+    // oxlint-disable-next-line no-await-in-loop -- écritures SÉQUENTIELLES par processus, la concurrence vient des DEUX processus.
     await applySettingsPatch(
       keys.map((key) => ({ key, op: "set" as const, value: `${prefix}-${i}` }))
     );
@@ -629,7 +629,7 @@ async function bodyOf(response: Response): Promise<string> {
       return false;
     }
   };
-  // biome-ignore lint/performance/noAwaitInLoops: sondage séquentiel de ports par nature.
+  // oxlint-disable-next-line no-await-in-loop -- sondage séquentiel de ports par nature.
   while ((await portTaken(port)) && port < 3980) {
     port += 1;
   }
@@ -649,7 +649,7 @@ async function bodyOf(response: Response): Promise<string> {
   let up = false;
   for (let i = 0; i < 60 && !up; i += 1) {
     try {
-      // biome-ignore lint/performance/noAwaitInLoops: attente de démarrage.
+      // oxlint-disable-next-line no-await-in-loop -- attente de démarrage.
       const r = await fetch(`${base}/`, { signal: AbortSignal.timeout(2000) });
       up = r.ok;
     } catch {

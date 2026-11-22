@@ -8,8 +8,8 @@
  *  - `useIsMobile` vient de `~/lib/use-mobile` (pas de dossier hooks/), un
  *    hook RÉÉCRIT en `useSyncExternalStore` SSR-sûr — voir son en-tête ;
  *  - l'écriture `document.cookie` (persistance `sidebar_state` du registre)
- *    est conservée telle quelle, sous un biome-ignore
- *    (lint/suspicious/noDocumentCookie) — un cookie de confort UI, pas un
+ *    est conservée telle quelle, sous un oxlint-disable
+ *    (unicorn/no-document-cookie) — un cookie de confort UI, pas un
  *    secret ;
  *  - ternaire au lieu de `&&` dans SidebarMenuSkeleton (noLeakedRender) et
  *    `type` → `interface` (useConsistentTypeDefinitions), mêmes conventions
@@ -108,7 +108,7 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      // biome-ignore lint/suspicious/noDocumentCookie: stock shadcn persistence, documented in header
+      // oxlint-disable-next-line unicorn/no-document-cookie -- stock shadcn persistence, documented in header
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
     [setOpenProp, open]

@@ -38,7 +38,7 @@ function ParentsElementsPage() {
 
   async function handleDelete(id: string) {
     if (
-      // biome-ignore lint/suspicious/noAlert: confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
+      // oxlint-disable-next-line no-alert -- confirm() volontairement minimal — garde anti-tap accidentel, pas d'UI modale à maintenir.
       !window.confirm(m.parents.entites.elements.confirmRetrait)
     ) {
       return;

@@ -23,10 +23,14 @@ yes → don't.
 - `bun run dev` — dev server on port 3009
 - `bun run build` / `bun run start` — clean local run (start uses PORT=3009)
 - `bun run check-types` — tsc
-- `bun run lint` / `bun run lint:fix` — Biome, extending the ultracite
-  presets (core + react + tanstack); the deliberate opt-outs (jsx handlers,
-  bitwise in the seeded generator, module façades, route filenames) are
-  documented inline in `biome.jsonc` and win over the presets.
+- `bun run lint` / `bun run lint:fix` — Ultracite (`ultracite check` /
+  `ultracite fix`): Oxlint (type-aware) + the oxfmt formatter, extending the
+  ultracite presets (core + react + tanstack). The deliberate opt-outs (jsx
+  handlers, bitwise in the seeded generator, module façades, route filenames,
+  zod key order, rules whose fix would change behaviour) are documented with a
+  `// WHY:` line in `oxlint.config.ts` / `oxfmt.config.ts` and win over the
+  presets; an inline exception is `// oxlint-disable-next-line <rule> --
+  <reason>`. Setup and blame-ignore: `docs/formatting.md`.
 - `bun run test` — golden assertion scripts (plain bun, no vitest):
   `test:golden` pins prompt identity (text fragments + the segment-image
   prompt builder, byte-identical); `test:coherence` pins the safety/structure

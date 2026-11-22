@@ -68,7 +68,6 @@ export function EcranPortrait({ onOuvrir }: { onOuvrir: () => void }) {
       >
         <span className="flex size-44 items-center justify-center overflow-hidden rounded-full border-4 border-border bg-card shadow-lg transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none">
           {imageUtilisable && portrait.imagePath ? (
-            // biome-ignore lint/a11y/noNoninteractiveElementInteractions: onError n'est pas une interaction — c'est le repli D10-A (image cassée → emoji, jamais de glyphe cassé au boot).
             <img
               alt=""
               className="size-full object-cover"

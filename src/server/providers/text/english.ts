@@ -337,7 +337,6 @@ export function heroesVisualAnchorBlockEn(heroes: HeroContext[]): string {
 // ── Schémas (ordre des clés IDENTIQUE au FR — épinglé) ───────────────────────
 
 function buildBeatSchemaEn(landing: boolean) {
-  // biome-ignore assist/source/useSortedKeys: l'ordre des clés EST le schéma JSON envoyé au modèle (identique au schéma FR) — épinglé par test:coherence.
   return z.object({
     title: z
       .string()
@@ -375,7 +374,6 @@ function buildBeatSchemaEn(landing: boolean) {
 export const BEAT_SCHEMA_EN = buildBeatSchemaEn(false);
 export const LANDING_BEAT_SCHEMA_EN = buildBeatSchemaEn(true);
 
-// biome-ignore assist/source/useSortedKeys: l'ordre des clés EST le schéma JSON envoyé au modèle (identique au schéma FR) — épinglé par test:coherence.
 export const ARC_SCHEMA_EN = z.object({
   arc: z
     .string()
