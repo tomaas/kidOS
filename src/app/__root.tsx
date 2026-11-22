@@ -48,6 +48,13 @@ function useRootLocale(): Locale {
 export const Route = createRootRoute({
   component: RootComponent,
   errorComponent: () => <EcranCalme variante="souci" />,
+  // La locale UI ET la marque (réglages parent, table app_settings) entrent
+  // dans l'app par CE loader et nulle part ailleurs. getShellContextFn ne
+  // jette jamais (replis internes) — le shell rend toujours.
+  // staleTime: Infinity : ces réglages ne changent que par /parents, qui
+  // fait router.invalidate() ; un AUTRE onglet converge à son prochain
+  // rechargement — le rechargement est la frontière de cohérence documentée.
+  loader: () => getShellContextFn(),
   head: ({ loaderData }) => {
     // Le titre d'onglet et la meta description suivent la locale UI (réglage
     // parent) et la marque posée en base (branding:* — env VITE_* en
@@ -84,13 +91,6 @@ export const Route = createRootRoute({
       ],
     };
   },
-  // La locale UI ET la marque (réglages parent, table app_settings) entrent
-  // dans l'app par CE loader et nulle part ailleurs. getShellContextFn ne
-  // jette jamais (replis internes) — le shell rend toujours.
-  // staleTime: Infinity : ces réglages ne changent que par /parents, qui
-  // fait router.invalidate() ; un AUTRE onglet converge à son prochain
-  // rechargement — le rechargement est la frontière de cohérence documentée.
-  loader: () => getShellContextFn(),
   notFoundComponent: () => <EcranCalme variante="introuvable" />,
   staleTime: Number.POSITIVE_INFINITY,
 });
